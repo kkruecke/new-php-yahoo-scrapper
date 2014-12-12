@@ -1,0 +1,49 @@
+Design
+==================================
+
+ The CSV file needs six columns 
+
+Col 1 - Company 
+Col 2 - Symbol 
+Col 3 - Date -- the date entered as the argument, in the form xx-yyy, where xx is the day as a digit, and yyy is the 3-letter abbrev. of the month.
+Col 4 - Time -- as a special one letter code, defined below:
+
+	if ( Col 4 = "After Market Close")
+		 Col4 = A
+	else if ( Col 4 = "Before Market Open")
+		 Col4 = B
+	else if ( Col 4 = "Time Not Supplied")
+		 Col4 = U
+	else if ( col 4 has a time supplied in form of ????)
+		 Col4 = D
+	else
+		 Col4 = U
+
+In order to get the entire text of the column without html, I will need to use DOMDocument methods.
+ 
+Col 5 - Eps 
+Col 6 - PrevYr  -- a column with the string "Add"
+
+Sample:      
+Company:Acorn International Inc 
+Symbol: ATV
+Date:19-Mar
+Time:B
+Eps: N/A
+PrevYr:Add
+
+------ Logic to get one letter code for Time ---
+Col 4 -
+If ( Col 4 = After Market Close)
+ Col4 = A
+If ( Col 4 = Before Market Open)
+ Col4 = B
+If ( Col 4 = Time Not Supplied)
+ Col4 = U
+If ( col 4 is supplied)
+ Col4 = D
+else
+ Col4 = U
+*/
+
+
