@@ -3,14 +3,15 @@ namespace Yahoo;
 
 class Registry {
 
-  static private \ArrayObject  $registry; 
+  //--static private \ArrayObject  $registry; 
+  static private $registry; 
 
   public function __construct(array $ini_array)
   {
       self::init();
   }
 
-  protected static function init() : void
+  protected static function init()
   {	  
      if (!isset(self::$registry)) {	  
 	  
@@ -19,7 +20,8 @@ class Registry {
      }
   }
 
-  public static function register(string $property, string $value) : void
+  /--public static function register(string $property, string $value) : void
+  public static function register($property, $value)
   {
 	  self::init();
 	  self::$registry->offsetSet($property, $value);
