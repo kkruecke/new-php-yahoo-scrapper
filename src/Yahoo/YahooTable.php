@@ -93,7 +93,6 @@ class YahooTable implements \IteratorAggregate {
   /*
    * return cell text trimmed
    */  
-  //--public function getCellText(int $rowid, int $cellid) // returns string
   public function getCellText($rowid, $cellid) // returns string          
   {
       if ($rowid >= 0 && $rowid < $this->rowCount() && $cellid >= 0 && $cellid < $this->columnCount($rowid)) { 	  
@@ -123,8 +122,7 @@ class YahooTable implements \IteratorAggregate {
       return $this->trNodesList;
   }
 
-   // get td node list for row 
-  //--protected function getTdNodelist($row_id) : \DOMNodeList
+  // get td node list for row 
   protected function getTdNodelist($row_id)
   {
      // get DOMNode for row $row_id

@@ -9,7 +9,7 @@ function boot_strap()
 
  $spl_loader = new SplClassLoader('Yahoo', 'src');
 
- $spl_loader->setFileExtension('.hh');
+ $spl_loader->setFileExtension('.php');
  $spl_loader->register();
 }
 
@@ -59,7 +59,7 @@ function validate_user_input($arg_number, array $params, &$error_msg)
 /*
  * Input: $argv[1] == date in DD/MM/YYYY format 
  */ 
-function  build_date_period($argv_1, $number_of_days)
+function  build_date_period(\DateTime $start_date, $number_of_days)
 {    
   // Determine the end date
   $end_date = clone($start_date); // \DateTime::createFromFormat('m/d/Y', $startDate);  
@@ -80,6 +80,13 @@ function url_exists($url)
 {
     $file_headers = get_headers($url);
     return ($file_headers[0] == 'HTTP/1.1 404 Not Found') ? false : true;
+}
+
+// Prospective callback
+function make_url(\DateTime $date_time)
+{
+    // Build yyyymmdd.html name
+   return  Registry::registry('url-path')  . $date_time->format('Ymd') . ".html";
 }
 
 /*

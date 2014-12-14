@@ -48,7 +48,7 @@ class YahooTableIterator implements  \SeekableIterator {
   /*
    * Parameters: range of columns to return from each row.
    */
-  public function __construct(YahooTable $htmltable, int $start_column, int $end_column)
+  public function __construct(YahooTable $htmltable, $start_column, $end_column)
   {
      $this->html_table = $htmltable;
      $this->start_column = $start_column; 
