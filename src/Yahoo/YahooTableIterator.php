@@ -123,13 +123,13 @@ class YahooTableIterator implements  \SeekableIterator {
 
      for($cellid = $this->start_column; $cellid < $this->end_column; $cellid++) {
 
-        $row_data[] = $this->html_table->getCellText($rowid, $cellid);
+        $row_data[$cellid] = $this->html_table->getCellText($rowid, $cellid);
      }	     
       
      // Change html entities back into ASCII (or Unicode) characters.  
      for($i = 0; $i < $this->end_column; ++$i) {
          
-         $row_data[$i] = html_entity_decode($value);
+         $row_data[$i] = html_entity_decode($row_data[$i]);
      }
      
      return $row_data;
