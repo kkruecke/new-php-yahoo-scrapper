@@ -42,7 +42,9 @@ function validate_user_input($arg_number, array $params, &$error_msg)
     
     return true;
 }
- 
+/*
+ * Input: $argv[1] == date in DD/MM/YYYY format 
+ */ 
 function  build_date_period($argv_1, $number_of_days)
 {    
   $start_date = \DateTime::createFromFormat('m/d/Y', $argv_1); 
@@ -59,7 +61,9 @@ function  build_date_period($argv_1, $number_of_days)
   return $date_period;
 }
 
-   
+/*
+ * returns bool
+ */   
 function url_exists($url)
 {
     $file_headers = get_headers($url);

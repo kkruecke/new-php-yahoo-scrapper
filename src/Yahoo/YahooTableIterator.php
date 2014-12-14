@@ -39,13 +39,11 @@ class ArrayIterator<T> implements KeyedIterator<int, T>,
 class YahooTableIterator implements  \SeekableIterator {
 
   //--protected   YahooTable $html_table;
-  protected   $html_table;
-  protected   int $current_row;
-  //--protected   Vector<string> $row_data;
-  protected   $row_data; // SplFixedArray
-  private     int $end;
-  private     int $start_column;
-  private     int $end_column;
+  protected   $html_table;  // YahooTable
+  protected   $current_row; // int
+  private     $end;         // int
+  private     $start_column;// int
+  private     $end_column;  // int
 
   /*
    * Parameters: range of columns to return from each row.
@@ -59,7 +57,9 @@ class YahooTableIterator implements  \SeekableIterator {
      $this->current_row = 0; 
 
      $this->end = 0;    // This is required to make HHVM happy.
-     $this->row_data = Vector {};
+     $size = $this->end_column - $this->start_column;
+     
+     $this->row_data = new \SplFixedArray($size); 
 
      $this->end = $this->html_table->rowCount(); 
   }
@@ -67,33 +67,38 @@ class YahooTableIterator implements  \SeekableIterator {
   /*
    * Iterator methods
    */  
-  public function rewind() : void
+  // returns void
+  public function rewind() // void
   {
      $this->current_row = 0;
   }
-
-  public function valid() : bool
+  
+  // returns bool
+  public function valid() 
   {
      return $this->current_row != $this->end;
   }
 
-  //--public function current() : Vector<string>
+  // returns \SplFixedArray
   public function current() 
   {
     return  $this->getRowData($this->current_row);	  
   }
-
-  public function key()  : int
+  
+  // returns int
+  public function key()
   {
      return $this->current_row;
   }
 
-  public function next() : void
+  // returns void
+  public function next()
   {
      ++$this->current_row;
   }
 
-  public function seek($pos) : void
+  // returns void
+  public function seek($pos)
   {
 	if ($pos < 0) {
 
@@ -110,20 +115,23 @@ class YahooTableIterator implements  \SeekableIterator {
 	return;
   }
   /*
-   * returns Vector<string> of cell text for $rowid
+   * returns splFixedArray of cell text for $rowid
    */ 
-  protected function getRowData(int $rowid) : Vector<string>
+  protected function getRowData(int $rowid)
   {
-     $row_data = Vector{};     
+     $row_data = new \SplFixedArray($this->end_column - $this->start_column);
 
      for($cellid = $this->start_column; $cellid < $this->end_column; $cellid++) {
 
         $row_data[] = $this->html_table->getCellText($rowid, $cellid);
      }	     
       
-     // Change html entities back into ASCII (or Unicode) characters.             
-     $row_data = $row_data->map( $x ==> { return html_entity_decode($x); } );
-
+     // Change html entities back into ASCII (or Unicode) characters.  
+     for($i = 0; $i < $this->end_column; ++$i) {
+         
+         $row_data[$i] = html_entity_decode($value);
+     }
+     
      return $row_data;
   }
  

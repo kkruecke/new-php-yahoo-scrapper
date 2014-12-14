@@ -8,15 +8,13 @@ namespace Yahoo;
  */ 
 class CSVYahooFormatter implements CSVFormatter {
 
-   //--private \DateTime $start_date;
-   private \DateTime $start_date;
+   private  $start_date;  // DateTime
 
    public function __construct(\DateTime $start_date) 
    {
 	   $this->start_date = $start_date;
    }
 
-   //-- public function format(Vector<string> $row) : string
    public function format(\SplFixedArray $row) // : string    
    {
      if ($row->count() < 4) {
