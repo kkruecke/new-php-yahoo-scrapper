@@ -24,7 +24,10 @@ In order to get the entire text of the column without html, I will need to use D
 Col 5 - Eps 
 Col 6 - PrevYr  -- a column with the string "Add"
 
-Sample:      
+Output in  CSV format:
+Acorn International Inc, ATV, 19-Mar, B, N/A, Add
+
+Output explanation:      
 Company:Acorn International Inc 
 Symbol: ATV
 Date:19-Mar
