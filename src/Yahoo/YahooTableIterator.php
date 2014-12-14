@@ -117,7 +117,7 @@ class YahooTableIterator implements  \SeekableIterator {
   /*
    * returns splFixedArray of cell text for $rowid
    */ 
-  protected function getRowData(int $rowid)
+  protected function getRowData($rowid)
   {
      $row_data = new \SplFixedArray($this->end_column - $this->start_column);
 
