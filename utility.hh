@@ -1,6 +1,5 @@
-<?php
+<?hh
 use Yahoo\Registry;
-
 require_once("loader/SplClassLoader.php");
 
 function boot_strap()
@@ -17,7 +16,8 @@ function boot_strap()
  * Input: $argc, $argv, reference to $error_msg string to return
  * Returns: boolean: true if input good, false otherwise.
  */
-function validate_user_input($arg_number, array $params, &$error_msg)
+
+function validate_user_input(int $arg_number, array $params, string &$error_msg) : bool
 {
 
    if ( isset($arg_number) && $arg_number != 3 ) {
@@ -56,10 +56,8 @@ function validate_user_input($arg_number, array $params, &$error_msg)
     
     return true;
 }
-/*
- * Input: $argv[1] == date in DD/MM/YYYY format 
- */ 
-function  build_date_period($argv_1, $number_of_days)
+
+function  build_date_period(\DateTime $start_date, int $number_of_days) : \DatePeriod
 {    
   // Determine the end date
   $end_date = clone($start_date); // \DateTime::createFromFormat('m/d/Y', $startDate);  
@@ -73,21 +71,39 @@ function  build_date_period($argv_1, $number_of_days)
   return $date_period;
 }
 
-/*
- * returns bool
- */   
-function url_exists($url)
-{
-    $file_headers = get_headers($url);
-    return ($file_headers[0] == 'HTTP/1.1 404 Not Found') ? false : true;
-}
-
-/*
- * Return bool
- */ 
-function  validate_url_existence($url) 
+function  validate_url_existence(string $url) : bool
 {
    $file_headers = @get_headers($url);
 
    return ($file_headers[0] == 'HTTP/1.1 404 Not Found') ? false : true;
+/*
+   if($file_headers[0] == 'HTTP/1.1 404 Not Found') {
+      $exists = false;
+   } else {
+      $exists = true;
+   }
+ */   
+}
+
+// Prospective callback
+function make_url(\DateTime $date_time)
+{
+    // Build yyyymmdd.html name
+   return  Registry::registry('url-path')  . $date_time->format('Ymd') . ".html";
+}
+
+// TODO: See old php code for building the full .html path
+function build_url_vector(string $url_path, \DatePeriod $date_period ) : Vector<Pair<\DateTime, string> >
+{
+  $v = Vector {};
+
+  foreach($date_period as $date) {
+
+     // Build yyyymmdd.html name
+     $url = $url_path . $date->format('Ymd') . ".html";
+     $v[] =  Pair ( $date, $url );
+
+  }	  
+
+  return $v;
 }

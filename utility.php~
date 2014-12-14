@@ -61,6 +61,8 @@ function validate_user_input($arg_number, array $params, &$error_msg)
  */ 
 function  build_date_period($argv_1, $number_of_days)
 {    
+  $start_date = \DateTime::createFromFormat('m/d/Y', $argv_1); 
+
   // Determine the end date
   $end_date = clone($start_date); // \DateTime::createFromFormat('m/d/Y', $startDate);  
   
