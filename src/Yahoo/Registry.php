@@ -1,4 +1,4 @@
-<?hh
+<?php
 namespace Yahoo;
 
 class Registry {
@@ -20,14 +20,15 @@ class Registry {
      }
   }
 
-  /--public static function register(string $property, string $value) : void
+  //--public static function register(string $property, string $value) : void
   public static function register($property, $value)
   {
 	  self::init();
 	  self::$registry->offsetSet($property, $value);
   }
 
-  public static function registry($key) : ?string
+  //--public static function registry($key) : ?string
+  public static function registry($key)
   {
        self::init();
 

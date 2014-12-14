@@ -1,4 +1,4 @@
-<?hh
+<?php
 namespace Yahoo;
 /*
  *
@@ -36,12 +36,13 @@ class ArrayIterator<T> implements KeyedIterator<int, T>,
 } 
  */ 
 //class YahooTableIterator implements \KeyedIterator<int, \Vector<string> >, SeekableIterator {
-class YahooTableIterator implements KeyedIterator<int, \Vector<string> >,  \SeekableIterator {
+class YahooTableIterator implements  \SeekableIterator {
 
-
-  protected   YahooTable $html_table;
+  //--protected   YahooTable $html_table;
+  protected   $html_table;
   protected   int $current_row;
-  protected   Vector<string> $row_data;
+  //--protected   Vector<string> $row_data;
+  protected   $row_data; // SplFixedArray
   private     int $end;
   private     int $start_column;
   private     int $end_column;
@@ -60,7 +61,7 @@ class YahooTableIterator implements KeyedIterator<int, \Vector<string> >,  \Seek
      $this->end = 0;    // This is required to make HHVM happy.
      $this->row_data = Vector {};
 
-      $this->end = $this->html_table->rowCount(); 
+     $this->end = $this->html_table->rowCount(); 
   }
 
   /*
@@ -76,9 +77,10 @@ class YahooTableIterator implements KeyedIterator<int, \Vector<string> >,  \Seek
      return $this->current_row != $this->end;
   }
 
-  public function current() : Vector<string>
+  //--public function current() : Vector<string>
+  public function current() 
   {
-    return   $this->getRowData($this->current_row);	  
+    return  $this->getRowData($this->current_row);	  
   }
 
   public function key()  : int

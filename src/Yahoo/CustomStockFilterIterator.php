@@ -1,4 +1,4 @@
-<?hh
+<?php
 namespace Yahoo;
       
 class CustomStockFilterIterator extends \FilterIterator {

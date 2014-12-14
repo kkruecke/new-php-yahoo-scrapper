@@ -1,4 +1,4 @@
-<?hh
+<?php
 namespace Yahoo;
 
 class CSVWriter {
@@ -35,13 +35,13 @@ class CSVWriter {
      unset($this->splfile);
   }
 
-  public function writeLine(Vector<string> $row_data) : void
+  public function writeLine(\SplFixedArray $row_data) // was: writeLOine(Vector<string> $row)  : void
   { 
       /*
        * Format the $row_data	  
        */ 	  
 
-      $csv_str = $this->formatter->format($row_data); // passed by reference
+      $csv_str = $this->formatter->format($row_data); 
 
       $csv_str .= "\n"; // replace terminating ',' with newline.
                    
@@ -50,7 +50,7 @@ class CSVWriter {
       $this->line_count++;
   }
   
-  public function getLineCount() : int
+  public function getLineCount() // : int
   {
       return $this->line_count;
   }

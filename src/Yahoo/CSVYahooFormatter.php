@@ -1,4 +1,4 @@
-<?hh
+<?php
 namespace Yahoo;
 
 /*
@@ -8,6 +8,7 @@ namespace Yahoo;
  */ 
 class CSVYahooFormatter implements CSVFormatter {
 
+   //--private \DateTime $start_date;
    private \DateTime $start_date;
 
    public function __construct(\DateTime $start_date) 
@@ -15,9 +16,9 @@ class CSVYahooFormatter implements CSVFormatter {
 	   $this->start_date = $start_date;
    }
 
-   public function format(Vector<string> $row) : string
+   //-- public function format(Vector<string> $row) : string
+   public function format(\SplFixedArray $row) // : string    
    {
-      
      if ($row->count() < 4) {
 
 	  throw new \RangeException("Size of Vector<string> is less than four\n");
@@ -53,8 +54,9 @@ class CSVYahooFormatter implements CSVFormatter {
        */
      $date = $this->start_date->format('j-M');
     
-     $array = $row->toArray();
-
+     //TODO: There is no toArray method. Change all this code below.
+     $array = $row->toArray(); 
+  
      array_splice($array, 2, 0, $date); // Insert date after first third columns.
 
      $array[] = "Add"; // Also taken from TableRowExtractorIterator::addDataSuffix() in prior PHP code.
