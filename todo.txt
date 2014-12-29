@@ -1,1 +1,1 @@
-The array_splice in CSVYahooFormatter.hh, which inserts a date, is failing.
+The XPath query failure bug seems to happen unpredictably. Is it elates to the @file_get_contents call above?
