@@ -1,1 +1,2 @@
-The XPath query failure bug seems to happen unpredictably. Is it elates to the @file_get_contents call above?
+The XPath query failure bug seems to happen for pages that do not actually exists. Is it the url test succeeding because there is a page, albeit
+not one with financial data?

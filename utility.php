@@ -94,7 +94,11 @@ function make_url(\DateTime $date_time)
  */ 
 function  validate_url_existence($url) 
 {
+  
    $file_headers = @get_headers($url);
 
-   return ($file_headers[0] == 'HTTP/1.1 404 Not Found') ? false : true;
+   //   TODO: This has a bug. Somethimes "HTTP/1.0" is returned.
+   // check out headers and return codes in headers
+   $bool = strcmp($file_headers[0], "HTTP/1.1 404 Not Found");
+   return $bool;
 }

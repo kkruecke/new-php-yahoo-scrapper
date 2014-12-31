@@ -17,7 +17,6 @@ class YahooTable implements \IteratorAggregate {
    * start and end column are within range of columns that exist
    */ 
  
-  //--public function __construct(string $url, string $xpath_table_query, int $start_column, int $end_column)
   public function __construct($url, $xpath_table_query, $start_column, $end_column)        
   {
    /*
@@ -26,6 +25,7 @@ class YahooTable implements \IteratorAggregate {
      $this->start_column = $start_column;	  
      $this->end_column = $end_column;;	  
 
+     //$page = file_get_contents($url);
      $page = @file_get_contents($url);
 
      // a new dom object
@@ -44,9 +44,9 @@ class YahooTable implements \IteratorAggregate {
      // returns \DOMNodeList. We must first get the first and only node, the table.
      $xpathNodeList = $this->xpath->query($xpath_table_query);
     
-     if ($xpathNodeList->length != 1) { 
+     if ($xpathNodeList->length != 1) { // TODO: Sometimes this if test succeeds. Is it only when there is  
         
-         throw new \Exception("XPath Query\n $xpath_table_query\n   Failed. Page format has evidently changed. Cannot proceed.\n");
+         throw new \Exception("XPath Query\n $xpath_table_query\nof page: $url\n   \nFailed!\n Check if page format has changed. Cannot proceed.\n");
      } 
 
      // DOMNode representing the table. 
