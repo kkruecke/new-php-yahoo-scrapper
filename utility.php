@@ -96,9 +96,15 @@ function  validate_url_existence($url)
 {
   
    $file_headers = @get_headers($url);
+   $response_code = substr($file_headers[0], 9, 3);
 
    //   TODO: This has a bug. Somethimes "HTTP/1.0" is returned.
    // check out headers and return codes in headers
-   $bool = strcmp($file_headers[0], "HTTP/1.1 404 Not Found");
+   $bool = true;
+   
+   if ( ( (int) $response_code)  >= 400) {
+       
+       $bool = false;
+   }
    return $bool;
 }
