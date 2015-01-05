@@ -1,2 +1,1 @@
-The XPath query failure bug seems to happen for pages that do not actually exists. Is it the url test succeeding because there is a page, albeit
-not one with financial data?
+Bug: The outputted date needs to come from the Yahoo finance webpage not from the command line input. 
