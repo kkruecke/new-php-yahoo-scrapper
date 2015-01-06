@@ -26,7 +26,7 @@ class YahooTable implements \IteratorAggregate {
      $this->end_column = $end_column;;	  
 
      //$page = file_get_contents($url);
-     $page = @file_get_contents($url);
+     $page = @file_get_contents($url); // Bug: This fails sometimes.
 
      // a new dom object
      $this->dom = new \DOMDocument();
