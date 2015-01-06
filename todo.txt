@@ -1,1 +1,2 @@
-Bug: The outputted date needs to come from the Yahoo finance webpage not from the command line input. 
+Bug: While validate_url() seems to work, the XPath query still fails sometimes; but when code rerun, it will work. Thus, the XPath query fails 
+intermittantly. 

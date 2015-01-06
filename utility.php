@@ -99,6 +99,12 @@ function  validate_url_existence($url)
    $response_code = substr($file_headers[0], 9, 3);
 
    $bool = ( ( (int) $response_code )  >= 400) ? false : true;
-       
+   /*
+   Debug
+   $valid = $bool ? "true" : "false";
+
+
+   echo "\n------------- $url validation is $valid\n";      
+   */
    return $bool;
 }
