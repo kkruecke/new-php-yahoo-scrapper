@@ -33,7 +33,8 @@ require_once("utility.php");
    */  
   $file_name = $start_date->format('jmY') . "-plus-" . $argv[2] . ".csv";
     
-  $csv_writer = new CSVWriter($file_name, new CSVYahooFormatter($start_date));
+  //--$csv_writer = new CSVWriter($file_name, new CSVYahooFormatter($start_date)); // BUG: date needs to vary.
+  $csv_writer = new CSVWriter($file_name, new CSVYahooFormatter()); // BUG: date needs to vary.
 
   // Start main loop
   foreach ($date_period as $date_time) {
@@ -49,7 +50,9 @@ require_once("utility.php");
       }
       
       try {
+
 	  $start_column = (int) Registry::registry('start-column');     
+
 	  $end_column = (int) Registry::registry('end-column');    // End column is one past the last column retrieved. 
 
 	  $table = new YahooTable($url, Registry::registry('xpath-query'), $start_column, $end_column);
@@ -58,10 +61,10 @@ require_once("utility.php");
 	     
 	  // We skip the first two rows, the table description and column headers, and the last row which has no financial data
 	  $start_row = 2;
-	  $row_count = $total_rows - $start_row - 1;
-	  $tableIter = $table->getIterator();
 
-	  $limitIter = new \LimitIterator($tableIter, 2, $row_count); 
+	  $row_count = $total_rows - $start_row - 1;
+
+	  $limitIter = new \LimitIterator($table->getIterator(), 2, $row_count); 
 
 	  /*
 	   * The filter iterator should include all the filters of the original code:
@@ -76,7 +79,7 @@ require_once("utility.php");
      
           foreach($filterIter as $key => $stock) {
 
-               $csv_writer->writeLine($stock); 
+               $csv_writer->writeLine($stock, $date_time); 
 	  }
 
 	  echo "Date $friendly_date processed\n";

@@ -44,7 +44,7 @@ class YahooTable implements \IteratorAggregate {
      // returns \DOMNodeList. We must first get the first and only node, the table.
      $xpathNodeList = $this->xpath->query($xpath_table_query);
     
-     if ($xpathNodeList->length != 1) { // TODO: Sometimes this if test succeeds. Is it only when there is  
+     if ($xpathNodeList->length != 1) { 
         
          throw new \Exception("XPath Query\n $xpath_table_query\nof page: $url\n   \nFailed!\n Check if page format has changed. Cannot proceed.\n");
      } 

@@ -35,13 +35,13 @@ class CSVWriter {
      unset($this->splfile);
   }
 
-  public function writeLine(\SplFixedArray $row_data) // was: writeLOine(Vector<string> $row)  : void
+  public function writeLine(\SplFixedArray $row_data,\DateTime $date) // was: writeLOine(Vector<string> $row)  : void
   { 
       /*
        * Format the $row_data	  
        */ 	  
 
-      $csv_str = $this->formatter->format($row_data); 
+      $csv_str = $this->formatter->format($row_data, $date); 
 
       $csv_str .= "\n"; // replace terminating ',' with newline.
                    

@@ -35,10 +35,8 @@ class ArrayIterator<T> implements KeyedIterator<int, T>,
   public function valid(): bool;
 } 
  */ 
-//class YahooTableIterator implements \KeyedIterator<int, \Vector<string> >, SeekableIterator {
 class YahooTableIterator implements  \SeekableIterator {
 
-  //--protected   YahooTable $html_table;
   protected   $html_table;  // YahooTable
   protected   $current_row; // int
   private     $end;         // int
