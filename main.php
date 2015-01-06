@@ -33,7 +33,6 @@ require_once("utility.php");
    */  
   $file_name = $start_date->format('jmY') . "-plus-" . $argv[2] . ".csv";
     
-  //--$csv_writer = new CSVWriter($file_name, new CSVYahooFormatter($start_date)); // BUG: date needs to vary.
   $csv_writer = new CSVWriter($file_name, new CSVYahooFormatter()); // BUG: date needs to vary.
 
   // Start main loop
