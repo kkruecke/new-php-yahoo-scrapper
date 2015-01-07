@@ -1,6 +1,18 @@
-Bug: While validate_url() seems to work, the XPath query still fails sometimes; but when code rerun, it will work. Thus, the XPath query fails 
+Bug: While validate_url() seems to always work, file_get_contents() in the YahooTable ctor fails  
 intermittantly. This is because file_get_contents() failed on a valid url. 
-
 
 Prospective solution: Use Guzzle
 http://guzzle.readthedocs.org/en/latest/
+
+This will require installing Guzzle using composer together with the curl extension for php5. It will also require making the Yahoo project work with the
+composer autoloader. 
+
+1. To install Guzzle:
+
+   $ composer require guzzlehttp/guzzle
+
+2. Install or enable the php5 curl extension:
+
+   $ sudo aptitude install php5-curl
+
+3. Read the bookmarks on how Composer works
