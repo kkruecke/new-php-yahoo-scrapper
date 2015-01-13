@@ -2,7 +2,7 @@
 use Yahoo\Registry;
 
 require_once("loader/SplClassLoader.php");
-require 'vendor/autoload.php';
+//--require 'vendor/autoload.php';
 
 function boot_strap()
 {
