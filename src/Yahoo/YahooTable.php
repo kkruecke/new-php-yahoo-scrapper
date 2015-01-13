@@ -24,15 +24,62 @@ class YahooTable implements \IteratorAggregate {
     */ 	  
      $this->start_column = $start_column;	  
      $this->end_column = $end_column;;	  
+     
+     /* Alternate code to use Guzzle
+     $client = new \GuzzleHttp\Client();
+     
+     for($i = 0; $i <2; ++$i) {
+         
+       try {
+                
+        $response = $client->get($url);
+        $body = $response->getBody();
+     
+        $page = $body->__toString();
 
-     $page = @\file_get_contents($url); // Bug: This fails sometimes.
-
-     if ($page === FALSE) {
-
-        echo print_r(\error_get_last());
-        die();
+        break;
+        
+       } catch (\Exception $e) {
+             
+          echo "Attempt to download page $url failed.  Retrying...\n";
+          
+          echo $e->getMessage() . "\n\n";
+	  echo $e->getTraceAsString() . "\n\n";
+          
+         
+          continue;
+       }
      }
+     */
+        
+    $opts = array(
+                'http'=>array(
+                  'method'=>"GET",
+                  'header'=>"Accept-language: en\r\n" .  "Cookie: foo=bar\r\n")
+                 );
 
+    $context = stream_context_create($opts);
+    
+    for ($i = 0; $i < 2; ++$i) {
+        
+    
+       $page = @file_get_contents($url, false, $context);
+               
+       if ($page !== false) {
+           
+          break;
+       }   
+       
+       echo "Attempt to download $url failed. Retrying\n";
+              
+    }
+    
+    if ($i == 2) {
+        
+       throw new Exception("Could not download page $url after two attempts\n");
+    }
+    
+    
      // a new dom object
      $this->dom = new \DOMDocument();
      

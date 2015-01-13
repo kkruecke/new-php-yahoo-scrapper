@@ -1,9 +1,9 @@
-Bug: While validate_url() seems to always work, file_get_contents() in the YahooTable ctor fails  
-intermittantly even though the url is valid. 
+Former bug: ile_get_contents() in the YahooTable ctor failed intermittently.  
+Current solution: added loop to try twice.
 
-Prospective solution: Use Guzzle instead of file_get_contents()
+Alternative solution: Use Guzzle instead of file_get_contents()
 
-Requirements:
+Requirements for Guzzle solution:
 
 This will require installing Guzzle using composer together with the curl extension for php5. It will also require making the Yahoo project work with the
 composer autoloader. 
@@ -17,3 +17,8 @@ composer autoloader.
    $ sudo aptitude install php5-curl
 
 3. Read the bookmarks on how Composer works
+
+4. Read Guzzle howtos.
+
+
+

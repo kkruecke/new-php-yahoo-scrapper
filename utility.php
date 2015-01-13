@@ -2,6 +2,7 @@
 use Yahoo\Registry;
 
 require_once("loader/SplClassLoader.php");
+require 'vendor/autoload.php';
 
 function boot_strap()
 {
@@ -11,6 +12,7 @@ function boot_strap()
 
  $spl_loader->setFileExtension('.php');
  $spl_loader->register();
+ 
 }
 
 /*
@@ -96,15 +98,15 @@ function  validate_url_existence($url)
 {
   
    $file_headers = @get_headers($url);
+   
+   if ($file_headers === FALSE) {
+       
+       return false;
+   }
+   
    $response_code = substr($file_headers[0], 9, 3);
 
    $bool = ( ( (int) $response_code )  >= 400) ? false : true;
-   /*
-   Debug
-   $valid = $bool ? "true" : "false";
-
-
-   echo "\n------------- $url validation is $valid\n";      
-   */
+  
    return $bool;
 }
