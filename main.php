@@ -44,7 +44,7 @@ require_once("utility.php");
       
       if (!validate_url_existence($url)) {
           
-           echo 'Skipping data for date ' . $friendly_date . " because webpage $url does not exist...\n";               
+           echo 'Skipping data for date ' . $friendly_date . " because webpage $url does not exist.\n";               
            continue;    
       }
       
@@ -54,7 +54,7 @@ require_once("utility.php");
 
 	  $end_column = (int) Registry::registry('end-column');    // End column is one past the last column retrieved. 
 
-	  $table = new YahooTable($url, Registry::registry('xpath-query'), $start_column, $end_column);
+	  $table = new YahooTable($friendly_date, $url, Registry::registry('xpath-query'), $start_column, $end_column);
 
 	  $total_rows = $table->rowCount(); // first row is 0, last is $total_rows - 1
 	     

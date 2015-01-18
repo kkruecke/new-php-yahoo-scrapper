@@ -17,7 +17,7 @@ class YahooTable implements \IteratorAggregate {
    * start and end column are within range of columns that exist
    */ 
  
-  public function __construct($url, $xpath_table_query, $start_column, $end_column)        
+  public function __construct($friendly_date, $url, $xpath_table_query, $start_column, $end_column)        
   {
    /*
     * The column of the table that the external iterator should return
@@ -70,7 +70,7 @@ class YahooTable implements \IteratorAggregate {
           break;
        }   
        
-       echo "Attempt to download $url failed. Retrying\n";
+       echo "Attempt to download data for $friendly_date on webpage $url failed. Retrying.\n";
               
     }
     
