@@ -1,6 +1,2 @@
-One small change, can u switch column "D" and "E".
-Please check under " 1/20/2015 – Sunday " in Google Document. Current loader into database takes in that order.
-
-https://drive.google.com/open?id=0B0JdjfGVIq72b3V6Mm93OWxmNlk&authuser=0
-
-Note: I introduced a bug: the date appears twice.
+Occasionally the page still does not download despite trying twice. This feels like a configuration bug rather than
+a software bug.
