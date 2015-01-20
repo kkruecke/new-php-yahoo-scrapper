@@ -86,9 +86,10 @@ require_once("utility.php");
   
       } catch(\Exception $e) {
           
-          $msg = "Error occurred processing page $url. Exception information below:\n";
+          $msg = "\nError occurred processing page $url. Exception information below:\n";
           
           $msg .= $e->getMessage() . "\n\n";
+          echo $msg;
 	  echo $e->getTraceAsString() . "\n\n";
           continue;
       }

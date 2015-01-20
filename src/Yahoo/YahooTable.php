@@ -76,9 +76,9 @@ class YahooTable implements \IteratorAggregate {
     
     if ($i == 2) {
         
-       throw new Exception("Could not download page $url after two attempts\n");
+       throw new \Exception("Could not download page $url after two attempts\n");
     }
-    
+   
     
      // a new dom object
      $this->dom = new \DOMDocument();
