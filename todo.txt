@@ -1,24 +1,4 @@
-Former bug: ile_get_contents() in the YahooTable ctor failed intermittently.  
-Current solution: added loop to try twice.
+One small change, can u switch column "D" and "E".
+Please check under " 1/20/2015 – Sunday " in Google Document. Current loader into database takes in that order.
 
-Alternative solution: Use Guzzle instead of file_get_contents()
-
-Requirements for Guzzle solution:
-
-This will require installing Guzzle using composer together with the curl extension for php5. It will also require making the Yahoo project work with the
-composer autoloader. 
-
-1. To install Guzzle:
-
-   $ composer require guzzlehttp/guzzle
-
-2. Install or enable the php5 curl extension:
-
-   $ sudo aptitude install php5-curl
-
-3. Read the bookmarks on how Composer works
-
-4. Read Guzzle howtos.
-
-
-
+https://drive.google.com/open?id=0B0JdjfGVIq72b3V6Mm93OWxmNlk&authuser=0

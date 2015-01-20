@@ -10,6 +10,9 @@ class CSVYahooFormatter implements CSVFormatter {
 
    public function format(\SplFixedArray $row, \DateTime $date) // : string    
    {
+     // TODO: Remove commas from company names
+
+
      if ($row->count() < 4) {
 
 	  throw new \RangeException("Size of Vector<string> is less than four\n");
