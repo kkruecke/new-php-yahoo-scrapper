@@ -2,7 +2,6 @@
 use Yahoo\Registry;
 
 require_once("loader/SplClassLoader.php");
-//--require 'vendor/autoload.php';
 
 function boot_strap()
 {
@@ -94,7 +93,7 @@ function make_url(\DateTime $date_time)
 /*
  * Return bool
  */ 
-function  validate_url_existence($url) 
+function validate_url_existence($url) 
 {
   
    $file_headers = @get_headers($url);
