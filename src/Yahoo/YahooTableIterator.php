@@ -117,6 +117,8 @@ class YahooTableIterator implements  \SeekableIterator {
    */ 
   protected function getRowData($rowid)
   {
+     //TODO: the $start_column and $end_column are passed to the constructor 
+
      $row_data = new \SplFixedArray($this->end_column - $this->start_column);
 
      for($cellid = $this->start_column; $cellid < $this->end_column; $cellid++) {

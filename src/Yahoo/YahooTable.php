@@ -6,7 +6,6 @@ class YahooTable implements \IteratorAggregate {
    private   $dom;	
    private   $xpath;	
    private   $trNodesList;
-   protected $trdNodesList;
    private   $start_column;
    private   $end_column;
 
@@ -154,6 +153,8 @@ class YahooTable implements \IteratorAggregate {
         $td = $tdNodelist->item($cellid);  
 
 	$nodeValue = trim($td->nodeValue);
+
+        // TODO: I think we need to change the code to get the length of the cell text?
 
 	return $nodeValue;
 
