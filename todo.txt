@@ -9,3 +9,11 @@ Same thing for symbols, T,F,X,V,M,C, it is not getting dates.
 Do you have any setup where I can update length 1 to 5 chars are valid. 
 
 See bug sample output in bug.html
+
+TODO:
+
+Enable php7 features:
+
+See http://php.net/manual/en/migration70.new-features.php
+See http://blog.teamtreehouse.com/5-new-features-php-7
+See https://github.com/tpunt/PHP7-Reference
