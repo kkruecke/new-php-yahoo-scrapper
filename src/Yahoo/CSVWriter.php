@@ -25,7 +25,7 @@ class CSVWriter {
     $this->line_count = 0;
   }
 
-  public function getFileName()
+  public function getFileName() : string
   {
      return $this->file_name;
   }
@@ -35,7 +35,7 @@ class CSVWriter {
      unset($this->splfile);
   }
 
-  public function writeLine(\SplFixedArray $row_data,\DateTime $date) // was: writeLOine(Vector<string> $row)  : void
+  public function writeLine(\SplFixedArray $row_data,\DateTime $date)  //  : void is php 7.1
   { 
       /*
        * Format the $row_data	  
@@ -50,7 +50,7 @@ class CSVWriter {
       $this->line_count++;
   }
   
-  public function getLineCount() // : int
+  public function getLineCount() : int
   {
       return $this->line_count;
   }

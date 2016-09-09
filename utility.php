@@ -11,14 +11,13 @@ function boot_strap()
 
  $spl_loader->setFileExtension('.php');
  $spl_loader->register();
- 
 }
 
 /*
  * Input: $argc, $argv, reference to $error_msg string to return
  * Returns: boolean: true if input good, false otherwise.
  */
-function validate_user_input($arg_number, array $params, &$error_msg)
+function validate_user_input(int $arg_number, array $params, &$error_msg) : bool
 {
 
    if ( isset($arg_number) && $arg_number != 3 ) {
@@ -60,7 +59,7 @@ function validate_user_input($arg_number, array $params, &$error_msg)
 /*
  * Input: $argv[1] == date in DD/MM/YYYY format 
  */ 
-function  build_date_period(\DateTime $start_date, $number_of_days)
+function  build_date_period(\DateTime $start_date, int $number_of_days) : \DatePeriod
 {    
   // Determine the end date
   $end_date = clone($start_date); // \DateTime::createFromFormat('m/d/Y', $startDate);  
@@ -77,7 +76,7 @@ function  build_date_period(\DateTime $start_date, $number_of_days)
 /*
  * returns bool
  */   
-function url_exists($url)
+function url_exists(string $url) : string
 {
     $file_headers = get_headers($url);
     return ($file_headers[0] == 'HTTP/1.1 404 Not Found') ? false : true;
@@ -93,7 +92,7 @@ function make_url(\DateTime $date_time)
 /*
  * Return bool
  */ 
-function validate_url_existence($url) 
+function validate_url_existence(string $url) : bool 
 {
   
    $file_headers = @get_headers($url);

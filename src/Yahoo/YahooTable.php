@@ -16,7 +16,7 @@ class YahooTable implements \IteratorAggregate {
    * start and end column are within range of columns that exist
    */ 
  
-  public function __construct($friendly_date, $url, $xpath_table_query, $start_column, $end_column)        
+  public function __construct(string $friendly_date, string $url, string $xpath_table_query, int $start_column, int $end_column)        
   {
    /*
     * The column of the table that the external iterator should return
@@ -124,19 +124,19 @@ class YahooTable implements \IteratorAggregate {
  /*
   * Return external iterator, passing the range of columns requested.
   */ 
-  public function getIterator()
+  public function getIterator() : \Yahoo\YahooTableIterator
   {
      return new YahooTableIterator($this, $this->start_column, $this->end_column);
   }
 
   //--public function rowCount() : int
-  public function rowCount()
+  public function rowCount() : int
   {
      return $this->getRowsNodelist()->length;
   } 
 
   //--public function columnCount(int $rowid) : int
-  public function columnCount($rowid)
+  public function columnCount($rowid) : int
   {
      return $this->getTdNodelist($rowid)->length;
   }
@@ -144,7 +144,7 @@ class YahooTable implements \IteratorAggregate {
   /*
    * return cell text trimmed
    */  
-  public function getCellText($rowid, $cellid) // returns string          
+  public function getCellText(int $rowid, int $cellid) :  string
   {
       if ($rowid >= 0 && $rowid < $this->rowCount() && $cellid >= 0 && $cellid < $this->columnCount($rowid)) { 	  
 
@@ -170,13 +170,13 @@ class YahooTable implements \IteratorAggregate {
       }
   }
 
-  protected function getRowsNodelist() // returns \DOMNodeList
+  protected function getRowsNodelist() : \DOMNodeList
   {
       return $this->trNodesList;
   }
 
   // get td node list for row 
-  protected function getTdNodelist($row_id)
+  protected function getTdNodelist($row_id) : \DOMNodeList
   {
      // get DOMNode for row $row_id
      $rowNode =  $this->getRowsNodelist()->item($row_id);

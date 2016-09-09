@@ -8,7 +8,7 @@ class CustomStockFilterIterator extends \FilterIterator {
 	parent::__construct($iter);
    }	   
 
-   public function accept() 
+   public function accept() : bool
    {
         // Only accept strings with a length of 10 and greater
         $row = parent::current();

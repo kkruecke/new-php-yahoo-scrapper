@@ -46,7 +46,7 @@ class YahooTableIterator implements  \SeekableIterator {
   /*
    * Parameters: range of columns to return from each row.
    */
-  public function __construct(YahooTable $htmltable, $start_column, $end_column)
+  public function __construct(YahooTable $htmltable, int $start_column, int $end_column)
   {
      $this->html_table = $htmltable;
      $this->start_column = $start_column; 
@@ -66,37 +66,37 @@ class YahooTableIterator implements  \SeekableIterator {
    * Iterator methods
    */  
   // returns void
-  public function rewind() // void
+  public function rewind() 
   {
      $this->current_row = 0;
   }
   
   // returns bool
-  public function valid() 
+  public function valid() : bool
   {
      return $this->current_row != $this->end;
   }
 
   // returns \SplFixedArray
-  public function current() 
+  public function current() : \SplFixedArray 
   {
     return  $this->getRowData($this->current_row);	  
   }
   
   // returns int
-  public function key()
+  public function key() : int
   {
      return $this->current_row;
   }
 
   // returns void
-  public function next()
+  public function next() 
   {
      ++$this->current_row;
   }
 
   // returns void
-  public function seek($pos)
+  public function seek($pos) 
   {
 	if ($pos < 0) {
 
@@ -115,7 +115,7 @@ class YahooTableIterator implements  \SeekableIterator {
   /*
    * returns splFixedArray of cell text for $rowid
    */ 
-  protected function getRowData($rowid)
+  protected function getRowData($rowid) : \SplFixedArray
   {
      //TODO: the $start_column and $end_column are passed to the constructor 
 

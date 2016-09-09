@@ -20,15 +20,14 @@ class Registry {
      }
   }
 
-  //--public static function register(string $property, string $value) : void
-  public static function register($property, $value)
+  public static function register(sting $property, string $value)  // ": void " is coming in php7.1
   {
 	  self::init();
 	  self::$registry->offsetSet($property, $value);
   }
 
   //--public static function registry($key) : ?string
-  public static function registry($key)
+  public static function registry(string $key) : string // ?string
   {
        self::init();
 

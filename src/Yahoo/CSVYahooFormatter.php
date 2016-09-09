@@ -8,7 +8,7 @@ namespace Yahoo;
  */ 
 class CSVYahooFormatter implements CSVFormatter {
 
-   public function format(\SplFixedArray $row, \DateTime $date) // : string    
+   public function format(\SplFixedArray $row, \DateTime $date) : string    
    {
     
      if ($row->count() < 4) {

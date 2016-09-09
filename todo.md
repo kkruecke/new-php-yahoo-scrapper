@@ -1,3 +1,5 @@
+# php7 Support Added
+
 # BUGS
 
 ## YahooTable Use fixed ini values for start and end column
