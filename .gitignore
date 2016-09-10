@@ -1,4 +1,5 @@
 *.html
+*.swp
 *.csv
 test.*
 *.hh
