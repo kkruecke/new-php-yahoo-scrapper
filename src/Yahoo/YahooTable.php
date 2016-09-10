@@ -129,13 +129,11 @@ class YahooTable implements \IteratorAggregate {
      return new YahooTableIterator($this, $this->start_column, $this->end_column);
   }
 
-  //--public function rowCount() : int
   public function rowCount() : int
   {
      return $this->getRowsNodelist()->length;
   } 
 
-  //--public function columnCount(int $rowid) : int
   public function columnCount($rowid) : int
   {
      return $this->getTdNodelist($rowid)->length;

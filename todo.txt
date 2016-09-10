@@ -1,3 +1,14 @@
+# double check the added return types as to whether they correct in each and every function and method: do they conform to the methods/functions design, and are
+they used in the way outline by the php7 return type standard. See: 
+
+1. http://php.net/manual/en/migration70.new-features.php
+2. http://blog.teamtreehouse.com/5-new-features-php-7
+3. http://stackoverflow.com/questions/34268063/correct-way-to-handle-php-7-return-types
+4. http://php.net/manual/en/migration70.php
+
+## Check that other new feature that are of true value are beng utilized. Thes will entail reading and understanding they new features.
+
+
 Bug: 
 Nandish reports:
 
