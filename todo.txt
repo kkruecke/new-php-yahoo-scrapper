@@ -23,7 +23,7 @@ See bug sample output in bug.html
 
 TODO:
 
-Enable php7 features:
+I enabled php7 scalar types, but if "<?php declare(strict_types=1);" is used, exceptions are being thrown.
 
 See http://php.net/manual/en/migration70.new-features.php
 See http://blog.teamtreehouse.com/5-new-features-php-7
