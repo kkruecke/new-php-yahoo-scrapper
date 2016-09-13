@@ -3,7 +3,6 @@ namespace Yahoo;
 
 class Registry {
 
-  //--static private \ArrayObject  $registry; // Is this OK? 
   static private $registry; 
 
   public function __construct(array $ini_array)

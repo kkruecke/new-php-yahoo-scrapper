@@ -1,17 +1,14 @@
 <?php declare(strict_types=1);
-use Yahoo\CSVWriter,
-    Yahoo\CSVYahooFormatter,
-    Yahoo\YahooTable, 
-    Yahoo\CustomStockFilterIterator,
-    Yahoo\Registry;
-  
+
+use Yahoo\{CSVWriter, CSVYahooFormatter, YahooTable, CustomStockFilterIterator, Registry};
+
 require_once("utility.php");
 
   boot_strap();
 
   if ($argc == 2) {
 
-    $argv[2] = "0"; //++ 
+    $argv[2] = "0"; // $argv values are strings 
     $argc = 3;
   }
 
@@ -26,7 +23,7 @@ require_once("utility.php");
 
   $start_date = \DateTime::createFromFormat('m/d/Y', $argv[1]); 
 
-  $date_period = build_date_period($start_date, intval($argv[2])); //++
+  $date_period = build_date_period($start_date, intval($argv[2])); 
 
   /*
    * CSVYahooFormatter determines the format of the output, the rows of the CSV file.
@@ -42,7 +39,7 @@ require_once("utility.php");
 
       $friendly_date = $date_time->format("m-d-Y"); // User-friendly date format
       
-      if (!validate_url_existence($url)) {
+      if (!url_exists($url)) {
           
            echo 'Skipping data for date ' . $friendly_date . " because webpage $url does not exist.\n";               
            continue;    

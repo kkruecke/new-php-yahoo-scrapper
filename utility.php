@@ -76,12 +76,43 @@ function  build_date_period(\DateTime $start_date, int $number_of_days) : \DateP
 /*
  * returns bool
  */   
-function url_exists(string $url) : string
+function url_exists(string $url) : bool
 {
-    $file_headers = get_headers($url);
-    return ($file_headers[0] == 'HTTP/1.1 404 Not Found') ? false : true;
-}
+  echo $url . "\n";
+  $file_headers = @get_headers($url);
 
+  if($file_headers[0] == 'HTTP/1.1 404 Not Found') 
+      return false;
+  else 
+      return true;
+}
+/*
+function url_exists(string $url) : bool
+{
+   $ch = curl_init($url);
+   
+   curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+   
+   curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+   
+   curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+   
+   $data = curl_exec($ch);
+   
+   $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+   
+   curl_close($ch); 
+   
+   if ($httpcode >= 200 && $httpcode < 300) {
+
+        return true;
+
+   } else {
+
+	return false;
+   }
+}
+*/
 // Prospective callback
 function make_url(\DateTime $date_time)
 {
