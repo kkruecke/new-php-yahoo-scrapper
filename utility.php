@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 use Yahoo\Registry;
 
 require_once("loader/SplClassLoader.php");
@@ -38,8 +38,8 @@ function validate_user_input(int $arg_number, array $params, &$error_msg) : bool
        $error_msg =  "The date " . $params[1] . " is not in a valid format.\n" ;
        return false;
    }
-          
-   $bRc = checkdate ($matches[1], $matches[2], $matches[3]);
+   // Convert strings to ints.        
+   $bRc = checkdate (intval($matches[1]), intval($matches[2]), intval($matches[3]));
       
    if ($bRc === FALSE) {
           

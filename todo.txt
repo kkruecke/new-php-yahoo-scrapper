@@ -1,6 +1,52 @@
 # double check the added return types as to whether they correct in each and every function and method: do they conform to the methods/functions design, and are
 they used in the way outline by the php7 return type standard. See: 
 
+Code:
+1.
+
+function url_exists($url) 
+{
+    if (!$fp = curl_init($url)) return false;
+    return true;
+}
+
+2.
+
+function url_exists($url) {
+    if (!$fp = curl_init($url)) return false;
+    return true;
+}
+
+3.
+
+function urlExists($url=NULL)
+{
+   if($url == NULL) return false;
+   
+   $ch = curl_init($url);
+   
+   curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+   
+   curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+   
+   curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+   
+   $data = curl_exec($ch);
+   
+   $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+   
+   curl_close($ch); 
+   
+   if($httpcode>=200 && $httpcode<300) {
+
+        return true;
+   } else {
+
+	return false;
+   }
+}
+4. http://www.barattalo.it/php/test-if-a-remote-url-exists-with-php-and-curl/
+
 1. http://php.net/manual/en/migration70.new-features.php
 2. http://blog.teamtreehouse.com/5-new-features-php-7
 3. http://stackoverflow.com/questions/34268063/correct-way-to-handle-php-7-return-types

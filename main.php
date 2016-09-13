@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 use Yahoo\CSVWriter,
     Yahoo\CSVYahooFormatter,
     Yahoo\YahooTable, 
@@ -11,7 +11,7 @@ require_once("utility.php");
 
   if ($argc == 2) {
 
-    $argv[2] = 0; 
+    $argv[2] = "0"; //++ 
     $argc = 3;
   }
 
@@ -26,12 +26,12 @@ require_once("utility.php");
 
   $start_date = \DateTime::createFromFormat('m/d/Y', $argv[1]); 
 
-  $date_period = build_date_period($start_date, (int) $argv[2]);
+  $date_period = build_date_period($start_date, intval($argv[2])); //++
 
   /*
    * CSVYahooFormatter determines the format of the output, the rows of the CSV file.
    */  
-  $file_name = $start_date->format('jmY') . "-plus-" . $argv[2] . ".csv";
+  $file_name = $start_date->format('jmY') . "-plus-" . intval($argv[2]) . ".csv";
     
   $csv_writer = new CSVWriter($file_name, new CSVYahooFormatter()); // BUG: date needs to vary.
 

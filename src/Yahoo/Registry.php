@@ -1,10 +1,10 @@
-<?php
+<?php declare(strict_types=1);
 namespace Yahoo;
 
 class Registry {
 
-  static private \ArrayObject  $registry; // Is this OK? 
-  //--static private $registry; 
+  //--static private \ArrayObject  $registry; // Is this OK? 
+  static private $registry; 
 
   public function __construct(array $ini_array)
   {
