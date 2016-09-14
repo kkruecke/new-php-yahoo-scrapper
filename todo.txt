@@ -15,6 +15,17 @@ Nandish reports:
    
    See bug sample output in bug.html
 
+My Comments
+-----------
+
+List of one-character stocks: file:///home/kurt/www/php-yahoo-finanace-scrapper/List%20of%20One%20Letter%20Stock%20Symbols.html
+List of five-character stocks: ????
+
+Questions:
+
+1. What length is allocated to the stock abbreviation and the date?
+2. What would cause truncation to occur?
+
 php7 Features
 -------------
   

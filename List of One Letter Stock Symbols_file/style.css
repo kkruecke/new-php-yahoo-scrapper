@@ -1,0 +1,208 @@
+/*  
+Theme Name: DailyNotes
+Theme URI: http://designdisease.com/
+Description: Designed by <a href="http://designdisease.com">Design Disease</a>. You may use this theme and make any changes you like as long you leave the credits link on. <a href="http://creativecommons.org/licenses/by-sa/3.0/">Creative Commons Attribution-Share Alike 3.0 License.</a>
+Version: 1.1
+Author: Design Disease
+Author URI: http://designdisease.com/
+Tags: white, grey, orange, black, two columns, fixed width, widgets, widget-ready
+*/
+
+/* Begin Typography & Colors */
+* { margin: 0; padding: 0; }
+body { background: #272727 url(images/body-bkg.jpg) repeat top left; font: normal 12px "Verdana", sans-serif; color:#535353; }
+input, button, textarea, select {  font: normal 12px/12px "Verdana", sans-serif; color:#535353; vertical-align: middle; }
+legend { display: none; }
+fieldset { border: none; }
+ul, ol { list-style: none;}
+ol { list-style-type: decimal;}
+table { border-collapse: collapse; width: 100%; }
+hr { display: none; }
+img { padding: 0px; margin: 0px; border: none; text-align: center;}
+
+a:link { text-decoration: none; color : #ff6600; border: 0px; -moz-outline-style: none;}
+a:active { text-decoration: underline; color : #ff6600; border: 0px; -moz-outline-style: none;}
+a:visited { text-decoration: none; color : #ff6600; border: 0px; -moz-outline-style: none;}
+a:hover	{ text-decoration: underline; color : #000; border: 0px; -moz-outline-style: none;} 
+a:focus { outline: none;-moz-outline-style: none;}
+
+h1, h2, h3, h4 { font-family: Arial, Helvetica, sans-serif; }
+
+/* BGContainer
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
+#bgcontain { width: 980px; background: url(images/header-top-bkg.png) no-repeat top left; margin: 0 auto; overflow: hidden;} 
+
+/* Header
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
+.header { width: 830px; padding: 0px 50px 0px 100px; position: relative; }
+
+/* Logo
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
+.logo { padding: 35px 0px 35px 0px; overflow: hidden; }
+.logo .txt h1 { font: bold 60px/60px "Arial", Gadget, sans-serif; letter-spacing: -3px; padding: 0px 0px 0px 0px; }
+.logo .txt h1 a, .head .logo .txt h1 a:visited,.head .logo .txt h1 a:hover { text-decoration: none; color:#fff;}
+.logo .desc {  font: bold 14px/14px Arial, Helvetica, sans-serif; letter-spacing: -1px; color:#b18f5e;}
+.logo .img img { margin-bottom: 5px; }
+
+
+/* Menu
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
+.menu { width: 830px; padding: 0px 50px 0px 100px; background: url(images/header-bkg.png) no-repeat bottom; overflow: hidden; min-height: 91px;}
+/**/ * html .menu { height:1%; } /* */ 
+.menu ul { float: left; padding: 0px 0px 0px 0px; background:url(images/menu-line-bkg.png) repeat-x bottom; width: 500px;}
+.menu li ul { display: none;}
+.menu li { display: inline; font: normal 19px/19px Arial, Helvetica, sans-serif; letter-spacing: -1px; float: left; }
+.menu li a { float: left; color:#996633;  padding: 20px 10px;}
+.menu li a:hover { color:#ff6600; text-decoration: none;}
+
+.menu .current_page_item a { color:#ff6600; background:url(images/menu-arrow.png) no-repeat center top; }
+.menu .current_page_item a span, .menu .current_page_item a:visited span, .menu .current_page_item a:hover span { color:#ff6600; }
+
+/* Search
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
+.menu .search { background: #ccc; width: 262px; overflow: hidden; margin-top: 58px; float: right; }
+.menu .search input { float: left; background: #333333 url(images/search-input.png) no-repeat right top; border: none; padding: 8px 8px 9px 8px; width: 168px; color:#fff; font: bold 14px/14px "Arial", sans-serif; letter-spacing: -1px;}
+.menu .search button { float: left; background: url(images/search-button.png) no-repeat; width: 78px; height: 33px; border: none; cursor: pointer; color:#fff; vertical-align: middle; padding: 3px 5px 5px 0px; font: bold 14px/14px "Arial", sans-serif; letter-spacing: -1px;}
+
+/* Container
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
+.container { width: 880px; float: left; background: #fcfcf4 url(images/container-bkg.png) repeat-y top center; padding: 0px 50px;}
+
+/* Title
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
+.title { font: bold 34px/30px Arial, sans-serif; letter-spacing: -1px; padding: 15px 0px; margin-bottom: 15px; background:url(images/menu-line-bkg.png) repeat-x bottom;}
+.hcom  { font: bold 24px/24px Arial, sans-serif; letter-spacing: -1px; padding-bottom: 2px; color:#000;}
+
+/* SC
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
+.SC { width: 880px; padding: 0px; overflow: hidden; float: left; }
+
+/* Side Left 
+############################################################################################################## */
+.SL { width: 500px; float: left; padding: 0px 50px; }
+.SL .post { overflow: hidden;}
+
+.SL .p-head { padding-bottom: 10px; background:url(images/menu-line-bkg.png) repeat-x bottom;}
+.SL .p-head h1 { font: bold 34px/32px Arial, sans-serif; letter-spacing: -1px; padding-bottom: 2px; color:#535353;}
+.SL .p-head h1 a { text-decoration: none; }
+.SL .p-head h2 { font: bold 30px/28px Arial, sans-serif; letter-spacing: -1px; padding-bottom: 2px; color:#535353;}
+.SL .p-head h2 a, .SL .p-head h2 a:visited { text-decoration: none; color:#535353; }
+.SL .p-head h2 a:hover { text-decoration: none; color:#ff8400; }
+.SL .p-head h3 { font: bold 24px/24px Arial, sans-serif; letter-spacing: -1px; padding-bottom: 2px; color:#535353;}
+.SL .p-head h3 a { text-decoration: none;}
+
+.SL .p-date-cat { background:url(images/date-cat-ico.png) no-repeat left top; padding-left: 17px; color:#b8afa6; }
+.SL .p-date-cat a, .p-date-cat a:visited, .p-date-cat a:hover { text-decoration: underline; color: #b8afa6;}
+
+.SL .p-date { font-size: 11px; color:#999966;}
+.SL .p-con { padding: 2px 0px; overflow: hidden;}
+.SL .p-con p { font: normal 12px/18px "Verdana"; padding: 3px 0px; margin: 3px 0px; color:#333;}
+.SL .p-con ol { padding: 10px 0px 10px 25px; margin: 0px; list-style: decimal inside;}
+.SL .p-con ol li { padding: 2px 0px 2px 0px; }
+.SL .p-con ul { padding: 10px 0px 10px 20px; margin: 0px; }
+.SL .p-con ul li { padding: 2px 0px 2px 13px; background: url("images/p-con-li.png") no-repeat left 2px; color:#666; }
+.SL .p-con blockquote { font: italic 13px/19px Georgia, "Times New Roman", Times, serif; padding: 5px 15px; background: #f4f3ea; margin: 10px 0px; color:#000; }
+.SL .p-con blockquote p { font: italic 13px/19px Georgia, "Times New Roman", Times, serif; color:#000; }
+.SL .p-con blockquote li { padding: 2px 0px 2px 13px; list-style-type: none; font-size: 12px; line-height: 17px;}
+
+.SL .p-det { background: #f3f4ea url(images/p-det-bkg.png) repeat-x bottom; text-align: left; padding: 14px 10px 20px 10px; margin-top: 5px; border-top: solid 1px #eeefe4;}
+.SL .p-det li { display: inline; padding: 5px 0px 5px 20px; margin-right: 5px; overflow: hidden; }
+.SL .p-det li.p-det-com { background: url("images/p-det-com-ico.png") no-repeat left 5px; }
+.SL .p-det li.p-det-tags { background: url("images/p-det-tags-ico.png") no-repeat left 6px; }
+.SL .p-det li.p-det-tags a { text-decoration: underline;}
+.SL .p-det li a, .p-det li a:visited, .p-det li a:hover { margin-right: 3px; color:#000033; }
+
+/* Images
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++  */
+.SL img.aligncenter { display: block; margin-left: auto; margin-right: auto; border: solid 5px #272727; }
+.SL img.alignright { margin: 5px 0 10px 20px; display: inline; border: solid 5px #272727;  }
+.SL img.alignleft { margin: 5px 20px 10px 0; display: inline; border: solid 5px #272727; }
+.SL .alignright { float: right; }
+.SL .alignleft { float: left }
+
+.wp-pagenavi { padding: 5px 0px; color:#92816b;}
+.wp-pagenavi .pages { margin-right: 15px;}
+.wp-pagenavi .page { padding: 0px 5px; border-right: solid 1px #d6c8b6; }
+.wp-pagenavi a, .nav a:visited { padding: 0px 5px; border-right: solid 1px #d6c8b6; font-weight: bold; color:#cc6666;}
+.wp-pagenavi a:hover { color:#333366;}
+.wp-pagenavi .current { padding: 0px 5px; border-right: solid 1px #d6c8b6; font-weight: bold;}
+
+
+
+
+/* Side Right 
+############################################################################################################## */
+.SR { width: 260px; float: right; padding-top: 25px;}
+.SR h2 { font: bold 18px/18px Arial, Helvetica, sans-serif, sans-serif; letter-spacing: -1px; background: #f0eee4; color:#535353; padding: 7px 5px; margin-bottom: 5px;}
+.SR a { color:#993300; }
+.SR a:hover { color:#ff6600;}
+
+.SR .syn { background: #f0eee4; margin-bottom: 25px; padding: 10px; }
+.SR .syn li { font: bold 14px/18px Arial, Helvetica, sans-serif, sans-serif; letter-spacing: -1px; padding: 2px 0px; }
+.SR .syn a.rss { color:#ff6600; background: url(images/syn-1.png) no-repeat left top; padding: 2px 0px 2px 20px; }
+.SR .syn a.tweet { color:#3399cc; background: url(images/syn-2.png) no-repeat left top; padding: 2px 0px 2px 20px; }
+
+.SR .widget { margin-bottom: 25px;}
+.SR .widget li { padding: 2px 0px 2px 6px; font: normal 12px/14px Verdana, Geneva, sans-serif; background: url(images/cat-arrow.png) no-repeat left 6px; }
+
+
+/* Categories
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
+.SR .widget_categories {}
+.SR .widget_categories li { padding: 2px 0px 2px 6px; font: bold 14px/16px Arial, Helvetica, sans-serif, sans-serif; letter-spacing: -1px; background: url(images/cat-arrow.png) no-repeat left 8px; }
+.SR .widget_categories li ul li { font: normal 13px/15px Verdana, Geneva, sans-serif; padding: 2px 0px 2px 0px; background: none; letter-spacing: normal;}
+
+.SR .widget_links .linkcat  { background: none; padding-left: 0px; }
+
+.SR .widget_tag_cloud { line-height: 22px;}
+.SR .widget_calendar table { width: 100%;}
+.SR .widget_calendar table td { text-align: center; padding: 3px; }
+.SR .widget_calendar caption { background: #f5f5f4; padding: 5px 0px; margin-bottom: 10px;}
+.SR .widget_calendar #today { background: #f5f5f4;}
+.SR .widget_search #s { width: 160px; border: solid 1px #b5d6cd; padding: 3px; margin-bottom: 5px;}
+
+.SR .widget_recent_comments
+.SR .widget_recent_comments { margin-bottom: 15px;}
+.SR .widget_recent_comments li { font-size: 11px; border-bottom: solid 1px #d7d7d7; padding: 5px 0px; background: none;}
+.SR .widget_recent_comments li a { font-size: 11px; color:#666;}
+.SR .widget_recent_comments .author { display: block; color:#ff3300;}
+
+
+/* Comments
+############################################################################################################## */
+.comments-list { padding-top: 10px;}
+.comments-list h2 { font: bold 24px/24px Arial, sans-serif; letter-spacing: -1px; padding-bottom: 15px; margin-bottom: 15px; background:url(images/menu-line-bkg.png) repeat-x bottom; }
+.comments-list div.entry { margin-bottom: 15px; padding-bottom: 15px; background:url(images/menu-line-bkg.png) repeat-x bottom; }
+.comments-list div.alt { margin-bottom: 15px; padding-bottom: 15px;}
+.comments-list p.name { font: normal 19px/19px Arial, sans-serif; color:#000; padding: 5px 0px 2px 0px; letter-spacing: -1px;}
+.comments-list p.avt { padding: 0px; margin: 0px; float: left;}
+.comments-list p.avt img { border: solid 1px #dededb; padding: 1px; margin-right: 10px;}
+.comments-list p.date { padding-bottom: 5px; margin-bottom: 5px; font: normal 11px/14px Verdana, Geneva, sans-serif; color:#b3b3b3;}
+.comments-list p.date a, .comments-list p.date a:visited, .comments-list p.date a:hover { color:#999;}
+
+.comments-list .con { font: normal 12px/17px "Verdana"; color:#333;}
+.comments-list .con p { font: normal 12px/17px "Verdana"; padding: 5px 0px; margin: 0px; color:#333;}
+.comments-list .con blockquote { font: italic 14px/19px Georgia, "Times New Roman", Times, serif; color:#666; margin: 10px 0px; background:#f1f1f1; padding: 5px 15px; }
+.comments-list .con blockquote p { font: italic 14px/19px Georgia, "Times New Roman", Times, serif; color:#666; }
+
+
+/* Comments Form
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
+.comments-form { padding-top: 35px; }
+.comments-form h3 { font: bold 24px/24px Arial, sans-serif; letter-spacing: -1px; padding-bottom: 15px; margin-bottom: 15px; background:url(images/menu-line-bkg.png) repeat-x bottom; }
+.comments-form p { color:#b8afa6; margin-bottom: 5px; padding: 3px 0px;  }
+.comments-form span { color:#ff0000; font-weight: normal;}
+.comments-form input { padding: 6px; width: 300px; margin-right: 5px; }
+.comments-form input.formid { border: 1px solid #d8d6cf; background: #fff; padding: 5px 4px;}
+.comments-form input.formemail { border: 1px solid #d8d6cf; background: #fff; padding: 5px 4px;}
+.comments-form input.formuri { border: 1px solid #d8d6cf; background: #fff; padding: 5px 4px;}
+.comments-form textarea { border: 1px solid #d8d6cf; background: #fff; padding: 10px; color:#000;}
+.comments-form .button { background: url(images/post-comment.png) no-repeat left top; text-indent: -50000px; width: 145px; height: 26px; border: none; display: block; cursor: hand;}
+
+
+/* Footer
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
+.footer { width: 880px; background: url(images/footer-bkg.png) no-repeat left top; padding: 40px 50px 0px 50px; overflow: hidden; margin-bottom: 20px; float: left;}
+.footer hr { border-left:none; border-right: none; border-top:1px solid #ccc; border-bottom: none; height : 1px; display: block; margin-bottom: 10px; }
+.footer p { padding: 1px 0px; color:#626262; font-size: 11px;}
+.footer p a, .footer p a:visited, .footer p a:hover {color:#626262; text-decoration: underline;}
