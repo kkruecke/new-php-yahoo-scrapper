@@ -2,7 +2,7 @@ array(10) {
   [0]=>
   string(15) "HTTP/1.0 200 OK"
   [1]=>
-  string(35) "Date: Tue, 13 Sep 2016 22:47:45 GMT"
+  string(35) "Date: Wed, 14 Sep 2016 13:30:01 GMT"
   [2]=>
   string(214) "P3P: policyref="http://info.yahoo.com/w3c/p3p.xml", CP="CAO DSP COR CUR ADM DEV TAI PSA PSD IVAi IVDi CONi TELo OTPi OUR DELi SAMi OTRi UNRi PUBi IND PHY ONL UNI PUR FIN COM NAV INT DEM CNT STA POL HEA PRE LOC GOV""
   [3]=>
@@ -16,7 +16,7 @@ array(10) {
   [7]=>
   string(36) "Strict-Transport-Security: max-age=0"
   [8]=>
-  string(152) "Via: http/1.1 media-border133.global.media.bf1.yahoo.com (ApacheTrafficServer [cMsSf ]), https/1.1 r08.ycpi.che.yahoo.net (ApacheTrafficServer [cMsSf ])"
+  string(151) "Via: http/1.1 media-border14.global.media.bf1.yahoo.com (ApacheTrafficServer [cMsSf ]), https/1.1 r04.ycpi.che.yahoo.net (ApacheTrafficServer [cMsSf ])"
   [9]=>
   string(11) "Server: ATS"
 }
@@ -25,7 +25,7 @@ array(10) {
   [0]=>
   string(15) "HTTP/1.0 200 OK"
   [1]=>
-  string(35) "Date: Tue, 13 Sep 2016 22:47:45 GMT"
+  string(35) "Date: Wed, 14 Sep 2016 13:30:01 GMT"
   [2]=>
   string(214) "P3P: policyref="http://info.yahoo.com/w3c/p3p.xml", CP="CAO DSP COR CUR ADM DEV TAI PSA PSD IVAi IVDi CONi TELo OTPi OUR DELi SAMi OTRi UNRi PUBi IND PHY ONL UNI PUR FIN COM NAV INT DEM CNT STA POL HEA PRE LOC GOV""
   [3]=>
@@ -39,7 +39,7 @@ array(10) {
   [7]=>
   string(36) "Strict-Transport-Security: max-age=0"
   [8]=>
-  string(152) "Via: http/1.1 media-border191.global.media.bf1.yahoo.com (ApacheTrafficServer [cMsSf ]), https/1.1 r04.ycpi.che.yahoo.net (ApacheTrafficServer [cMsSf ])"
+  string(151) "Via: http/1.1 media-border17.global.media.bf1.yahoo.com (ApacheTrafficServer [cMsSf ]), https/1.1 r10.ycpi.che.yahoo.net (ApacheTrafficServer [cMsSf ])"
   [9]=>
   string(11) "Server: ATS"
 }
@@ -48,7 +48,7 @@ array(11) {
   [0]=>
   string(22) "HTTP/1.0 404 Not Found"
   [1]=>
-  string(35) "Date: Tue, 13 Sep 2016 22:47:46 GMT"
+  string(35) "Date: Wed, 14 Sep 2016 13:30:02 GMT"
   [2]=>
   string(214) "P3P: policyref="http://info.yahoo.com/w3c/p3p.xml", CP="CAO DSP COR CUR ADM DEV TAI PSA PSD IVAi IVDi CONi TELo OTPi OUR DELi SAMi OTRi UNRi PUBi IND PHY ONL UNI PUR FIN COM NAV INT DEM CNT STA POL HEA PRE LOC GOV""
   [3]=>
@@ -64,7 +64,7 @@ array(11) {
   [8]=>
   string(36) "Strict-Transport-Security: max-age=0"
   [9]=>
-  string(152) "Via: http/1.1 media-border162.global.media.bf1.yahoo.com (ApacheTrafficServer [cMsSf ]), https/1.1 r01.ycpi.che.yahoo.net (ApacheTrafficServer [cMsSf ])"
+  string(152) "Via: http/1.1 media-border181.global.media.bf1.yahoo.com (ApacheTrafficServer [cMsSf ]), https/1.1 r08.ycpi.che.yahoo.net (ApacheTrafficServer [cMsSf ])"
   [10]=>
   string(11) "Server: ATS"
 }

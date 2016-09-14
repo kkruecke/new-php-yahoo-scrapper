@@ -79,12 +79,14 @@ function  build_date_period(\DateTime $start_date, int $number_of_days) : \DateP
 function url_exists(string $url) : bool
 {
   $file_headers = @get_headers($url);
-  var_dump($file_headers);
 
-  if($file_headers[0] == 'HTTP/1.1 404 Not Found') 
+  if(strpos($file_headers[0], '404 Not Found') === false) {
+
       return false;
-  else 
+
+  } else {
       return true;
+  }
 }
 /*
 function url_exists(string $url) : bool
