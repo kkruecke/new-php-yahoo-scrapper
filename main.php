@@ -41,7 +41,7 @@ require_once("utility.php");
       
       if (url_exists($url) == false) {
           
-           echo 'Skipping data for date ' . $friendly_date . " because webpage $url does not exist.\n";               
+           echo "The $friendly_date web page $url does not exist, therefore no .csv file will be created for $friendly_date.\n";               
            continue;    
       }
       
