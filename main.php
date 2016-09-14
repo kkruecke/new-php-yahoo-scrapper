@@ -39,7 +39,7 @@ require_once("utility.php");
 
       $friendly_date = $date_time->format("m-d-Y"); // User-friendly date format
       
-      if (!url_exists($url)) {
+      if (url_exists($url) == false) {
           
            echo 'Skipping data for date ' . $friendly_date . " because webpage $url does not exist.\n";               
            continue;    

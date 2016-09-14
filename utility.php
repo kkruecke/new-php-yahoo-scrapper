@@ -80,9 +80,9 @@ function url_exists(string $url) : bool
 {
   $file_headers = @get_headers($url);
 
-  if(strpos($file_headers[0], '404 Not Found') === false) {
+  if(strpos($file_headers[0], '404 Not Found') !== false) {
 
-      return false;
+       return false;
 
   } else {
       return true;
