@@ -1,6 +1,3 @@
-Is it attempting to download a url that does not exist. My testing shows that url_exists returns false. So why is it still attempting to download
-the non-existant page? 
-
 1. http://php.net/manual/en/migration70.new-features.php
 2. http://blog.teamtreehouse.com/5-new-features-php-7
 3. http://stackoverflow.com/questions/34268063/correct-way-to-handle-php-7-return-types
