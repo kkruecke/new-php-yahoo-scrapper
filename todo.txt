@@ -4,16 +4,7 @@ TODOES
 Bugs
 ----
 
-Nandish reports:
-
-   If Symbol Length is either 1 or 5, it is not getting Earning Date.
-   
-   In this following example, GOOGL symbol length is 5, we are not getting date. 
-   Same thing for symbols, T,F,X,V,M,C, it is not getting dates. 
-   
-   Do you have any setup where I can update length 1 to 5 chars are valid. 
-   
-   See bug sample output in bug.html
+Changed CustomStockFilterIterator.php
 
 My Comments
 -----------
