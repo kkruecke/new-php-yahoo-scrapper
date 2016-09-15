@@ -25,12 +25,15 @@ class CustomStockFilterIterator extends \FilterIterator {
 			return false;
 		}
 	}
+
+        return true; // Criteria below no longer wanted per email with Nandish 
         /*
 	 * Further criteria: We only want US Stocks
 	 */ 
+        /*  Commented out on 9/15/2016 
         $stock_length = strlen($row[1]);
 
         return (($stock_length > 1 && $stock_length < 5) && ( strpos($row[1], '.') === FALSE)) ? true : false;
-
+        */   
     }
 }
