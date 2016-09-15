@@ -41,7 +41,7 @@ require_once("utility.php");
       
       if (url_exists($url) == false) {
           
-           echo "The $friendly_date web page $url does not exist, therefore no .csv file will be created for $friendly_date.\n";               
+           echo "Page $url does not exist, therefore no .csv file for $friendly_date can be created.\n";               
            continue;    
       }
       
