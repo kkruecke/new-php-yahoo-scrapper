@@ -78,7 +78,7 @@ class YahooTableIterator implements  \SeekableIterator {
   }
 
   // returns \SplFixedArray
-  public function current() : \SplFixedArray 
+  public function current() : \SplFixedArray  
   {
     return  $this->getRowData($this->current_row);	  
   }
