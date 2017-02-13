@@ -17,7 +17,7 @@ require_once("utility.php");
   if (validate_user_input($argc, $argv, $error_msg) == false) {
 
        echo $error_msg . "\n";
-       echo Registry::registry('help'); 
+       echo Registry::registry('help') . "\n"; 
        return;
   }
 

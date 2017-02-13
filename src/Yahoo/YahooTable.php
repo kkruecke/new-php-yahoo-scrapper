@@ -5,9 +5,9 @@ class YahooTable implements \IteratorAggregate {
 
    private   $dom;	
    private   $xpath;	
-   private   $trNodesList;
-   private   $start_column;
-   private   $end_column;
+   private   $trDOMNodeList;
+   private   $tbl_begin_column;
+   private   $tbl_end_column;
 
   /*
    * Preconditions: 
@@ -16,13 +16,13 @@ class YahooTable implements \IteratorAggregate {
    * start and end column are within range of columns that exist
    */ 
  
-  public function __construct(string $friendly_date, string $url, string $xpath_table_query, int $start_column, int $end_column)        
+  public function __construct(string $friendly_date, string $url, string $xpath_table_query, int $tbl_begin_column, int $tbl_end_column)        
   {
    /*
     * The column of the table that the external iterator should return
     */ 	  
-     $this->start_column = $start_column;	  
-     $this->end_column = $end_column;;	  
+     $this->tbl_begin_column = $tbl_begin_column;	  
+     $this->tbl_end_column = $tbl_end_column;;	  
      
      /* Alternate code to use Guzzle
      $client = new \GuzzleHttp\Client();
@@ -61,7 +61,6 @@ class YahooTable implements \IteratorAggregate {
     
     for ($i = 0; $i < 2; ++$i) {
         
-    
        $page = @file_get_contents($url, false, $context);
                
        if ($page !== false) {
@@ -70,7 +69,6 @@ class YahooTable implements \IteratorAggregate {
        }   
        
        echo "Attempt to download data for $friendly_date on webpage $url failed. Retrying.\n";
-              
     }
     
     if ($i == 2) {
@@ -79,29 +77,29 @@ class YahooTable implements \IteratorAggregate {
     }
    
     
-     // a new dom object
-     $this->dom = new \DOMDocument();
-     
-     // load the html into the object
-     $this->dom->strictErrorChecking = false; // default is true.
+    // a new dom object
+    $this->dom = new \DOMDocument();
+    
+    // load the html into the object
+    $this->dom->strictErrorChecking = false; // default is true.
+    
+    // discard redundant white space
+    $this->dom->preserveWhiteSpace = false;
 
     @$this->dom->loadHTML($page);  // Turn off error reporting
-     
-     // discard redundant white space
-     $this->dom->preserveWhiteSpace = false;
+       
+    $this->xpath = new \DOMXPath($this->dom);
     
-     $this->xpath = new \DOMXPath($this->dom);
+    // From returned \DOMNodeList we get the first (and only node), the table.
+    $xpathNodeList = $this->xpath->query($xpath_table_query);
     
-     // returns \DOMNodeList. We must first get the first and only node, the table.
-     $xpathNodeList = $this->xpath->query($xpath_table_query);
-    
-     if ($xpathNodeList->length != 1) { 
-        
-         throw new \Exception("XPath Query\n $xpath_table_query\nof page: $url\n   \nFailed!\n Check if page format has changed. Cannot proceed.\n");
-     } 
+    if ($xpathNodeList->length != 1) { 
+       
+        throw new \Exception("XPath Query\n $xpath_table_query\nof page: $url\n   \nFailed!\n Check if page format has changed. It appears to have more than one table. Cannot proceed.\n");
+    } 
 
-     // DOMNode representing the table. 
-     $tableNodeElement = $xpathNodeList->item(0);
+    // Get DOMNode representing the table. 
+    $tableNodeElement = $xpathNodeList->item(0);
     
     /* 
      * We need to as the $tableNodeElement->length to get the number of rows. We will subtract the first two rows --
@@ -112,13 +110,13 @@ class YahooTable implements \IteratorAggregate {
      * 2.  /html/body/table[3]/tr/td[1]/table[1]/tr[2] is column headers
      */
     
-      if (!$tableNodeElement->hasChildNodes()) {
-         
-         throw new \Exception("This is no table element at \n $xpath_table_query\n. Page format has evidently changed. Cannot proceed.\n");
-      } 
+    if (!$tableNodeElement->hasChildNodes()) {
+       
+       throw new \Exception("This is no table element at \n $xpath_table_query\n. Page format has evidently changed. Cannot proceed.\n");
+    } 
 
-      // DOMNodelist for rows of the table
-      $this->trNodesList = $tableNodeElement->childNodes;
+    // DOMNodelist for rows of the table
+    $this->trDOMNodeList = $tableNodeElement->childNodes;
   }
 
  /*
@@ -126,21 +124,27 @@ class YahooTable implements \IteratorAggregate {
   */ 
   public function getIterator() : \Yahoo\YahooTableIterator
   {
-     return new YahooTableIterator($this, $this->start_column, $this->end_column);
+     return new YahooTableIterator($this, $this->tbl_begin_column, $this->tbl_end_column);
   }
 
   public function rowCount() : int
   {
-     return $this->getRowsNodelist()->length;
+     return $this->trDOMNodeList->length;
   } 
 
+/*
+  protected function getRowsNodelist() : \DOMNodeList
+  {
+      return $this->trDOMNodeList;
+  }
+*/
   public function columnCount($rowid) : int
   {
      return $this->getTdNodelist($rowid)->length;
   }
 
   /*
-   * return cell text trimmed
+   * Returns trimmed cell text
    */  
   public function getCellText(int $rowid, int $cellid) :  string
   {
@@ -151,8 +155,6 @@ class YahooTable implements \IteratorAggregate {
         $td = $tdNodelist->item($cellid);  
 
 	$nodeValue = trim($td->nodeValue);
-
-        // TODO: I think we need to change the code to get the length of the cell text?
 
 	return $nodeValue;
 
@@ -167,19 +169,13 @@ class YahooTable implements \IteratorAggregate {
 	  return "meaningless";
       }
   }
-
-  protected function getRowsNodelist() : \DOMNodeList
-  {
-      return $this->trNodesList;
-  }
-
   // get td node list for row 
   protected function getTdNodelist($row_id) : \DOMNodeList
   {
-     // get DOMNode for row $row_id
-     $rowNode =  $this->getRowsNodelist()->item($row_id);
+     // get DOMNode for row number $row_id
+     $rowNode =  $this->trDOMNodeList->item($row_id);
 
-     // get DOMNodeList for td cells in the row     
+     // get DOMNodeList of <td></td> elemnts in the row     
      return $rowNode->getElementsByTagName('td');
   }
  

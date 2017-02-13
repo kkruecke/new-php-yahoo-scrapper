@@ -22,7 +22,7 @@ function validate_user_input(int $arg_number, array $params, &$error_msg) : bool
 
    if ( isset($arg_number) && $arg_number != 3 ) {
       
-     $error_msg = "Two input paramters are required\n";
+     $error_msg = "Two input paramters are required.";
      return false;
    }
   
