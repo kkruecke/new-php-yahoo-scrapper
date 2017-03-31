@@ -28,14 +28,14 @@ require_once("utility.php");
   /*
    * CSVYahooFormatter determines the format of the output, the rows of the CSV file.
    */  
-  $file_name = $start_date->format('jmY') . "-plus-" . intval($argv[2]) . ".csv";
+  $output_file_name = $start_date->format('jmY') . "-plus-" . intval($argv[2]) . ".csv";
     
-  $csv_writer = new CSVWriter($file_name, new CSVYahooFormatter()); // BUG: date needs to vary.
+  $csv_writer = new CSVWriter($output_file_name, new CSVYahooFormatter()); 
 
   // Start main loop
   foreach ($date_period as $date_time) {
       
-      $url = make_url($date_time); // Build yyyymmdd.html name
+      $url = make_url($date_time); // Build page name
 
       $friendly_date = $date_time->format("m-d-Y"); // User-friendly date format
       
@@ -55,7 +55,7 @@ require_once("utility.php");
 
 	  $total_rows = $table->rowCount(); 
 	            
-          $limitIter = new \LimitIterator($table->getIterator(), 2, $total_rows); 
+          $limitIter = new \LimitIterator($table->getIterator(), 0, $total_rows); 
           
 	  /*
 	   * The filter iterator should include all the filters of the original code:
