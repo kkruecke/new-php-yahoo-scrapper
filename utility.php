@@ -76,6 +76,7 @@ function  build_date_period(\DateTime $start_date, int $number_of_days) : \DateP
 /*
  * returns bool
  */   
+/*
 function url_exists(string $url) : bool
 {
   $file_headers = @get_headers($url);
@@ -88,6 +89,7 @@ function url_exists(string $url) : bool
       return true;
   }
 }
+*/
 /*
 function url_exists(string $url) : bool
 {
@@ -115,14 +117,6 @@ function url_exists(string $url) : bool
    }
 }
 */
-// Prospective callback
-function make_url(\DateTime $date_time)
-{
-    // Build yyyymmdd.html name
-   //--return  Registry::registry('url-path')  . $date_time->format('Ymd') . ".html";
-   // new format uses query string: "?day=YYYY-DD-MM"
-   return Registry::registry('url-path')  . '?day=' . $date_time->format('Y-m-d');
-}
 
 /*
  * Return bool

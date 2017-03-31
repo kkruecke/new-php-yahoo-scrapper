@@ -1,13 +1,32 @@
 <?php declare(strict_types=1);	
 namespace Yahoo;
 
-class YahooTable implements \IteratorAggregate {
+class YahooEarningsTable implements \IteratorAggregate {
 
    private   $dom;	
    private   $xpath;	
    private   $trDOMNodeList;
    private   $tbl_begin_column;
    private   $tbl_end_column;
+
+  static public function page_exists(\DateTime $date_time) : bool
+  {
+    return self::url_exists( self::make_url($date_time) );
+  }
+
+  static private function url_exists(string $url) : bool
+  {
+    $file_headers = @get_headers($url);
+
+    if(strpos($file_headers[0], '404 Not Found') !== false) {
+
+        return false;
+
+    } else {
+
+      return true;
+    }
+  } 
 
   /*
    * Preconditions: 
@@ -16,41 +35,11 @@ class YahooTable implements \IteratorAggregate {
    * start and end column are within range of columns that exist
    */ 
  
-  public function __construct(string $friendly_date, string $url, string $xpath_table_query, int $tbl_begin_column, int $tbl_end_column)        
+  public function __construct(\DateTime $date_time, /*string $url,*/ string $xpath_table_query, int $tbl_begin_column, int $tbl_end_column)        
   {
    /*
     * The column of the table that the external iterator should return
     */ 	  
-     $this->tbl_begin_column = $tbl_begin_column;	  
-     $this->tbl_end_column = $tbl_end_column;;	  
-     
-     /* Alternate code to use Guzzle
-     $client = new \GuzzleHttp\Client();
-     
-     for($i = 0; $i <2; ++$i) {
-         
-       try {
-                
-        $response = $client->get($url);
-        $body = $response->getBody();
-     
-        $page = $body->__toString();
-
-        break;
-        
-       } catch (\Exception $e) {
-             
-          echo "Attempt to download page $url failed.  Retrying...\n";
-          
-          echo $e->getMessage() . "\n\n";
-	  echo $e->getTraceAsString() . "\n\n";
-          
-         
-          continue;
-       }
-     }
-     */
-        
     $opts = array(
                 'http'=>array(
                   'method'=>"GET",
@@ -58,6 +47,10 @@ class YahooTable implements \IteratorAggregate {
                  );
 
     $context = stream_context_create($opts);
+
+    $friendly_date = $date_time->format("m-d-Y"); 
+
+    $url = self::make_url($date_time);  
     
     for ($i = 0; $i < 2; ++$i) {
         
@@ -76,7 +69,9 @@ class YahooTable implements \IteratorAggregate {
        throw new \Exception("Could not download page $url after two attempts\n");
     }
    
-    
+    $this->tbl_begin_column = $tbl_begin_column;	  
+    $this->tbl_end_column = $tbl_end_column;;	  
+     
     // a new dom object
     $this->dom = new \DOMDocument();
     
@@ -117,6 +112,11 @@ class YahooTable implements \IteratorAggregate {
 
     // DOMNodelist for rows of the table
     $this->trDOMNodeList = $tableNodeElement->childNodes;
+  }
+
+  static private function make_url(\DateTime $date_time) : string
+  {
+    return Registry::registry('url-path') . '?day=' . $date_time->format('Y-m-d');
   }
 
  /*

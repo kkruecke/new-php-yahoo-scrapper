@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-use Yahoo\{CSVWriter, CSVYahooFormatter, YahooTable, CustomStockFilterIterator, Registry};
+use Yahoo\{CSVWriter, CSVYahooFormatter, YahooEarningsTable, CustomStockFilterIterator, Registry};
 
 require_once("utility.php");
 
@@ -35,11 +35,7 @@ require_once("utility.php");
   // Start main loop
   foreach ($date_period as $date_time) {
       
-      $url = make_url($date_time); // Build page name
-
-      $friendly_date = $date_time->format("m-d-Y"); // User-friendly date format
-      
-      if (url_exists($url) == false) {
+      if (YahooEarningsTable::page_exists($date_time) == false) {
           
            echo "Page $url does not exist, therefore no .csv file for $friendly_date can be created.\n";               
            continue;    
@@ -51,7 +47,7 @@ require_once("utility.php");
 
 	  $end_column = (int) Registry::registry('end-column');    // End column is one past the last column retrieved. 
 
-	  $table = new YahooTable($friendly_date, $url, Registry::registry('xpath-query'), $start_column, $end_column);
+	  $table = new YahooEarningsTable($date_time, Registry::registry('xpath-query'), $start_column, $end_column);
 
 	  $total_rows = $table->rowCount(); 
 	            
@@ -72,8 +68,8 @@ require_once("utility.php");
 
                $csv_writer->writeLine($stock, $date_time); 
 	  }
-
-	  echo "Date $friendly_date processed\n";
+          
+	  echo "Date ". $date_time->format("m-d-Y") . " processed\n";
 
   
       } catch(\Exception $e) {
