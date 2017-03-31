@@ -132,12 +132,6 @@ class YahooTable implements \IteratorAggregate {
      return $this->trDOMNodeList->length;
   } 
 
-/*
-  protected function getRowsNodelist() : \DOMNodeList
-  {
-      return $this->trDOMNodeList;
-  }
-*/
   public function columnCount($rowid) : int
   {
      return $this->getTdNodelist($rowid)->length;

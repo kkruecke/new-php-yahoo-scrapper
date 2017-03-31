@@ -120,8 +120,8 @@ function make_url(\DateTime $date_time)
 {
     // Build yyyymmdd.html name
    //--return  Registry::registry('url-path')  . $date_time->format('Ymd') . ".html";
-	// new format uses query string: "?day=YYYY-DD-MM"
-   return Registry::registry('url-path')  . '?day=' . '$date_time->format('Y-m-d');
+   // new format uses query string: "?day=YYYY-DD-MM"
+   return Registry::registry('url-path')  . '?day=' . $date_time->format('Y-m-d');
 }
 
 /*
