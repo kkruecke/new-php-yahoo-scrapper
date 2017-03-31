@@ -92,12 +92,12 @@ class YahooTable implements \IteratorAggregate {
     
     // From returned \DOMNodeList we get the first (and only node), the table.
     $xpathNodeList = $this->xpath->query($xpath_table_query);
-    
+        
     if ($xpathNodeList->length != 1) { 
        
         throw new \Exception("XPath Query\n $xpath_table_query\nof page: $url\n   \nFailed!\n Check if page format has changed. It appears to have more than one table. Cannot proceed.\n");
     } 
-
+    
     // Get DOMNode representing the table. 
     $tableNodeElement = $xpathNodeList->item(0);
     

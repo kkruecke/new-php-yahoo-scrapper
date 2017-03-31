@@ -53,15 +53,10 @@ require_once("utility.php");
 
 	  $table = new YahooTable($friendly_date, $url, Registry::registry('xpath-query'), $start_column, $end_column);
 
-	  $total_rows = $table->rowCount(); // first row is 0, last is $total_rows - 1
-	     
-	  // We skip the first two rows, the table description and column headers, and the last row which has no financial data
-	  $start_row = 2;
-
-	  $row_count = $total_rows - $start_row - 1;
-
-	  $limitIter = new \LimitIterator($table->getIterator(), 2, $row_count); 
-
+	  $total_rows = $table->rowCount(); 
+	            
+          $limitIter = new \LimitIterator($table->getIterator(), 2, $total_rows); +
+          
 	  /*
 	   * The filter iterator should include all the filters of the original code:
 	   *   1. no column may be blank
