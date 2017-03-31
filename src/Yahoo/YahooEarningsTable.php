@@ -28,6 +28,11 @@ class YahooEarningsTable implements \IteratorAggregate {
     }
   } 
 
+  static private function make_url(\DateTime $date_time) : string
+  {
+    return Registry::registry('url-path') . '?day=' . $date_time->format('Y-m-d');
+  }
+
   /*
    * Preconditions: 
    * url exists
@@ -114,12 +119,7 @@ class YahooEarningsTable implements \IteratorAggregate {
     $this->trDOMNodeList = $tableNodeElement->childNodes;
   }
 
-  static private function make_url(\DateTime $date_time) : string
-  {
-    return Registry::registry('url-path') . '?day=' . $date_time->format('Y-m-d');
-  }
-
- /*
+   /*
   * Return external iterator, passing the range of columns requested.
   */ 
   public function getIterator() : \Yahoo\YahooTableIterator
