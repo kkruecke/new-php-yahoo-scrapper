@@ -55,7 +55,7 @@ require_once("utility.php");
 
 	  $total_rows = $table->rowCount(); 
 	            
-          $limitIter = new \LimitIterator($table->getIterator(), 2, $total_rows); +
+          $limitIter = new \LimitIterator($table->getIterator(), 2, $total_rows); 
           
 	  /*
 	   * The filter iterator should include all the filters of the original code:
