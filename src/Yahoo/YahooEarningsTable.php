@@ -75,7 +75,7 @@ class YahooEarningsTable implements \IteratorAggregate {
     }
    
     $this->tbl_begin_column = $tbl_begin_column;	  
-    $this->tbl_end_column = $tbl_end_column;;	  
+    $this->tbl_end_column = $tbl_end_column; // TODO: Seems wrong	  
      
     // a new dom object
     $this->dom = new \DOMDocument();
@@ -122,9 +122,9 @@ class YahooEarningsTable implements \IteratorAggregate {
    /*
   * Return external iterator, passing the range of columns requested.
   */ 
-  public function getIterator() : \Yahoo\YahooTableIterator
+  public function getIterator() : \Yahoo\YahooEarningsTableIterator
   {
-     return new YahooTableIterator($this, $this->tbl_begin_column, $this->tbl_end_column);
+     return new YahooEarningsTableIterator($this, $this->tbl_begin_column, $this->tbl_end_column);
   }
 
   public function rowCount() : int

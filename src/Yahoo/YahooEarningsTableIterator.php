@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 namespace Yahoo;
 
-class YahooTableIterator implements  \SeekableIterator {
+class YahooEarningsTableIterator implements  \SeekableIterator {
 
   protected   $html_table;  // YahooTable
   protected   $current_row; // int

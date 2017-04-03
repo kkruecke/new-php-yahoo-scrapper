@@ -6,7 +6,7 @@ namespace Yahoo;
  * Should this be an Abstract class or an Interface since we don't need an implementation.
  * Interface seems the best choice.
  */ 
-class CSVYahooFormatter implements CSVFormatter {
+class CSVYahooEarningsFormatter implements CSVFormatter {
 
    public function format(\SplFixedArray $row, \DateTime $date) : string    
    {
@@ -15,10 +15,14 @@ class CSVYahooFormatter implements CSVFormatter {
 
 	  throw new \RangeException("Size of Vector<string> is less than four\n");
      }	   
-
+          
      // Remove commas from company names
-     $company_name = $row[0];
-
+     //--$company_name = $row[0];
+          
+     $company_name = $row[1];
+     
+     $row[0] = str_replace(',', "", $company_name);
+     
      $row[0] = str_replace(',', "", $company_name);
 
      // Alter a column per specification.txt     

@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-use Yahoo\{CSVWriter, CSVYahooFormatter, YahooEarningsTable, CustomStockFilterIterator, Registry};
+use Yahoo\{CSVWriter, CSVYahooEarningsFormatter, YahooEarningsTable, CustomStockFilterIterator, Registry};
 
 require_once("utility.php");
 
@@ -26,11 +26,11 @@ require_once("utility.php");
   $date_period = build_date_period($start_date, intval($argv[2])); 
 
   /*
-   * CSVYahooFormatter determines the format of the output, the rows of the CSV file.
+   * CSVYahooEarningsFormatter determines the format of the output, the rows of the CSV file.
    */  
   $output_file_name = $start_date->format('jmY') . "-plus-" . intval($argv[2]) . ".csv";
     
-  $csv_writer = new CSVWriter($output_file_name, new CSVYahooFormatter()); 
+  $csv_writer = new CSVWriter($output_file_name, new CSVYahooEarningsFormatter()); 
 
   // Start main loop
   foreach ($date_period as $date_time) {
