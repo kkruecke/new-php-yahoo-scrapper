@@ -63,7 +63,8 @@ require_once("utility.php");
 
 	   */   
 	  //--$filterIter = new CustomStockFilterIterator($limitIter);
-	  $filterIter = new CustomStockFilterIterator($table->getIterator());
+	  $filterIter = new CustomStockFilterIterator($table->getIterator(), (int) Registry::registry('stock-symbol-column'));
+          
      
           foreach($filterIter as $key => $stock) {
 

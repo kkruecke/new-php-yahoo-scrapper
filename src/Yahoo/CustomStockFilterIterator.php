@@ -2,10 +2,13 @@
 namespace Yahoo;
       
 class CustomStockFilterIterator extends \FilterIterator {
-
-   public function __construct(\Iterator $iter)
+    
+   private $symbol_column;
+   
+   public function __construct(\Iterator $iter, int $symbol_column)
    {
 	parent::__construct($iter);
+        $this->symbol_column = $symbol_column;
    }	   
 
    public function accept() : bool
@@ -26,14 +29,15 @@ class CustomStockFilterIterator extends \FilterIterator {
 		}
 	}
 
-        return true; // Criteria below no longer wanted per email with Nandish 
+        
         /*
 	 * Further criteria: We only want US Stocks
 	 */ 
-        /*  Commented out on 9/15/2016 
-        $stock_length = strlen($row[1]);
+        $symbol = $row[$this->symbol_column];
+        
+        // Added back on 03/02/2017
+        $stock_length = strlen($symbol);
 
-        return (($stock_length > 1 && $stock_length < 5) && ( strpos($row[1], '.') === FALSE)) ? true : false;
-        */   
+        return (($stock_length > 1 && $stock_length < 5) && ( strpos($symbol, '.') === FALSE)) ? true : false;
     }
 }
