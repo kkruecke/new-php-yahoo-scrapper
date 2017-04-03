@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);	
 namespace Yahoo;
 
-class YahooEarningsTable implements \IteratorAggregate, Table {
+class YahooEarningsTable implements \IteratorAggregate, YahooTableInterface {
 
    private   $dom;	
    private   $trDOMNodeList;
@@ -32,15 +32,15 @@ class YahooEarningsTable implements \IteratorAggregate, Table {
 
     $url = self::make_url($date_time);  
 
-    $page = $this->get_html_file($url); //++
+    $page = $this->get_html_file($url); 
        
     $this->loadHTML($page);
 
     $this->trDOMNodeList = $this->get_DOMNodeList(Registry::registry('tbody-xpath-query'));
 
-    $thDOMNodeList = $this->get_DOMNodeList(Registry::registry('thead-xpath-query'));
+    $thDOMNodeList = $this->get_DOMNodeList(Registry::registry('thead-tr-xpath-query'));
 
-    $this->column_count = $thDOMNodeList->length; // <--- TODO: This is wrong
+    $this->column_count = $thDOMNodeList->length; 
   }
 
   private function loadHTML(string $page) : bool
@@ -178,4 +178,4 @@ class YahooEarningsTable implements \IteratorAggregate, Table {
      return $rowNode->getElementsByTagName('td');
   }
  
-} // end class
+} 

@@ -32,7 +32,7 @@ require_once("utility.php");
     
   $csv_writer = new CSVWriter($output_file_name, new CSVYahooEarningsFormatter()); 
 
-  // Start main loop
+  // main loop
   foreach ($date_period as $date_time) {
       
       if (YahooEarningsTable::page_exists($date_time) == false) {
@@ -43,16 +43,8 @@ require_once("utility.php");
       
       try {
 
-	  //--$start_column = (int) Registry::registry('start-column');     
-
-	  //--$end_column = (int) Registry::registry('end-column');    // End column is one past the last column retrieved. 
-
 	  $table = new YahooEarningsTable($date_time);
 
-	  $total_rows = $table->row_count(); 
-	            
-          //--$limitIter = new \LimitIterator($table->getIterator(), 0, $total_rows); 
-          
 	  /*
 	   * The filter iterator should include all the filters of the original code:
 	   *   1. no column may be blank
@@ -62,13 +54,11 @@ require_once("utility.php");
 	   * $callbackFilterIter = new \CallbackFilterIterator($rowExtractorIter, 'isUSStock_callback');
 
 	   */   
-	  //--$filterIter = new CustomStockFilterIterator($limitIter);
 	  $filterIter = new CustomStockFilterIterator($table->getIterator(), (int) Registry::registry('stock-symbol-column'));
-          
      
-          foreach($filterIter as $key => $stock) {
+          foreach($filterIter as $key => $stock_row) {
 
-               $csv_writer->writeLine($stock, $date_time); 
+               $csv_writer->writeLine($stock_row, $date_time); 
 	  }
           
 	  echo "Date ". $date_time->format("m-d-Y") . " processed\n";
