@@ -43,15 +43,15 @@ require_once("utility.php");
       
       try {
 
-	  $start_column = (int) Registry::registry('start-column');     
+	  //--$start_column = (int) Registry::registry('start-column');     
 
-	  $end_column = (int) Registry::registry('end-column');    // End column is one past the last column retrieved. 
+	  //--$end_column = (int) Registry::registry('end-column');    // End column is one past the last column retrieved. 
 
-	  $table = new YahooEarningsTable($date_time, Registry::registry('xpath-query'), $start_column, $end_column);
+	  $table = new YahooEarningsTable($date_time);
 
-	  $total_rows = $table->rowCount(); 
+	  $total_rows = $table->row_count(); 
 	            
-          $limitIter = new \LimitIterator($table->getIterator(), 0, $total_rows); 
+          //--$limitIter = new \LimitIterator($table->getIterator(), 0, $total_rows); 
           
 	  /*
 	   * The filter iterator should include all the filters of the original code:
@@ -62,7 +62,8 @@ require_once("utility.php");
 	   * $callbackFilterIter = new \CallbackFilterIterator($rowExtractorIter, 'isUSStock_callback');
 
 	   */   
-	  $filterIter = new CustomStockFilterIterator($limitIter);
+	  //--$filterIter = new CustomStockFilterIterator($limitIter);
+	  $filterIter = new CustomStockFilterIterator($table->getIterator());
      
           foreach($filterIter as $key => $stock) {
 

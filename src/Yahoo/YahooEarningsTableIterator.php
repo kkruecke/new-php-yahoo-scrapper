@@ -6,26 +6,19 @@ class YahooEarningsTableIterator implements  \SeekableIterator {
   protected   $html_table;  // YahooTable
   protected   $current_row; // int
   private     $end;         // int
-  private     $tbl_begin_column;// int
-  private     $tbl_end_column;  // int
 
   /*
    * Parameters: range of columns to return from each row.
    */
-  public function __construct(YahooEarningsTable $htmltable, int $tbl_begin_column, int $tbl_end_column)
+  public function __construct(YahooEarningsTable $htmltable) //, int $tbl_begin_column, int $tbl_end_column)
   {
      $this->html_table = $htmltable;
-     $this->tbl_begin_column = $tbl_begin_column; 
-     $this->tbl_end_column = $tbl_end_column;
-
-     $this->current_row = 0; 
-
-     $this->end = 0;    // This was required to make HHVM happy.
-     $size = $this->tbl_end_column - $this->tbl_begin_column;
      
-     $this->row_data = new \SplFixedArray($size); 
+     $this->current_row = 0; 
+               
+     //$this->row_data = new \SplFixedArray($this->html_table->row_count());
 
-     $this->end = $this->html_table->rowCount(); 
+     $this->end = $this->html_table->row_count(); 
   }
 
   /*
@@ -84,15 +77,17 @@ class YahooEarningsTableIterator implements  \SeekableIterator {
    */ 
   protected function getRowData($rowid) : \SplFixedArray
   {
-     $row_data = new \SplFixedArray($this->tbl_end_column - $this->tbl_begin_column);
+     $column_count = $this->html_table->column_count();
 
-     for($cellid = $this->tbl_begin_column; $cellid < $this->tbl_end_column; $cellid++) {
+     $row_data = new \SplFixedArray($column_count); 
+
+     for($cellid = 0; $cellid < $column_count; $cellid++) {
 
         $row_data[$cellid] = $this->html_table->getCellText($rowid, $cellid);
      }	     
       
      // Change html entities back into ASCII (or Unicode) characters.  
-     for($i = 0; $i < $this->tbl_end_column; ++$i) {
+     for($i = 0; $i < $this->html_table->column_count(); ++$i) {
          
          $row_data[$i] = html_entity_decode($row_data[$i]);
      }

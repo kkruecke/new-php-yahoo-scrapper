@@ -10,67 +10,59 @@ class CSVYahooEarningsFormatter implements CSVFormatter {
 
    public function format(\SplFixedArray $row, \DateTime $date) : string    
    {
-    
-     if ($row->count() < 4) {
+     /* 
+      * Column Header - Column No:
+      * ==================
+      * Stock - 0
+      * Name  - 1
+      * EPS Estimate - 2
+      * Reported EPS - 3
+      * Surpise (%) - 4
+      * Earnings Call Time - 5
+      */    
 
-	  throw new \RangeException("Size of Vector<string> is less than four\n");
-     }	   
-          
-     // Remove commas from company names
-     //--$company_name = $row[0];
-          
      $company_name = $row[1];
      
-     $row[0] = str_replace(',', "", $company_name);
-     
-     $row[0] = str_replace(',', "", $company_name);
+     $array[0] = str_replace(',', "", $company_name);  // company name
+      
+     $array[1] = $row[0]; // stock symbol
 
-     // Alter a column per specification.txt     
-     $column4_text = $row[3];	   
-   
-     if (is_numeric($column4_text[0])) { // a time was specified
-   
-           $column4_text =  'D';
-   
-      } else if (FALSE !== strpos($column4_text, "After")) { // "After market close"
-   
-            $column4_text =  'A';
-   
-      } else if (FALSE !== strpos($column4_text, "Before")) { // "Before market close"
-   
-           $column4_text =  'B';
-   
-      } else if (FALSE !== strpos($column4_text, "Time")) { // "Time not supplied"
-   
-         $column4_text =  'U';
-   
-      } else { // none of above cases
-   
-           $column4_text =  'U';
-      }  
-  
-      /*
-       * This is taken from the prior php code TableRowExtractorIterator::addDataSuffix() method, which was invoked after
-       * TableRowExtractorIterator::getRowData()
-       */
-     
-     $date = $date->format('j-M');
-    
-     $array = $row->toArray(); 
-           
-     array_splice($array, 2, 0, $date);
-     
-     $temp = $array[3];
-     
-     $array[3] = $column4_text;
-     
-     $array[4] = $temp;
-     
-     $array[] = "Add"; 
+     $array[2] = $date->format('j-M');
+
+     // Alter "Earnings Call Time" per specification.txt     
+     $array[3] = $this->convert_call_time($row[5]); // "call time"/time    
+
+     $arry[4] = $row[2]; 
+
+     $array[] = "Add"; // Last column "Add"
 
      $csv_str = implode(",", $array);
 
      return $csv_str;
    }
 
+   private function convert_call_time(string $call_time) : string
+   {
+      if (is_numeric($call_time[0])) { // a time was specified
+    
+            $call_time =  'D';
+    
+       } else if (FALSE !== strpos($call_time, "After")) { // "After market close"
+    
+             $call_time =  'A';
+    
+       } else if (FALSE !== strpos($call_time, "Before")) { // "Before market close"
+    
+            $call_time =  'B';
+    
+       } else if (FALSE !== strpos($call_time, "Time")) { // "Time not supplied"
+    
+          $call_time =  'U';
+    
+       } else { // none of above cases
+    
+            $call_time =  'U';
+       }  
+       return $call_time;
+   } 
 }
