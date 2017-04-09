@@ -38,9 +38,9 @@ class YahooEarningsTable implements \IteratorAggregate, YahooTableInterface {
        
     $this->loadHTML($page);
 
-    $this->trDOMNodeList = $this->get_DOMNodeList(Registry::registry('tbody-xpath-query'));
+    $this->trDOMNodeList = $this->get_DOMNodeList(Registry::registry('earnings-tbody-query'));
 
-    $thDOMNodeList = $this->get_DOMNodeList(Registry::registry('thead-tr-xpath-query'));
+    $thDOMNodeList = $this->get_DOMNodeList(Registry::registry('earnings-thead-query'));
 
     $this->column_count = $thDOMNodeList->length; 
   }
@@ -77,11 +77,7 @@ class YahooEarningsTable implements \IteratorAggregate, YahooTableInterface {
         $tdNodelist = $this->getTdNodelist($rowid);
                 
         $td = $tdNodelist->item($cellid);  
-        // debug code start
-        if (is_null($td->nodeValue)) {
-            $debug = 10;                  // Bug is caused when $cellid is greater than number of elements in $tdNodeList?
-        }
-        // debug code end
+       
 	$nodeValue = trim($td->nodeValue);
 
 	return $nodeValue;
