@@ -37,11 +37,11 @@ class YahooEarningsTable implements \IteratorAggregate, YahooTableInterface {
     $page = $this->get_html_file($this->url); 
        
     $this->loadHTML($page);
-
+    /*
     $this->trDOMNodeList = $this->get_DOMNodeList(Registry::registry('tbody-xpath-query'));
 
     $thDOMNodeList = $this->get_DOMNodeList(Registry::registry('thead-tr-xpath-query'));
-
+    */
     $this->column_count = $thDOMNodeList->length; 
   }
 
@@ -61,6 +61,7 @@ class YahooEarningsTable implements \IteratorAggregate, YahooTableInterface {
 
   private function get_DOMNodeList(string $xpath_query) : \DOMNodeList
   {
+      
       $xpath = new \DOMXPath($this->dom);
    
       $xpathNodeList = $xpath->query($xpath_query);
