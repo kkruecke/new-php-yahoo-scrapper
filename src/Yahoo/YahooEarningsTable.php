@@ -88,7 +88,6 @@ class YahooEarningsTable implements \IteratorAggregate, YahooTableInterface {
 
           $column_count = $this->column_count();
 
-	  //throw new \RangeException("Either row id of $rowid or cellid of $cellid is out of range. Row count is $row_count. Column count is $column_count\n");
 	  throw \RangeException("Either row id of $rowid or cellid of $cellid is out of range. Row count is $row_count. Column count is $column_count\n");
       }
   }
