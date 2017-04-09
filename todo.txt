@@ -4,13 +4,12 @@ TODOES
 Bugs
 ----
 
-Change code to use DOM methods instead of an xpath query. Something like
+Either get rid of the XPath query code and use the DOM call below (plus any other DOM calls) so that code is not so brittle to minor html changes, perhaping change
+the code to use DOM methods instead of an xpath query. Something like
 
-  $tables = $dom->getElementsByTagName('table'); 
+  $tables = $dom->getElementsByTagName('table'); // YahooEarningsTable.php 
 
-This approach is more flexible than using XPath which requires exactly the path
-specified.
-
+Or use a different XPath query, such as a //table query. See https://www.w3schools.com/xml/xpath_syntax.asp for XPath options and syntax.
 
 My Comments
 -----------
