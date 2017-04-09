@@ -38,6 +38,6 @@ class CustomStockFilterIterator extends \FilterIterator {
         // Added back on 03/02/2017
         $stock_length = strlen($symbol);
 
-        return (($stock_length > 1 && $stock_length =< 5) && ( strpos($symbol, '.') === FALSE)) ? true : false;
+        return (($stock_length > 1 && $stock_length <= 5) && ( strpos($symbol, '.') === FALSE)) ? true : false;
     }
 }

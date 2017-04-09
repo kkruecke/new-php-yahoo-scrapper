@@ -7,8 +7,10 @@ class YahooEarningsTable implements \IteratorAggregate, YahooTableInterface {
    private   $trDOMNodeList;
    private   $row_count;
    private   $column_count;
-   
-  /*
+   private   $url;
+
+
+   /*
    * Preconditions: 
    * url exists
    * xpath is accurate
@@ -30,9 +32,9 @@ class YahooEarningsTable implements \IteratorAggregate, YahooTableInterface {
 
     $friendly_date = $date_time->format("m-d-Y"); 
 
-    $url = self::make_url($date_time);  
+    $this->url = self::make_url($date_time);  
 
-    $page = $this->get_html_file($url); 
+    $page = $this->get_html_file($this->url); 
        
     $this->loadHTML($page);
 
@@ -62,10 +64,12 @@ class YahooEarningsTable implements \IteratorAggregate, YahooTableInterface {
       $xpath = new \DOMXPath($this->dom);
    
       $xpathNodeList = $xpath->query($xpath_query);
+      
+     //++ $abc = $this->dom->getElementsByTagName('table'); New Code.
           
       if ($xpathNodeList->length != 1) { 
-         
-          throw new \Exception("XPath Query\n $xpath_query\nof page: $url\n   \nFailed!\n Check if page format has changed. It appears to have more than one table. Cannot proceed.\n");
+          // BUG: $url not defined.
+          throw new \Exception("XPath Query\n $xpath_query\nof page: {$this->url}\n   \nFailed!\n Check if page format has changed. It appears to have more than one table. Cannot proceed.\n");
       } 
       
       // Get DOMNode representing the table. 

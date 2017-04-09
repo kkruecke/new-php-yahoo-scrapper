@@ -4,7 +4,13 @@ TODOES
 Bugs
 ----
 
-Changed CustomStockFilterIterator.php
+Change code to use DOM methods instead of an xpath query. Something like
+
+  $tables = $dom->getElementsByTagName('table'); 
+
+This approach is more flexible than using XPath which requires exactly the path
+specified.
+
 
 My Comments
 -----------
