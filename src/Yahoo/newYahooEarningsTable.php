@@ -37,12 +37,79 @@ class YahooEarningsTable implements \IteratorAggregate, YahooTableInterface {
     $page = $this->get_html_file($this->url); 
        
     $this->loadHTML($page);
-    /*
-    $this->trDOMNodeList = $this->get_DOMNodeList(Registry::registry('tbody-xpath-query'));
 
-    $thDOMNodeList = $this->get_DOMNodeList(Registry::registry('thead-tr-xpath-query'));
-    */
-    $this->column_count = $thDOMNodeList->length; 
+    $this->loadTableNodes();
+  }
+
+  function loadTableNodes()
+  {
+      $xpath = new \DOMXPath($this->dom);
+            
+      $nodeList = $xpath->query("(//table)[2]");
+
+      $DOMElement = $nodeList->item(0);
+
+      $nodeList = $xpath->query("(/thead/tr", $DOMElement);
+
+      $this->trDOMNodeList = $nodeList->getChildNodes();
+
+      $nodeList = $xpath->query("(/tbody", $DOMElement);
+
+      $childNodes = $nodeList->getChildNodes();
+
+      $this->column_count = $childNodes->length; 
+  } 
+   
+  function getChildNodes(\DOMNodeList $NodeList)  : \DOMElement // This might not be of use.
+  {
+      if ($NodeList->length != 1) { 
+         
+          throw new \Exception("DOMNodeList length is not one.\n");
+      } 
+      
+      // Get DOMNode representing the table. 
+      $DOMElement = $NodeList->item(0);
+      
+      if (!$DOMElement->hasChildNodes()) {
+         
+         throw new \Exception("hasChildNodes() failed.\n");
+      } 
+  
+      // DOMNodelist for rows of the table
+      return $DOMElement->childNodes;
+   }
+  /*
+   * Returns trimmed cell text
+   */  
+  public function getCellText(int $rowid, int $cellid) :  string
+  {
+      if ($rowid >= 0 && $rowid < $this->row_count() && $cellid >= 0 && $cellid < $this->column_count()) { 	  
+
+        $tdNodelist = $this->getTdNodelist($rowid);
+                
+        $td = $tdNodelist->item($cellid);  
+       
+	$nodeValue = trim($td->nodeValue);
+
+	return $nodeValue;
+
+      } else {
+
+          $row_count = $this->row_count();
+
+          $column_count = $this->column_count();
+
+	  throw \RangeException("Either row id of $rowid or cellid of $cellid is out of range. Row count is $row_count. Column count is $column_count\n");
+      }
+  }
+  // get td node list for row 
+  protected function getTdNodelist($row_id) : \DOMNodeList
+  {
+     // get DOMNode for row number $row_id
+     $rowNode =  $this->trDOMNodeList->item($row_id);
+
+     // get DOMNodeList of <td></td> elemnts in the row     
+     return $rowNode->getElementsByTagName('td');
   }
 
   private function loadHTML(string $page) : bool
@@ -56,37 +123,9 @@ class YahooEarningsTable implements \IteratorAggregate, YahooTableInterface {
       $this->dom->preserveWhiteSpace = false;
   
       @$boolRc = $this->dom->loadHTML($page);  // Turn off error reporting
-       return $boolRc;
+      return $boolRc;
   } 
 
-  private function get_DOMNodeList(string $xpath_query) : \DOMNodeList
-  {
-      
-      $xpath = new \DOMXPath($this->dom);
-   
-      $xpathNodeList = $xpath->query($xpath_query);
-     // TODO: Get rid of the XPath query code and use the DOM call below (plus any other DOM calls) so that code is not so brittle to minor
-     // html changes.
-
-      $items = $this->dom->getElementsByTagName('table'); 
-      $table = $items->item(0);
-          
-      if ($xpathNodeList->length != 1) { 
-          // BUG: $url not defined.
-          throw new \Exception("XPath Query\n $xpath_query\nof page: {$this->url}\n   \nFailed!\n Check if page format has changed. It appears to have more than one table. Cannot proceed.\n");
-      } 
-      
-      // Get DOMNode representing the table. 
-      $tableNodeElement = $xpathNodeList->item(0);
-      
-      if (!$tableNodeElement->hasChildNodes()) {
-         
-         throw new \Exception("This is no table element at \n $xpath_table_query\n. Page format has evidently changed. Cannot proceed.\n");
-      } 
-  
-      // DOMNodelist for rows of the table
-      return $tableNodeElement->childNodes;
-   }
 
   static public function page_exists(\DateTime $date_time) : bool
   {
@@ -109,7 +148,7 @@ class YahooEarningsTable implements \IteratorAggregate, YahooTableInterface {
 
   static private function make_url(\DateTime $date_time) : string
   {
-    return Registry::registry('url-path') . '?day=' . $date_time->format('Y-m-d');
+        return Registry::registry('url-path') . '?day=' . $date_time->format('Y-m-d');
   }
 
   private function get_html_file(string $url) : string
@@ -133,7 +172,7 @@ class YahooEarningsTable implements \IteratorAggregate, YahooTableInterface {
       return $page;
   } 
     
-   /*
+  /*
   * Return external iterator, passing the range of columns requested.
   */ 
   public function getIterator() : \Yahoo\YahooEarningsTableIterator
@@ -151,39 +190,5 @@ class YahooEarningsTable implements \IteratorAggregate, YahooTableInterface {
      return $this->column_count;
   }
 
-  /*
-   * Returns trimmed cell text
-   */  
-  public function getCellText(int $rowid, int $cellid) :  string
-  {
-      if ($rowid >= 0 && $rowid < $this->row_count() && $cellid >= 0 && $cellid < $this->column_count()) { 	  
 
-        $tdNodelist = $this->getTdNodelist($rowid);
-          
-        $td = $tdNodelist->item($cellid);  
-
-	$nodeValue = trim($td->nodeValue);
-
-	return $nodeValue;
-
-      } else {
-
-          $row_count = $this->row_count();
-
-          $column_count = $this->column_count();
-
-	  //throw new \RangeException("Either row id of $rowid or cellid of $cellid is out of range. Row count is $row_count. Column count is $column_count\n");
-	  throw \RangeException("Either row id of $rowid or cellid of $cellid is out of range. Row count is $row_count. Column count is $column_count\n");
-      }
-  }
-  // get td node list for row 
-  protected function getTdNodelist($row_id) : \DOMNodeList
-  {
-     // get DOMNode for row number $row_id
-     $rowNode =  $this->trDOMNodeList->item($row_id);
-
-     // get DOMNodeList of <td></td> elemnts in the row     
-     return $rowNode->getElementsByTagName('td');
-  }
- 
 } 

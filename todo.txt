@@ -1,6 +1,8 @@
 TODOES
 ======
 
+src/Yahoo/newYaooEarningsTable.php has new prosp. code.
+
 My Comments
 -----------
 
