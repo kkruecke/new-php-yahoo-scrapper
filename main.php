@@ -4,6 +4,15 @@ use Yahoo\{CSVWriter, CSVYahooEarningsFormatter, YahooEarningsTable, CustomStock
 
 require_once("utility.php");
 
+function displayException(\Exception $e)
+{
+  $msg = "\nError occurred processing page. Exception information below:\n";
+          
+  $msg .= $e->getMessage() . "\n\n";
+  echo $msg;
+  echo $e->getTraceAsString() . "\n\n";
+}
+
   boot_strap();
 
   if ($argc == 2) {
@@ -32,7 +41,7 @@ require_once("utility.php");
     
   $csv_writer = new CSVWriter($output_file_name, new CSVYahooEarningsFormatter()); 
 
-  // main loop
+  // loop over each day in the DatePeriod.
   foreach ($date_period as $date_time) {
       
       if (YahooEarningsTable::page_exists($date_time) == false) {
@@ -61,16 +70,12 @@ require_once("utility.php");
                $csv_writer->writeLine($stock_row, $date_time); 
 	  }
           
-	  echo "Date ". $date_time->format("m-d-Y") . " processed\n";
+	  echo $date_time->format("m-d-Y") . " processed\n";
 
   
       } catch(\Exception $e) {
-          
-          $msg = "\nError occurred processing page. Exception information below:\n";
-          
-          $msg .= $e->getMessage() . "\n\n";
-          echo $msg;
-	  echo $e->getTraceAsString() . "\n\n";
+         
+          displayException($e); 
           return 0;
       }
   }
@@ -80,3 +85,4 @@ require_once("utility.php");
   echo  $csv_writer->getFileName() . " has been created. It contains $line_count US stocks entries.\n";
     
   return;
+
