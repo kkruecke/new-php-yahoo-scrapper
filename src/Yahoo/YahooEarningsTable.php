@@ -9,14 +9,6 @@ class YahooEarningsTable implements \IteratorAggregate, YahooTableInterface {
    private   $column_count;
    private   $url;
 
-
-   /*
-   * Preconditions: 
-   * url exists
-   * xpath is accurate
-   * start and end column are within range of columns that exist
-   */ 
- 
   public function __construct(\DateTime $date_time)
   {
    /*
@@ -38,35 +30,46 @@ class YahooEarningsTable implements \IteratorAggregate, YahooTableInterface {
        
     $this->loadHTML($page);
 
-    $this->trDOMNodeList = $this->get_DOMNodeList(Registry::registry('earnings-tbody-query'));
-
-    $thDOMNodeList = $this->get_DOMNodeList(Registry::registry('earnings-thead-query'));
-
-    $this->column_count = $thDOMNodeList->length; 
+    $this->loadTableNodes();
   }
 
-  private function get_DOMNodeList(string $xpath_query) : \DOMNodeList
+  function loadTableNodes()
   {
       $xpath = new \DOMXPath($this->dom);
             
-      $xpathNodeList = $xpath->query($xpath_query);
-          
-      if ($xpathNodeList->length != 1) { 
+      $nodeList = $xpath->query("(//table)[2]");
+
+      $DOMElement = $nodeList->item(0);
+
+      $nodeList = $xpath->query("tbody", $DOMElement);
+
+      $this->trDOMNodeList = $this->getChildNodes($nodeList);
+
+      $nodeList = $xpath->query("thead/tr", $DOMElement);
+
+      $childNodes = $this->getChildNodes($nodeList); 
+
+      $this->column_count = $childNodes->length; 
+  } 
+   
+  function getChildNodes(\DOMNodeList $NodeList)  : \DOMNodeList // This might not be of use.
+  {
+      if ($NodeList->length != 1) { 
          
-          throw new \Exception("XPath Query\n $xpath_query\nof page: {$this->url}\n   \nFailed!\n");
+          throw new \Exception("DOMNodeList length is not one.\n");
       } 
       
       // Get DOMNode representing the table. 
-      $tableNodeElement = $xpathNodeList->item(0);
+      $DOMElement = $NodeList->item(0);
       
-      if (!$tableNodeElement->hasChildNodes()) {
+      if (!$DOMElement->hasChildNodes()) {
          
-         throw new \Exception("This is no table element at \n $xpath_table_query\n. Page format has evidently changed. Cannot proceed.\n");
+         throw new \Exception("hasChildNodes() failed.\n");
       } 
   
       // DOMNodelist for rows of the table
-      return $tableNodeElement->childNodes;
-  }
+      return $DOMElement->childNodes;
+   }
   /*
    * Returns trimmed cell text
    */  
