@@ -30,10 +30,10 @@ class YahooEarningsTable implements \IteratorAggregate, YahooTableInterface {
        
     $this->loadHTML($page);
 
-    $this->loadTableNodes();
+    $this->loadRowNodes();
   }
 
-  function loadTableNodes()
+  function loadRowNodes()
   {
       $xpath = new \DOMXPath($this->dom);
             
