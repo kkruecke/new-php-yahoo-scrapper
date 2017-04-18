@@ -4,7 +4,7 @@ TODOES
 Query column's by name of column. Map name to an order.
 New config.php or .ini with
 
-$conf['columns'] = { 'name1' ???
+$conf['columns'] = { 'name1' ?
 
 colmns.names = 
 columns.order =
