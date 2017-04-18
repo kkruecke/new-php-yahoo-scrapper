@@ -1,13 +1,7 @@
 TODOES
 ======
 
-Query column's by name of column. Map name to an order.
-New config.php or .ini with
-
-$conf['columns'] = { 'name1' ?
-
-colmns.names = 
-columns.order =
+I might try using a php config file, like ~/y/config.php, and then making the code configuration driven. 
 
 My Comments
 -----------

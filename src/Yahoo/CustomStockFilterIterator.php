@@ -20,10 +20,7 @@ class CustomStockFilterIterator extends \FilterIterator {
 	 * Filter criteria: Only accept rows with all non-empty columns
 	 */  
 	foreach($row as $columnn_num => $column_text) {
-                /*
-		 * All column must be non-empty. Alternate regex:
-                $rc = preg_match ('/^\s*$/', $cell_text); 
-		 */  
+                  
 		if (strlen($column_text) == 0) {
 			return false;
 		}
@@ -38,6 +35,12 @@ class CustomStockFilterIterator extends \FilterIterator {
         // Added back on 03/02/2017
         $stock_length = strlen($symbol);
 
-        return (($stock_length > 1 && $stock_length <= 5) && ( strpos($symbol, '.') === FALSE)) ? true : false;
+        /* 
+          Must be:
+          1. Between 1 and 5 characters in length.
+          2. Must be only a-z and/or A-Z--no numbers, no dots.
+         */ 
+        return  preg_match("/^[a-zA-Z]{1,5}$/", $symbol) ? true : false;
+        //--return (($stock_length > 1 && $stock_length <= 5) && ( strpos($symbol, '.') === FALSE)) ? true : false;
     }
 }

@@ -32,8 +32,8 @@ class CSVYahooEarningsFormatter implements CSVFormatter {
      // Alter "Earnings Call Time" per specification.txt     
      $array[3] = $this->convert_call_time($row[5]); // "call time"/time    
 
-     $arry[4] = $row[2]; 
-
+     $array[4] = $row[2];  // <-- TODO: This seems missing.
+     
      $array[] = "Add"; // Last column "Add"
 
      $csv_str = implode(",", $array);
