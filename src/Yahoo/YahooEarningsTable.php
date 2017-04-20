@@ -50,8 +50,31 @@ class YahooEarningsTable implements \IteratorAggregate, YahooTableInterface {
       $childNodes = $this->getChildNodes($nodeList); 
 
       $this->column_count = $childNodes->length; 
+
+      // Prospective code to get column index or something like it.
+      //--$this->testLoadColumnInfo(array("Symbol", "Company", "EPS Estimate", "Earnings Call Time"), $xpath, $DOMElement);
   } 
-   
+  
+  private function testLoadColumnInfo(array $column_names, \DOMXPath $xpath, \DOMElement $DOMElement) 
+  {  
+    // This code works, but doesn't really give the index of the column whose value we found.  
+    foreach($column_names as $column_name) {
+        
+      $query = "thead/tr/th[starts-with(., '$column_name')]";
+      
+      $node_list = $xpath->query($query, $DOMElement);
+      
+      if ($node_list->length != 0) {
+           $x = $node_list->item(0);    
+           var_dump($x);
+           echo "\n";
+      }
+      
+    } 
+     //...
+  }
+
+  
   function getChildNodes(\DOMNodeList $NodeList)  : \DOMNodeList // This might not be of use.
   {
       if ($NodeList->length != 1) { 

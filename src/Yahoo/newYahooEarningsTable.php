@@ -6,7 +6,7 @@ class YahooEarningsTable implements \IteratorAggregate, YahooTableInterface {
    private   $dom;	
    private   $trDOMNodeList;
    private   $row_count;
-   private   $column_count;
+   private   $column_names; // array
    private   $url;
 
   public function __construct(\DateTime $date_time, array $column_names)
@@ -30,7 +30,10 @@ class YahooEarningsTable implements \IteratorAggregate, YahooTableInterface {
        
     $this->loadHTML($page);
 
+    $this->column_names = $column_names;
+
     $this->loadTable($column_names);
+ 
   }
 
   function loadTable(array $column_names)
@@ -45,44 +48,38 @@ class YahooEarningsTable implements \IteratorAggregate, YahooTableInterface {
 
       $this->trDOMNodeList = $this->getChildNodes($nodeList);
       
-      $this->loadColumnXXXX(array $col_names,  $DOMElement)
-      $nodeList = $xpath->query("thead/tr", $DOMElement);
-
-      $childNodes = $this->getChildNodes($nodeList); 
-  }
- 
-  private function getColumnIndecies(array $col_names, \DOMElement $DOMElement) // ?
-  {  
-      $nodeList = $xpath->query("thead/tr", $DOMElement);
-
-      $childNodes = $this->getChildNodes($nodeList); 
-      
-      foreach($i = 0; $i < $childNodes->length; ++$i) {
-     
-
-        $this->column_index
-     }
-     //...
+      $this->loadColumnInfo(array $col_names,  $DOMElement)
   }
 
   function getChildNodes(\DOMNodeList $NodeList)  : \DOMNodeList // This might not be of use.
   {
-      if ($NodeList->length != 1) { 
-         
-          throw new \Exception("DOMNodeList length is not one.\n");
-      } 
-      
-      // Get DOMNode representing the table. 
-      $DOMElement = $NodeList->item(0);
-      
-      if (!$DOMElement->hasChildNodes()) {
-         
-         throw new \Exception("hasChildNodes() failed.\n");
-      } 
+     if ($NodeList->length != 1) { 
+        
+         throw new \Exception("DOMNodeList length is not one.\n");
+     } 
+     
+     // Get DOMNode representing the table. 
+     $DOMElement = $NodeList->item(0);
+     
+     if (!$DOMElement->hasChildNodes()) {
+        
+        throw new \Exception("hasChildNodes() failed.\n");
+     } 
   
-      // DOMNodelist for rows of the table
-      return $DOMElement->childNodes;
+     // DOMNodelist for rows of the table
+     return $DOMElement->childNodes;
    }
+ 
+  private function loadColumnInfo(array $column_names, \DOMElement $DOMElement) 
+  {  
+    foreach($column_names as $column_name) {
+     
+      $x = $xpath->query('thead/tr/th[.="$column_name"]', $DOMElement);
+
+    } 
+     //...
+  }
+
   /*
    * Returns trimmed cell text
    */  
