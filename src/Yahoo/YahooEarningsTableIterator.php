@@ -39,7 +39,11 @@ class YahooEarningsTableIterator implements  \SeekableIterator {
   // returns \SplFixedArray
   public function current() : \SplFixedArray  
   {
-    return  $this->getRowData($this->current_row);	  
+    return $this->html_table->getRowData($this->current_row);	  
+    /*
+    $current_code = $this->getRowData($this->current_row);	  
+    return $current_code;
+     */ 
   }
   
   // returns int
@@ -71,27 +75,5 @@ class YahooEarningsTableIterator implements  \SeekableIterator {
 	}
 
 	return;
-  }
-  /*
-   * returns SplFixedArray of cell text for $rowid
-   */ 
-  protected function getRowData($rowid) : \SplFixedArray
-  {
-     $column_count = $this->html_table->column_count();
-
-     $row_data = new \SplFixedArray($column_count); 
-
-     for($cellid = 0; $cellid < $column_count; $cellid++) {
-
-        $row_data[$cellid] = $this->html_table->getCellText($rowid, $cellid);
-     }	     
-      
-     // Change html entities back into ASCII (or Unicode) characters.  
-     for($i = 0; $i < $this->html_table->column_count(); ++$i) {
-         
-         $row_data[$i] = html_entity_decode($row_data[$i]);
-     }
-     
-     return $row_data;
   }
 } 

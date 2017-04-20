@@ -52,7 +52,7 @@ class YahooEarningsTable implements \IteratorAggregate, YahooTableInterface {
       $this->column_count = $childNodes->length; 
 
       // Prospective code to get column index or something like it.
-      //--$this->testLoadColumnInfo(array("Symbol", "Company", "EPS Estimate", "Earnings Call Time"), $xpath, $DOMElement);
+      // $this->testLoadColumnInfo(array("Symbol", "Company", "EPS Estimate", "Earnings Call Time"), $xpath, $DOMElement);
   } 
   
   private function testLoadColumnInfo(array $column_names, \DOMXPath $xpath, \DOMElement $DOMElement) 
@@ -69,11 +69,9 @@ class YahooEarningsTable implements \IteratorAggregate, YahooTableInterface {
            var_dump($x);
            echo "\n";
       }
-      
     } 
      //...
   }
-
   
   function getChildNodes(\DOMNodeList $NodeList)  : \DOMNodeList // This might not be of use.
   {
@@ -92,31 +90,28 @@ class YahooEarningsTable implements \IteratorAggregate, YahooTableInterface {
   
       // DOMNodelist for rows of the table
       return $DOMElement->childNodes;
-   }
-  /*
-   * Returns trimmed cell text
-   */  
-  public function getCellText(int $rowid, int $cellid) :  string
-  {
-      if ($rowid >= 0 && $rowid < $this->row_count() && $cellid >= 0 && $cellid < $this->column_count()) { 	  
-
-        $tdNodelist = $this->getTdNodelist($rowid);
-                
-        $td = $tdNodelist->item($cellid);  
-       
-	$nodeValue = trim($td->nodeValue);
-
-	return $nodeValue;
-
-      } else {
-
-          $row_count = $this->row_count();
-
-          $column_count = $this->column_count();
-
-	  throw \RangeException("Either row id of $rowid or cellid of $cellid is out of range. Row count is $row_count. Column count is $column_count\n");
-      }
   }
+
+  /*
+   * returns SplFixedArray of cell text for $rowid
+   */ 
+  public function getRowData(int $rowid) : \SplFixedArray
+  {
+     $row_data = new \SplFixedArray($this->column_count); 
+
+     $tdNodelist = $this->getTdNodelist($rowid); 
+     
+     $i = 0;
+     
+     foreach($tdNodelist as $td) {
+
+         $nodeValue = trim($td->nodeValue);        
+         $row_data[$i++] = html_entity_decode($nodeValue);
+     }
+
+     return $row_data;
+  }
+
   // get td node list for row 
   protected function getTdNodelist($row_id) : \DOMNodeList
   {
