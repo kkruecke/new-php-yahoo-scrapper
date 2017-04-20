@@ -93,13 +93,17 @@ class YahooEarningsTable implements \IteratorAggregate, YahooTableInterface {
   }
 
   /*
-   * returns SplFixedArray of cell text for $rowid
+   * returns SplFixedArray of all cell text for $rowid
    */ 
   public function getRowData(int $rowid) : \SplFixedArray
   {
      $row_data = new \SplFixedArray($this->column_count); 
 
-     $tdNodelist = $this->getTdNodelist($rowid); 
+     // get DOMNode for row number $row_id
+     $rowNode =  $this->trDOMNodeList->item($row_id);
+
+     // get DOMNodeList of <td></td> elemnts in the row     
+     $tdNodelist = $rowNode->getElementsByTagName('td');
      
      $i = 0;
      
@@ -110,16 +114,6 @@ class YahooEarningsTable implements \IteratorAggregate, YahooTableInterface {
      }
 
      return $row_data;
-  }
-
-  // get td node list for row 
-  protected function getTdNodelist($row_id) : \DOMNodeList
-  {
-     // get DOMNode for row number $row_id
-     $rowNode =  $this->trDOMNodeList->item($row_id);
-
-     // get DOMNodeList of <td></td> elemnts in the row     
-     return $rowNode->getElementsByTagName('td');
   }
 
   private function loadHTML(string $page) : bool
