@@ -6,10 +6,9 @@ class YahooEarningsTable implements \IteratorAggregate, YahooTableInterface {
    private   $dom;	
    private   $trDOMNodeList;
    private   $row_count;
-   private   $column_names; // array new??
    private   $url;
 
-   private  $column_indecies; // new
+   private $column_indecies;
 
   public function __construct(\DateTime $date_time, array $column_names)
   {
@@ -24,101 +23,106 @@ class YahooEarningsTable implements \IteratorAggregate, YahooTableInterface {
 
     $context = stream_context_create($opts);
 
-    $friendly_date = $date_time->format("m-d-Y"); 
-
-    $this->url = self::make_url($date_time);  
-
-    $page = $this->get_html_file($this->url); 
+    $friendly_date = $date_time->format("m-d-Y");
+ 
+    $this->url = self::make_url($date_time);
+  
+    $page = $this->get_html_file($this->url);
        
     $this->loadHTML($page);
 
-    $this->column_names = $column_names;
-
-    $this->loadTable($column_names);
- 
+    $this->loadRowNodes($column_names);
   }
 
-  function loadTable(array $column_names)
+  function loadRowNodes(array $column_names)
   {
       $xpath = new \DOMXPath($this->dom);
             
       $nodeList = $xpath->query("(//table)[2]");
 
-      $DOMElement = $nodeList->item(0);
+      $tblElement = $nodeList->item(0);
 
-      $nodeList = $xpath->query("tbody", $DOMElement);
+      $nodeList = $xpath->query("tbody", $tblElement);
 
       $this->trDOMNodeList = $this->getChildNodes($nodeList);
-      
-      $this->loadColumnInfo(array $col_names,  $DOMElement)
-  }
 
-  function getChildNodes(\DOMNodeList $NodeList)  : \DOMNodeList // This might not be of use.
-  {
-     if ($NodeList->length != 1) { 
-        
-         throw new \Exception("DOMNodeList length is not one.\n");
-     } 
-     
-     // Get DOMNode representing the table. 
-     $DOMElement = $NodeList->item(0);
-     
-     if (!$DOMElement->hasChildNodes()) {
-        
-        throw new \Exception("hasChildNodes() failed.\n");
-     } 
-  
-     // DOMNodelist for rows of the table
-     return $DOMElement->childNodes;
-   }
+      $nodeList = $xpath->query("thead/tr", $tblElement);
+
+      $childNodes = $this->getChildNodes($nodeList);
  
-  private function findRelevantColumns(array $column_names, \DOMElement $DOMElement) 
+      $this->findRelevantColumns($column_names, $xpath, $tblElement);
+  } 
+   
+  private function findRelevantColumns(array $column_names, \DOMXPath $xpath, \DOMElement $DOMElement) 
   { 
+     $col_cnt = count($column_names);
+
      $thNodelist = $xpath->query("thead/tr/th", $DOMElement);
 
-     for ($col_num = 0; $cil_num < ; ++$col_num) {
+     for ($col_num = 0; $col_num < $thNodelist->length; ++$col_num) {
 
         $thNode = $thNodelist->item($col_num);
 
-        if (array_search($thNode->nodeValue, $column_names)) {
+        $index = array_search($thNode->nodeValue, $column_names);
+
+        if ($index !== FALSE) {
 
              $this->column_indecies[] = $col_num;
+             // TODO: USe this instead:
+             $this->column_indecies2[$column_names[$index]] = $col_num;
         }
+
+        if (count($this->column_indecies) == $col_cnt)
+            break;
     } 
+    print_r($this->column_indecies2);
+    die();
+  }
+  
+  function getChildNodes(\DOMNodeList $NodeList)  : \DOMNodeList // This might not be of use.
+  {
+      if ($NodeList->length != 1) { 
+         
+          throw new \Exception("DOMNodeList length is not one.\n");
+      } 
+      
+      // Get DOMNode representing the table. 
+      $DOMElement = $NodeList->item(0);
+      
+      if (!$DOMElement->hasChildNodes()) {
+         
+         throw new \Exception("hasChildNodes() failed.\n");
+      } 
+  
+      // DOMNodelist for rows of the table
+      return $DOMElement->childNodes;
   }
 
   /*
-   * Returns trimmed cell text
-   */  
-  public function getCellText(int $rowid, int $cellid) :  string
+   * returns SplFixedArray of all text for the columns indexed by $this->column_indecies in row number $row_num
+   */ 
+  public function getRowData($row_num) : \SplFixedArray
   {
-      if ($rowid >= 0 && $rowid < $this->row_count() && $cellid >= 0 && $cellid < $this->column_count()) { 	  
-
-        $tdNodelist = $this->getTdNodelist($rowid);
-                
-        $td = $tdNodelist->item($cellid);  
-       
-	$nodeValue = trim($td->nodeValue);
-
-	return $nodeValue;
-
-      } else {
-
-          $row_count = $this->row_count();
-
-          $column_count = $this->column_count();
-
-	  throw \RangeException("Either row id of $rowid or cellid of $cellid is out of range. Row count is $row_count. Column count is $column_count\n");
-      }
-  }
-  // get td node list for row 
-  protected function getTdNodelist($row_id) : \DOMNodeList
-  {
+     $row_data = new \SplFixedArray(count($this->column_indecies));
+ 
      // get DOMNode for row number $row_id
-     $rowNode =  $this->trDOMNodeList->item($row_id);
+     $rowNode =  $this->trDOMNodeList->item($row_num);
 
      // get DOMNodeList of <td></td> elemnts in the row     
-     return $rowNode->getElementsByTagName('td');
+     $tdNodelist = $rowNode->getElementsByTagName('td');
+
+     $i = 0;
+
+     foreach($this->column_indecies as $index) {
+
+         $td = $tdNodelist->item($index);     
+
+         $nodeValue = trim($td->nodeValue);
+        
+         $row_data[$i++] = html_entity_decode($nodeValue);
+
+     }
+     return $row_data;
   }
 
   private function loadHTML(string $page) : bool
@@ -132,9 +136,9 @@ class YahooEarningsTable implements \IteratorAggregate, YahooTableInterface {
       $this->dom->preserveWhiteSpace = false;
   
       @$boolRc = $this->dom->loadHTML($page);  // Turn off error reporting
+
       return $boolRc;
   } 
-
 
   static public function page_exists(\DateTime $date_time) : bool
   {
@@ -152,6 +156,7 @@ class YahooEarningsTable implements \IteratorAggregate, YahooTableInterface {
     } else {
 
       return true;
+
     }
   } 
 
@@ -178,6 +183,7 @@ class YahooEarningsTable implements \IteratorAggregate, YahooTableInterface {
           
          throw new \Exception("Could not download page $url after two attempts\n");
       }
+
       return $page;
   } 
     
@@ -196,8 +202,6 @@ class YahooEarningsTable implements \IteratorAggregate, YahooTableInterface {
 
   public function column_count() : int
   {
-     return $this->column_count;
+     return count($this->column_indecies);
   }
-
-
 } 

@@ -63,13 +63,15 @@ class YahooEarningsTable implements \IteratorAggregate, YahooTableInterface {
 
         $thNode = $thNodelist->item($col_num);
 
-        if (array_search($thNode->nodeValue, $column_names) !== FALSE) {
+        $index = array_search($thNode->nodeValue, $column_names);
+
+        if ($index !== FALSE) {
 
              $this->column_indecies[] = $col_num;
         }
 
         if (count($this->column_indecies) == $col_cnt)
-            return;
+            break;
     } 
   }
   
