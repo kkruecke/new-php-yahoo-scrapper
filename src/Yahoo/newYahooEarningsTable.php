@@ -6,8 +6,10 @@ class YahooEarningsTable implements \IteratorAggregate, YahooTableInterface {
    private   $dom;	
    private   $trDOMNodeList;
    private   $row_count;
-   private   $column_names; // array
+   private   $column_names; // array new??
    private   $url;
+
+   private  $column_indecies; // new
 
   public function __construct(\DateTime $date_time, array $column_names)
   {
@@ -70,14 +72,19 @@ class YahooEarningsTable implements \IteratorAggregate, YahooTableInterface {
      return $DOMElement->childNodes;
    }
  
-  private function loadColumnInfo(array $column_names, \DOMElement $DOMElement) 
-  {  
-    foreach($column_names as $column_name) {
-     
-      $x = $xpath->query('thead/tr/th[.="$column_name"]', $DOMElement);
+  private function findRelevantColumns(array $column_names, \DOMElement $DOMElement) 
+  { 
+     $thNodelist = $xpath->query("thead/tr/th", $DOMElement);
 
+     for ($col_num = 0; $cil_num < ; ++$col_num) {
+
+        $thNode = $thNodelist->item($col_num);
+
+        if (array_search($thNode->nodeValue, $column_names)) {
+
+             $this->column_indecies[] = $col_num;
+        }
     } 
-     //...
   }
 
   /*

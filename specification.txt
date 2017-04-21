@@ -21,7 +21,7 @@ Col 4 - Time -- as a special one letter code, defined below:
 
 In order to get the entire text of the column without html, I will need to use DOMDocument methods.
  
-Col 5 - Eps 
+Col 5 - Eps Estimate
 Col 6 - PrevYr  -- a column with the string "Add"
 
 Output in  CSV format:

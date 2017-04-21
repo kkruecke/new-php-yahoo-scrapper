@@ -52,7 +52,9 @@ function displayException(\Exception $e)
       
       try {
 
-	  $table = new YahooEarningsTable($date_time);
+          $column_names = Registry::registry('columns');
+
+          $table = new YahooEarningsTable($date_time, $column_names);
 
 	  /*
 	   * The filter iterator should include all the filters of the original code:

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+<database>
+  <host>localhost</host>
+  <dbname>maude_medwatch</name>
+  <user>kurt</user>
+  <password>kk0457</password>
+</database>
+<files>
+    <file filename="data/foidev-all.txt" table="device">
+    <indecies>
+        <index field_name="mdr_report_key">0</index>
+        <index field_name="device_sequence_no">4</index>
+        <index field_name="device_report_product_code">25</index>
+    </indecies>
+    </file>
+    <file filename="data/mdrfoi-all.txt" table="mdr">
+    <indecies>
+        <index field_name="mdr_report_key">0</index>
+        <index field_name="report_source_code">3</index>
+        <index field_name="date_received">7</index>
+    </indecies>
+    </file>
+    <file filename="data/foitext-all.txt"  table="text">
+    <indecies>
+        <index field_name="mdr_report_key">0</index>
+        <index field_name="text_key">1</index>
+        <index field_name="text_type_code">2</index>
+	<index field_name="patient_sequence_no">3</index>
+        <index field_name="text">5</index>
+    </indecies>
+    </file>
+</files>
+</configuration>

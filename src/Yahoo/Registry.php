@@ -26,7 +26,7 @@ class Registry {
   }
 
   //--public static function registry($key) : ?string
-  public static function registry(string $key) : string // ?string
+  public static function registry(string $key) // was : string
   {
        self::init();
 

@@ -8,17 +8,29 @@ namespace Yahoo;
  */ 
 class CSVYahooEarningsFormatter implements CSVFormatter {
 
+   public function __construct() //TODO: Determine what this should be. We want it to be configuration driven.
+   {
+
+   }
+
    public function format(\SplFixedArray $row, \DateTime $date) : string    
    {
      /* 
-      * Column Header - Column No:
+      * Column order based on columns[] in yahoo.ini currently is:
       * ==================
-      * Stock - 0
-      * Name  - 1
-      * EPS Estimate - 2
-      * Reported EPS - 3
-      * Surpise (%) - 4
-      * Earnings Call Time - 5
+      * Symbol - 0
+      * Company  - 1
+      * Earnings Call Time - 2
+      * EPS Estimate - 3
+      *     
+      * Desired Output Order:     
+      * =====================    
+      *  Company column   
+      *  Symbol column  
+      *  Current Date: day and month   
+      *  Time column translated as one-letter code
+      *  EPS Estimate column
+      *  Hardcoded value of "Add"
       */    
 
      $company_name = $row[1];
@@ -27,12 +39,12 @@ class CSVYahooEarningsFormatter implements CSVFormatter {
       
      $array[1] = $row[0]; // stock symbol
 
-     $array[2] = $date->format('j-M');
+     $array[2] = $date->format('j-M'); // current DD/MM -- day and month.
 
      // Alter "Earnings Call Time" per specification.txt     
-     $array[3] = $this->convert_call_time($row[5]); // "call time"/time    
-
-     $array[4] = $row[2];  // <-- TODO: This seems missing.
+     $array[3] = $this->convert_call_time($row[2]); // "Earnings Call Time"
+     
+     $array[4] = $this->format_eps($row[3]);  // EPS Estimate 
      
      $array[] = "Add"; // Last column "Add"
 
@@ -65,4 +77,9 @@ class CSVYahooEarningsFormatter implements CSVFormatter {
        }  
        return $call_time;
    } 
+
+   private function format_eps(string $eps) : string
+   {
+      return (is_numeric($eps) == FALSE) ? "N/A" : $eps;
+   }
 }

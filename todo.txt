@@ -1,7 +1,7 @@
 TODOES
 ======
 
-I introduced a regression. The code in ~/temp, of two days ago, works. 
+Started on new .ini format for table columns. Goal: make code more configuration driven.
 
 My Comments
 -----------
