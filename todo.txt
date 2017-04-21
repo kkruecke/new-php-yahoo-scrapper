@@ -1,7 +1,10 @@
 TODOES
 ======
 
-Started on new .ini format for table columns. Goal: make code more configuration driven.
+Started on new .xml config file. Goal: make code more configuration driven. See:
+
+https://www.w3schools.com/php/php_xml_simplexml_get.asp
+https://www.sitepoint.com/parsing-xml-with-simplexml/
 
 My Comments
 -----------
