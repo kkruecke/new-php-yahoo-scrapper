@@ -1,7 +1,7 @@
 TODOES
 ======
 
-I might try using a php config file, like ~/y/config.php, and then making the code configuration driven. 
+I introduced a regression. The code in ~/temp, of two days ago, works. 
 
 My Comments
 -----------

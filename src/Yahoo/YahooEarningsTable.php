@@ -95,12 +95,12 @@ class YahooEarningsTable implements \IteratorAggregate, YahooTableInterface {
   /*
    * returns SplFixedArray of all cell text for $rowid
    */ 
-  public function getRowData(int $rowid) : \SplFixedArray
+  public function getRowData($rowid) : \SplFixedArray
   {
      $row_data = new \SplFixedArray($this->column_count); 
 
      // get DOMNode for row number $row_id
-     $rowNode =  $this->trDOMNodeList->item($row_id);
+     $rowNode =  $this->trDOMNodeList->item($rowid);
 
      // get DOMNodeList of <td></td> elemnts in the row     
      $tdNodelist = $rowNode->getElementsByTagName('td');
