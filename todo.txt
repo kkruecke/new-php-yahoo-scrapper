@@ -1,10 +1,7 @@
 TODOES
 ======
 
-Started on new .xml config file. Goal: make code more configuration driven. See:
-
-https://www.w3schools.com/php/php_xml_simplexml_get.asp
-https://www.sitepoint.com/parsing-xml-with-simplexml/
+See ~/temp/yahoo/todo.md
 
 My Comments
 -----------
