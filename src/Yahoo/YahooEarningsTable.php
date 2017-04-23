@@ -8,9 +8,9 @@ class YahooEarningsTable implements \IteratorAggregate, YahooTableInterface {
    private   $row_count;
    private   $url;
 
-   private $column_indecies;
+   private $column_indecies; // Associative array of names mapped to indecies.
 
-  public function __construct(\DateTime $date_time, array $column_names)
+  public function __construct(\DateTime $date_time, array $column_config) // TODO: Decide on a data structure for this.
   {
    /*
     * The column of the table that the external iterator should return
@@ -31,7 +31,7 @@ class YahooEarningsTable implements \IteratorAggregate, YahooTableInterface {
        
     $this->loadHTML($page);
 
-    $this->loadRowNodes($column_names);
+    $this->loadRowNodes($column_names); // TODO: Change this, too.
   }
 
   function loadRowNodes(array $column_names)
@@ -67,10 +67,10 @@ class YahooEarningsTable implements \IteratorAggregate, YahooTableInterface {
 
         if ($index !== FALSE) {
 
-             $this->column_indecies[] = $col_num;
+             $this->column_indecies[$column_names[$index]] = $col_num; 
         }
 
-        if (count($this->column_indecies) == $col_cnt)
+        if (count($this->column_indecies) == $col_cnt) 
             break;
     } 
   }
@@ -109,13 +109,13 @@ class YahooEarningsTable implements \IteratorAggregate, YahooTableInterface {
 
      $i = 0;
 
-     foreach($this->column_indecies as $index) {
+     foreach($this->column_indecies as $name => $index) {
 
          $td = $tdNodelist->item($index);     
 
          $nodeValue = trim($td->nodeValue);
         
-         $row_data[$i++] = html_entity_decode($nodeValue);
+         $row_data[$name$i++] = html_entity_decode($nodeValue);
 
      }
      return $row_data;
