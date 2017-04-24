@@ -3,10 +3,10 @@ Design
 
  The CSV file needs six columns 
 
-Col 1 - Company 
-Col 2 - Symbol 
-Col 3 - Date -- the date entered as the argument, in the form xx-yyy, where xx is the day as a digit, and yyy is the 3-letter abbrev. of the month.
-Col 4 - Time -- as a special one letter code, defined below:
+Col 0 - Company 
+Col 1 - Symbol 
+Col 2 - Date entered as the argument, in the form xx-yyy, where xx is the day as a digit, and yyy is the 3-letter abbrev. of the month.
+Col 3 - Time -- as a special one letter code, defined below:
 
 	if ( Col 4 = "After Market Close")
 		 Col4 = A
@@ -21,8 +21,8 @@ Col 4 - Time -- as a special one letter code, defined below:
 
 In order to get the entire text of the column without html, I will need to use DOMDocument methods.
  
-Col 5 - Eps Estimate
-Col 6 - PrevYr  -- a column with the string "Add"
+Col 4 - Eps Estimate
+Col 5 - PrevYr  -- a column with the string "Add"
 
 Output in  CSV format:
 Acorn International Inc, ATV, 19-Mar, B, N/A, Add

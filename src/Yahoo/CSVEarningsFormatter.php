@@ -11,7 +11,7 @@ class CSVEarningsFormatter implements CSVFormatter {
    private $output_ordering;
    private $input_ordering;
 
-   public function __construct(array $output_ordering, array $input_ordering)
+   public function __construct(array $input_ordering, array $output_ordering)
    {
        $this->output_ordering = $output_ordering;
        $this->input_ordering = $input_ordering;
@@ -43,6 +43,7 @@ class CSVEarningsFormatter implements CSVFormatter {
      print_r($this->output_ordering);
      die("ending"); 
       */
+     $output = array();  
      // Reorder input into appropriate output positions in $output
      foreach($this->output_ordering as $abbrev => $output_index) {
              
