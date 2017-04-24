@@ -58,7 +58,7 @@ class EarningsTable implements \IteratorAggregate, TableInterface {
   /*
    *  Input:
    *  $column_names = Configuration::config('column-column_names') 
-   *  $column_info  =  Configuration::config('column-info') 
+   *  $column_info  =  Configuration::config('output-ordering') 
    */ 
   private function findRelevantColumns(\DOMXPath $xpath, \DOMElement $DOMElement, $column_names, $column_info) 
   {  
@@ -84,12 +84,12 @@ class EarningsTable implements \IteratorAggregate, TableInterface {
             break;
     } 
     
-    $this->createAbbrevMapping($column_info);
+    $this->createInputOrdering($column_info);
   }
 
-  private function createAbbrevMapping(array $col_info)
+  private function createInputOrdering(array $col_info)
   {
-    $col_info = Configuration::config('column-info'); 
+    $col_info = Configuration::config('output-ordering'); 
     
     $abbrevs = array_keys($col_info);
     
@@ -99,7 +99,7 @@ class EarningsTable implements \IteratorAggregate, TableInterface {
     }
   }
 
-  public function getAbbrevMapping() : array
+  public function getInputOrdering() : array
   {
     return $this->abbrev_mapping;
   }

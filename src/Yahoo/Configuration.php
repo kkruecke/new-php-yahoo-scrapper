@@ -10,6 +10,14 @@ class Configuration {
       self::init();
    }
 
+   public static function debug()
+   {
+      self::init(); 
+      echo "Dumping Configuration settings:\n";
+      var_dump(self::$config_);
+      echo "\n";
+   }
+
    private static function init()
    {
      if (isset(self::$config_)) return;	  
@@ -31,7 +39,7 @@ class Configuration {
      self::$config_['help'] = (string) $xml->help;
      self::$config_['url'] = (string) $xml->url;
      self::$config_['column-names'] = $names;
-     self::$config_['column-info'] = $abbrevs;
+     self::$config_['output-ordering'] = $abbrevs;
    }
 
    public static function setConfig(string $key, array $value) 

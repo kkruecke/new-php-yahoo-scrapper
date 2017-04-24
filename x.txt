@@ -1,0 +1,64 @@
+SplFixedArray Object
+(
+    [0] => AOS
+    [1] => A. O. Smith Corp
+    [2] => Before Market Open
+    [3] => 0.47
+)
+
+Dumping Abbreviation mapping to row indecies:
+array(4) {    This is the input ordering
+  'sym' =>
+  int(0)
+  'co' =>
+  int(1)
+  'time' =>
+  int(2)
+  'eps' =>
+  int(3)
+}
+'output-ordering' =>  This is the output ordering-
+  array(4) {
+    'sym' =>
+    int(1)
+    'co' =>
+    int(0)
+    'time' =>
+    int(3)
+    'eps' =>
+    int(4)
+  }
+
+Array
+(
+    [sym] => 0
+    [co] => 1
+    [time] => 2
+    [eps] => 3
+)
+
+
+Dumping Configuration settings:
+  'column-names' =>
+  array(4) {
+    [0] =>
+    string(6) "Symbol"
+    [1] =>
+    string(7) "Company"
+    [2] =>
+    string(18) "Earnings Call Time"
+    [3] =>
+    string(12) "EPS Estimate"
+  }
+  'output-ordering' =>     This is the output ordering--right??
+  array(4) {
+    'sym' =>
+    int(1)
+    'co' =>
+    int(0)
+    'time' =>
+    int(3)
+    'eps' =>
+    int(4)
+  }
+ending

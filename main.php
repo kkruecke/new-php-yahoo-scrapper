@@ -50,12 +50,18 @@ function displayException(\Exception $e)
       }
       
       try {
-          
-          $table = new EarningsTable($date_time, Configuration::config('column-names'), Configuration::config('column-info')); 
 
-          $abbrev_2_indecies = $table->getAbbrevMapping(); 
+          $output_ordering =  Configuration::config('output-ordering');
+
+          $table = new EarningsTable($date_time, Configuration::config('column-names'), $output_ordering); 
+
+          $abbrev_2_indecies = $table->getInputOrdering(); 
+
+          //--echo "Dumping Abbreviation mapping to row indecies:\n";
+          //--var_dump($abbrev_2_indecies);
+          echo "\n";
         
-          $csv_writer = new CSVWriter($output_file_name, new CSVEarningsFormatter($abbrev_2_indecies)); 
+          $csv_writer = new CSVWriter($output_file_name, new CSVEarningsFormatter($abbrev_2_indecies, $output_ordering)); 
           
           // CustomStockFilterIterator needs the index (in the row array returned from the table iterator) that contains the stock symbol.
 	  $filterIter = new CustomStockFilterIterator($table->getIterator(), $abbrev_2_indecies['sym']); 

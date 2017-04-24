@@ -8,11 +8,14 @@ namespace Yahoo;
  */ 
 class CSVEarningsFormatter implements CSVFormatter {
 
-   private $column_info;
+   private $output_ordering;
+   private $input_ordering;
 
-   public function __construct(array $column_info)
+   public function __construct(array $output_ordering, array $input_ordering)
    {
-       $this->column_info = $column_info;
+       $this->output_ordering = $output_ordering;
+       $this->input_ordering = $input_ordering;
+       //--Configuration::debug();  
    }
 
    public function format(\SplFixedArray $row, \DateTime $date) : string    
@@ -33,45 +36,48 @@ class CSVEarningsFormatter implements CSVFormatter {
       *  Time column translated as one-letter code
       *  EPS Estimate column
       *  Hardcoded value of "Add"
-      */    
+      */
+    
+     /*
      print_r($row);
-     print_r($this->column_info);
-      
-     foreach($this->column_info as $abbrev => $input_column) {
-
-        $temp =  $row[$input_column];  
-
-        // Bug?: we need to place them in $array[xxx], where xxxx is output="xxx"; for example,
-        // <column abbrev="sym" output="1">Symbol</column>
-        // Are we missing abbrev-to-input??? Rethink what is actually needed.
-        switch ($abbrev) {
-
-           case 'co':
-                $array[0] = str_replace(',', "", $temp);  
-                break;
-      
-           case 'sym':
-               $array[1] = $temp;
-               break;
-
-           case 'eps':
-               $array[4] = $this->format_eps($temp);  // EPS Estimate 
-               break; 
-
-           case 'time': 
-              // Alter "Earnings Call Time" per specification.txt     
-              $array[3] = $this->convert_call_time($temp); // "Earnings Call Time"
-              break;
-       }
+     print_r($this->output_ordering);
+     die("ending"); 
+      */
+     // Reorder input into appropriate output positions in $output
+     foreach($this->output_ordering as $abbrev => $output_index) {
+             
+             $output[ $output_index ] = $this->modify_input($row[ $this->input_ordering[$abbrev] ], $abbrev);
      }
      
-     $array[2] = $date->format('j-M'); // current DD/MM -- day and month.
+     $output[2] = $date->format('j-M'); // current DD/MM -- day and month.
 
-     $array[] = "Add"; // Last column "Add"
+     $output[] = "Add"; // Last column "Add"
 
-     $csv_str = implode(",", $array);
+     $csv_str = implode(",", $output);
 
      return $csv_str;
+   }
+
+   private function modify_input($input, $abbrev)
+   {
+      switch ($abbrev) {
+
+          case 'co':
+               return str_replace(',', "", $input);  
+               break;
+      
+          case 'eps':
+              return $this->format_eps($input);  // EPS Estimate 
+              break; 
+
+          case 'time': 
+             return $this->convert_call_time($input); // "Earnings Call Time"
+             break;
+
+          default:
+              return $input;
+              break;
+      }
    }
 
    private function convert_call_time(string $call_time) : string
