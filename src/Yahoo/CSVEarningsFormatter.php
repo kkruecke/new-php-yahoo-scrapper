@@ -42,7 +42,9 @@ class CSVEarningsFormatter implements CSVFormatter {
      print_r($this->output_ordering);
      die("ending"); 
       */
-     $output = array();  
+     $size = count($this->output_ordering) + 2;  
+     $output = new \SplFixedArray($size);
+     
      // Reorder input into appropriate output positions in $output
      foreach($this->output_ordering as $abbrev => $output_index) {
              
@@ -51,10 +53,18 @@ class CSVEarningsFormatter implements CSVFormatter {
      
      $output[2] = $date->format('j-M'); // current DD/MM -- day and month.
 
-     $output[] = "Add"; // Last column "Add"
+     $output[$size - 1] = "Add"; // Last column "Add"
 
-     $csv_str = implode(",", $output);
-
+     $csv_str = '';
+     // implode the fixed array
+     $i = 0;
+     while($i < $size) {
+         
+         $csv_str .= $output[$i++];
+         if ($i == $size) break;
+         $csv_str .= ',';    
+     }
+     
      return $csv_str;
    }
 
