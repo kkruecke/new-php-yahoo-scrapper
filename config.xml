@@ -5,7 +5,7 @@
   <columns>
     <column abbrev="sym"  output="1">Symbol</column>
     <column abbrev="co"   output="0">Company</column>
-    <column abbrev="time" output="3">Earnings Call time</column>
+    <column abbrev="time" output="3">Earnings Call Time</column>
     <column abbrev="eps"  output="4">EPS Estimate</column>
   </columns>
 </configuration>

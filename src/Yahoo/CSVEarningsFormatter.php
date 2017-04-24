@@ -6,11 +6,13 @@ namespace Yahoo;
  * Should this be an Abstract class or an Interface since we don't need an implementation.
  * Interface seems the best choice.
  */ 
-class CSVYahooEarningsFormatter implements CSVFormatter {
+class CSVEarningsFormatter implements CSVFormatter {
 
-   public function __construct() //TODO: Determine what this should be. We want it to be configuration driven.
+   private $column_info;
+
+   public function __construct(array $column_info)
    {
-
+       $this->column_info = $column_info;
    }
 
    public function format(\SplFixedArray $row, \DateTime $date) : string    
@@ -32,20 +34,39 @@ class CSVYahooEarningsFormatter implements CSVFormatter {
       *  EPS Estimate column
       *  Hardcoded value of "Add"
       */    
-
-     $company_name = $row[1];
-     
-     $array[0] = str_replace(',', "", $company_name);  // company name
+     print_r($row);
+     print_r($this->column_info);
       
-     $array[1] = $row[0]; // stock symbol
+     foreach($this->column_info as $abbrev => $input_column) {
 
+        $temp =  $row[$input_column];  
+
+        // Bug?: we need to place them in $array[xxx], where xxxx is output="xxx"; for example,
+        // <column abbrev="sym" output="1">Symbol</column>
+        // Are we missing abbrev-to-input??? Rethink what is actually needed.
+        switch ($abbrev) {
+
+           case 'co':
+                $array[0] = str_replace(',', "", $temp);  
+                break;
+      
+           case 'sym':
+               $array[1] = $temp;
+               break;
+
+           case 'eps':
+               $array[4] = $this->format_eps($temp);  // EPS Estimate 
+               break; 
+
+           case 'time': 
+              // Alter "Earnings Call Time" per specification.txt     
+              $array[3] = $this->convert_call_time($temp); // "Earnings Call Time"
+              break;
+       }
+     }
+     
      $array[2] = $date->format('j-M'); // current DD/MM -- day and month.
 
-     // Alter "Earnings Call Time" per specification.txt     
-     $array[3] = $this->convert_call_time($row[2]); // "Earnings Call Time"
-     
-     $array[4] = $this->format_eps($row[3]);  // EPS Estimate 
-     
      $array[] = "Add"; // Last column "Add"
 
      $csv_str = implode(",", $array);

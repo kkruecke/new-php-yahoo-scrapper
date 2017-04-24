@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 namespace Yahoo;
 
-class YahooEarningsTableIterator implements  \SeekableIterator {
+class EarningsTableIterator implements  \SeekableIterator {
 
   protected   $html_table;  // YahooTable
   protected   $current_row; // int
@@ -10,7 +10,7 @@ class YahooEarningsTableIterator implements  \SeekableIterator {
   /*
    * Parameters: range of columns to return from each row.
    */
-  public function __construct(YahooEarningsTable $htmltable) //, int $tbl_begin_column, int $tbl_end_column)
+  public function __construct(EarningsTable $htmltable) //, int $tbl_begin_column, int $tbl_end_column)
   {
      $this->html_table = $htmltable;
      

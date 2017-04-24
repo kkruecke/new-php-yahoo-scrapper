@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-use Yahoo\{CSVWriter, CSVYahooEarningsFormatter, YahooEarningsTable, CustomStockFilterIterator, Registry};
+use Yahoo\{CSVWriter, CSVEarningsFormatter, EarningsTable, CustomStockFilterIterator, Configuration};
 
 require_once("utility.php");
 
@@ -23,10 +23,11 @@ function displayException(\Exception $e)
 
   $error_msg = '';
 
+
   if (validate_user_input($argc, $argv, $error_msg) == false) {
 
        echo $error_msg . "\n";
-       echo Registry::registry('help') . "\n"; 
+       echo Configuration::config('help') . "\n"; 
        return;
   }
 
@@ -35,37 +36,29 @@ function displayException(\Exception $e)
   $date_period = build_date_period($start_date, intval($argv[2])); 
 
   /*
-   * CSVYahooEarningsFormatter determines the format of the output, the rows of the CSV file.
+   * CSVEarningsFormatter determines the format of the output, the rows of the CSV file.
    */  
   $output_file_name = $start_date->format('jmY') . "-plus-" . intval($argv[2]) . ".csv";
-    
-  $csv_writer = new CSVWriter($output_file_name, new CSVYahooEarningsFormatter()); 
-
+  
   // loop over each day in the DatePeriod.
   foreach ($date_period as $date_time) {
       
-      if (YahooEarningsTable::page_exists($date_time) == false) {
+      if (EarningsTable::page_exists($date_time) == false) {
           
            echo "Page $url does not exist, therefore no .csv file for $friendly_date can be created.\n";               
            continue;    
       }
       
       try {
+          
+          $table = new EarningsTable($date_time, Configuration::config('column-names'), Configuration::config('column-info')); 
 
-          $column_names = Registry::registry('columns');
-
-          $table = new YahooEarningsTable($date_time, $column_names);
-
-	  /*
-	   * The filter iterator should include all the filters of the original code:
-	   *   1. no column may be blank
-	   *   2. only US Stocks are selected
-	   *
-	   * Alternately, a custom callback filter iterator could be used like so: 
-	   * $callbackFilterIter = new \CallbackFilterIterator($rowExtractorIter, 'isUSStock_callback');
-
-	   */   
-	  $filterIter = new CustomStockFilterIterator($table->getIterator(), (int) Registry::registry('stock-symbol-column'));
+          $abbrev_2_indecies = $table->getAbbrevMapping(); 
+        
+          $csv_writer = new CSVWriter($output_file_name, new CSVEarningsFormatter($abbrev_2_indecies)); 
+          
+          // CustomStockFilterIterator needs the index (in the row array returned from the table iterator) that contains the stock symbol.
+	  $filterIter = new CustomStockFilterIterator($table->getIterator(), $abbrev_2_indecies['sym']); 
      
           foreach($filterIter as $key => $stock_row) {
 

@@ -1,16 +1,18 @@
 <?php declare(strict_types=1);	
 namespace Yahoo;
 
-class YahooEarningsTable implements \IteratorAggregate, YahooTableInterface {
+class EarningsTable implements \IteratorAggregate, TableInterface {
 
+   // TODO: Return an asso. array indexed by the abbreviation.????
    private   $dom;	
    private   $trDOMNodeList;
    private   $row_count;
    private   $url;
 
-   private $column_indecies;
+   private $input_column_indecies; // Associative array of names mapped to indecies.
+   private $abbrev_mapping = array();
 
-  public function __construct(\DateTime $date_time, array $column_names)
+  public function __construct(\DateTime $date_time, array $column_names, array $column_info) 
   {
    /*
     * The column of the table that the external iterator should return
@@ -31,10 +33,10 @@ class YahooEarningsTable implements \IteratorAggregate, YahooTableInterface {
        
     $this->loadHTML($page);
 
-    $this->loadRowNodes($column_names);
+    $this->loadRowNodes($column_names, $column_info); 
   }
 
-  function loadRowNodes(array $column_names)
+  function loadRowNodes(array $column_names, array $column_info)
   {
       $xpath = new \DOMXPath($this->dom);
             
@@ -50,32 +52,58 @@ class YahooEarningsTable implements \IteratorAggregate, YahooTableInterface {
 
       $childNodes = $this->getChildNodes($nodeList);
  
-      $this->findRelevantColumns($column_names, $xpath, $tblElement);
+      $this->findRelevantColumns($xpath, $tblElement, $column_names, $column_info);
   } 
-   
-  private function findRelevantColumns(array $column_names, \DOMXPath $xpath, \DOMElement $DOMElement) 
-  { 
+
+  /*
+   *  Input:
+   *  $column_names = Configuration::config('column-column_names') 
+   *  $column_info  =  Configuration::config('column-info') 
+   */ 
+  private function findRelevantColumns(\DOMXPath $xpath, \DOMElement $DOMElement, $column_names, $column_info) 
+  {  
      $col_cnt = count($column_names);
 
      $thNodelist = $xpath->query("thead/tr/th", $DOMElement);
 
+     $arr = array();
+     
      for ($col_num = 0; $col_num < $thNodelist->length; ++$col_num) {
 
         $thNode = $thNodelist->item($col_num);
+        
+        $index = array_search($thNode->nodeValue, $column_names); 
+                
+        if ($index === FALSE) {
+             continue; 
+         } 
+         
+        $this->input_column_indecies[] = $col_num; 
 
-        $index = array_search($thNode->nodeValue, $column_names);
-
-        if ($index !== FALSE) {
-
-             $this->column_indecies[] = $col_num;
-             $this->column_indecies2[$column_names[$index]] = $col_num;
-        }
-
-        if (count($this->column_indecies) == $col_cnt) // TODO: Change
+        if (count($this->input_column_indecies) == $col_cnt) 
             break;
     } 
+    
+    $this->createAbbrevMapping($column_info);
   }
-  
+
+  private function createAbbrevMapping(array $col_info)
+  {
+    $col_info = Configuration::config('column-info'); 
+    
+    $abbrevs = array_keys($col_info);
+    
+    for($i = 0; $i < count($col_info); ++$i) { // we ignore output_input
+      
+      $this->abbrev_mapping[$abbrevs[$i]] = $this->input_column_indecies[$i];
+    }
+  }
+
+  public function getAbbrevMapping() : array
+  {
+    return $this->abbrev_mapping;
+  }
+   
   function getChildNodes(\DOMNodeList $NodeList)  : \DOMNodeList // This might not be of use.
   {
       if ($NodeList->length != 1) { 
@@ -96,11 +124,11 @@ class YahooEarningsTable implements \IteratorAggregate, YahooTableInterface {
   }
 
   /*
-   * returns SplFixedArray of all text for the columns indexed by $this->column_indecies in row number $row_num
+   * returns SplFixedArray of all text for the columns indexed by $this->input_column_indecies in row number $row_num
    */ 
   public function getRowData($row_num) : \SplFixedArray
   {
-     $row_data = new \SplFixedArray(count($this->column_indecies));
+     $row_data = new \SplFixedArray(count($this->input_column_indecies));
  
      // get DOMNode for row number $row_id
      $rowNode =  $this->trDOMNodeList->item($row_num);
@@ -110,7 +138,7 @@ class YahooEarningsTable implements \IteratorAggregate, YahooTableInterface {
 
      $i = 0;
 
-     foreach($this->column_indecies as $index) {
+     foreach($this->input_column_indecies as $index) {
 
          $td = $tdNodelist->item($index);     
 
@@ -159,7 +187,8 @@ class YahooEarningsTable implements \IteratorAggregate, YahooTableInterface {
 
   static private function make_url(\DateTime $date_time) : string
   {
-        return Registry::registry('url-path') . '?day=' . $date_time->format('Y-m-d');
+        //--return Registry::registry('url-path') . '?day=' . $date_time->format('Y-m-d');
+        return Configuration::config('url') . '?day=' . $date_time->format('Y-m-d');
   }
 
   private function get_html_file(string $url) : string
@@ -187,9 +216,9 @@ class YahooEarningsTable implements \IteratorAggregate, YahooTableInterface {
   /*
   * Return external iterator, passing the range of columns requested.
   */ 
-  public function getIterator() : \Yahoo\YahooEarningsTableIterator
+  public function getIterator() : \Yahoo\EarningsTableIterator
   {
-     return new YahooEarningsTableIterator($this);
+     return new EarningsTableIterator($this);
   }
 
   public function row_count() : int
@@ -199,6 +228,6 @@ class YahooEarningsTable implements \IteratorAggregate, YahooTableInterface {
 
   public function column_count() : int
   {
-     return count($this->column_indecies);
+     return count($this->input_column_indecies);
   }
 } 

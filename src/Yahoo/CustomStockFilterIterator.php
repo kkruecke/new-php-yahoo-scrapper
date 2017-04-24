@@ -25,7 +25,6 @@ class CustomStockFilterIterator extends \FilterIterator {
 			return false;
 		}
 	}
-
         
         /*
 	 * Further criteria: We only want US Stocks

@@ -3,33 +3,51 @@ namespace Yahoo;
 
 class Configuration {
 
-   private $config = array();
+   private static $config_;
 
-   public function __construct($ini_fname)
+   public function __construct()
    {
-      libxml_use_internal_errors();
-
-      $xml = simplexml_load_file($ini_fname); 
-
-      $columns = array();
-
-      foreach($xml->columns->column as $column) {
-
-         $inner = array();
-
-         $inner[ (string) $column{'abbrev'}] = (integer) $column{'output'};
-
-         $columns[ (string) $column] = $inner;
-      }
-
-      $this->config['columns'] = $columns;   
-      $this->config['help'] = (string) $xml->help;
-      $this->config['url'] = (string) $xml->url;
+      self::init();
    }
 
-   public function setInputColumn(string $name) 
+   private static function init()
    {
-       // Alter $this->columns[$name], adding input column somehow. 
+     if (isset(self::$config_)) return;	  
+
+     libxml_use_internal_errors();
+
+     $xml = simplexml_load_file("config.xml"); 
+
+     $names = array();
+     $abbrevs = array();
+
+     foreach($xml->columns->column as $column) {
+
+        $names[] = (string) $column;
+
+        $abbrevs[(string) $column{'abbrev'}] = (integer) $column{'output'};
+     }
+
+     self::$config_['help'] = (string) $xml->help;
+     self::$config_['url'] = (string) $xml->url;
+     self::$config_['column-names'] = $names;
+     self::$config_['column-info'] = $abbrevs;
    }
-  
+
+   public static function setConfig(string $key, array $value) 
+   {
+       self::$config_[$key] = $value;
+   }
+   
+   public static function getConfig()
+   {
+       self::init();
+       return self::$config_;
+   }
+   
+   public static function config(string $index) // returns either string or array
+   {
+      self::init();
+      return self::$config_[$index];
+   }
 };
