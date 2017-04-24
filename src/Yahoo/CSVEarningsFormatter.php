@@ -15,7 +15,6 @@ class CSVEarningsFormatter implements CSVFormatter {
    {
        $this->output_ordering = $output_ordering;
        $this->input_ordering = $input_ordering;
-       //--Configuration::debug();  
    }
 
    public function format(\SplFixedArray $row, \DateTime $date) : string    

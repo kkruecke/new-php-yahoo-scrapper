@@ -10,9 +10,9 @@ class EarningsTable implements \IteratorAggregate, TableInterface {
    private   $url;
 
    private $input_column_indecies; // Associative array of names mapped to indecies.
-   private $abbrev_mapping = array();
+   private $input_ordering = array();
 
-  public function __construct(\DateTime $date_time, array $column_names, array $column_info) 
+  public function __construct(\DateTime $date_time, array $column_names, array $output_ordering) 
   {
    /*
     * The column of the table that the external iterator should return
@@ -33,34 +33,43 @@ class EarningsTable implements \IteratorAggregate, TableInterface {
        
     $this->loadHTML($page);
 
-    $this->loadRowNodes($column_names, $column_info); 
+    $this->loadRowNodes($column_names, $output_ordering); 
   }
 
-  function loadRowNodes(array $column_names, array $column_info)
+  function loadRowNodes(array $column_names, array $output_ordering)
   {
       $xpath = new \DOMXPath($this->dom);
             
       $nodeList = $xpath->query("(//table)[2]");
+      
+      if ($nodeList->length == 0) { // Table was not found.
+          
+          $this->row_count = 0;
+
+          // set some default values since there is no table on the page.
+          $total = count($output_ordering);
+ 
+          $this->input_ordering = array_combine(array_keys($output_ordering), range(0, $total - 1));
+          return;
+      }
 
       $tblElement = $nodeList->item(0);
 
       $nodeList = $xpath->query("tbody", $tblElement);
 
       $this->trDOMNodeList = $this->getChildNodes($nodeList);
+      
+      $this->row_count = $this->trDOMNodeList->length;
 
-      $nodeList = $xpath->query("thead/tr", $tblElement);
-
-      $childNodes = $this->getChildNodes($nodeList);
- 
-      $this->findRelevantColumns($xpath, $tblElement, $column_names, $column_info);
+      $this->findRelevantColumns($xpath, $tblElement, $column_names, $output_ordering);
   } 
 
   /*
    *  Input:
    *  $column_names = Configuration::config('column-column_names') 
-   *  $column_info  =  Configuration::config('output-ordering') 
+   *  $output_ordering  =  Configuration::config('output-ordering') 
    */ 
-  private function findRelevantColumns(\DOMXPath $xpath, \DOMElement $DOMElement, $column_names, $column_info) 
+  private function findRelevantColumns(\DOMXPath $xpath, \DOMElement $DOMElement, $column_names, $output_ordering) 
   {  
      $col_cnt = count($column_names);
 
@@ -84,24 +93,22 @@ class EarningsTable implements \IteratorAggregate, TableInterface {
             break;
     } 
     
-    $this->createInputOrdering($column_info);
+    $this->createInputOrdering($output_ordering);
   }
-
-  private function createInputOrdering(array $col_info)
+  
+  private function createInputOrdering(array $output_ordering)
   {
-    $col_info = Configuration::config('output-ordering'); 
+     $abbrevs = array_keys($output_ordering);
     
-    $abbrevs = array_keys($col_info);
-    
-    for($i = 0; $i < count($col_info); ++$i) { // we ignore output_input
+    for($i = 0; $i < count($abbrevs); ++$i) { // we ignore output_input
       
-      $this->abbrev_mapping[$abbrevs[$i]] = $this->input_column_indecies[$i];
+       $this->input_ordering[$abbrevs[$i]] = $this->input_column_indecies[$i];
     }
   }
 
   public function getInputOrdering() : array
   {
-    return $this->abbrev_mapping;
+    return $this->input_ordering;
   }
    
   function getChildNodes(\DOMNodeList $NodeList)  : \DOMNodeList // This might not be of use.
@@ -187,7 +194,6 @@ class EarningsTable implements \IteratorAggregate, TableInterface {
 
   static private function make_url(\DateTime $date_time) : string
   {
-        //--return Registry::registry('url-path') . '?day=' . $date_time->format('Y-m-d');
         return Configuration::config('url') . '?day=' . $date_time->format('Y-m-d');
   }
 
@@ -223,7 +229,7 @@ class EarningsTable implements \IteratorAggregate, TableInterface {
 
   public function row_count() : int
   {
-     return $this->trDOMNodeList->length;
+     return $this->row_count;
   } 
 
   public function column_count() : int

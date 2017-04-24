@@ -39,6 +39,8 @@ class CustomStockFilterIterator extends \FilterIterator {
           1. Between 1 and 5 characters in length.
           2. Must be only a-z and/or A-Z--no numbers, no dots.
          */ 
-        return  preg_match("/^[a-zA-Z]{1,5}$/", $symbol) ? true : false;
+        $rc = preg_match("/^[a-zA-Z]{1,5}$/", $symbol) ? true : false;
+        
+        return $rc;
     }
 }

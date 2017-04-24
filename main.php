@@ -54,25 +54,22 @@ function displayException(\Exception $e)
           $output_ordering =  Configuration::config('output-ordering');
 
           $table = new EarningsTable($date_time, Configuration::config('column-names'), $output_ordering); 
+          
+          $table_stock_cnt = $table->row_count();
 
-          $abbrev_2_indecies = $table->getInputOrdering(); 
+          $input_ordering = $table->getInputOrdering(); 
 
-          //--echo "Dumping Abbreviation mapping to row indecies:\n";
-          //--var_dump($abbrev_2_indecies);
-          echo "\n";
-        
-          $csv_writer = new CSVWriter($output_file_name, new CSVEarningsFormatter($abbrev_2_indecies, $output_ordering)); 
+          $csv_writer = new CSVWriter($output_file_name, new CSVEarningsFormatter($input_ordering, $output_ordering)); 
           
           // CustomStockFilterIterator needs the index (in the row array returned from the table iterator) that contains the stock symbol.
-	  $filterIter = new CustomStockFilterIterator($table->getIterator(), $abbrev_2_indecies['sym']); 
-     
+	  $filterIter = new CustomStockFilterIterator($table->getIterator(), $input_ordering['sym']); 
+    
           foreach($filterIter as $key => $stock_row) {
 
                $csv_writer->writeLine($stock_row, $date_time); 
 	  }
-          
-	  echo $date_time->format("m-d-Y") . " processed\n";
 
+          display_progress($date_time, $table->row_count(), $csv_writer->getLineCount()); 
   
       } catch(\Exception $e) {
          
@@ -86,4 +83,7 @@ function displayException(\Exception $e)
   echo  $csv_writer->getFileName() . " has been created. It contains $line_count US stocks entries.\n";
     
   return;
-
+function display_progress(\DateTime $date_time, int $table_stock_cnt, int $lines_written)
+{
+  echo $date_time->format("m-d-Y") . " earnings table contained $table_stock_cnt stocks. {$lines_written} met the filter criteria and were written.\n";
+}
