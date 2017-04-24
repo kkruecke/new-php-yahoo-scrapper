@@ -80,5 +80,5 @@ function displayException(\Exception $e)
 
 function display_progress(\DateTime $date_time, int $table_stock_cnt, int $lines_written)
 {
-  echo $date_time->format("m-d-Y") . " earnings table contained $table_stock_cnt stocks. {$lines_written} met the filter criteria and were written.\n";
+  echo $date_time->format("m-d-Y") . " earnings table contained $table_stock_cnt stocks. {$lines_written} stocks met the filter criteria and were written.\n";
 }
