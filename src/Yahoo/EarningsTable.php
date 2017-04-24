@@ -3,14 +3,13 @@ namespace Yahoo;
 
 class EarningsTable implements \IteratorAggregate, TableInterface {
 
-   // TODO: Return an asso. array indexed by the abbreviation.????
    private   $dom;	
    private   $trDOMNodeList;
    private   $row_count;
    private   $url;
 
-   private $input_column_indecies; // Associative array of names mapped to indecies.
-   private $input_ordering = array();
+   private $input_column_indecies;   // indecies of column names ordered in those names appear in config.xml  
+   private $input_ordering = array();// Associative array of abbreviations mapped to indecies indicating their location in the table.
 
   public function __construct(\DateTime $date_time, array $column_names, array $output_ordering) 
   {
