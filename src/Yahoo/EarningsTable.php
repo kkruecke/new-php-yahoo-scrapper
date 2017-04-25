@@ -61,7 +61,7 @@ class EarningsTable implements \IteratorAggregate, TableInterface {
       
       $this->row_count = $this->trDOMNodeList->length;
 
-      $this->findColumns($xpath, $tblElement, $column_names, $output_ordering);
+      $this->findColumnIndecies($xpath, $tblElement, $column_names, $output_ordering);
     
       $this->createInputOrdering($output_ordering);
   } 
@@ -71,7 +71,7 @@ class EarningsTable implements \IteratorAggregate, TableInterface {
    *  $column_names = Configuration::config('column-column_names') 
    *  $output_ordering  =  Configuration::config('output-ordering') 
    */ 
-  private function findColumns(\DOMXPath $xpath, \DOMElement $DOMElement, $column_names, $output_ordering) 
+  private function findColumnIndecies(\DOMXPath $xpath, \DOMElement $DOMElement, $column_names, $output_ordering) 
   {  
      $config_col_cnt = count($column_names);
 
