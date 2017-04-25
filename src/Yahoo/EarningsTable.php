@@ -114,9 +114,18 @@ class EarningsTable implements \IteratorAggregate, TableInterface {
     }
   }
 
-  public function getInputOrdering() : array
+  public function getInputOrder() : array
   {
     return $this->input_ordering;
+  }
+  /*
+    Input: abbrev from confg.xml
+    Output: Its index in the returned getRowData() 
+   */
+  public function getRowDataIndex(string $abbrev) : int
+  {
+    // If it is a valid $abbrev, return its index.  
+    return array_search($abbrev, $this->input_ordering) !== false ? $this->input_ordering[$abbrev] : false;
   }
    
   function getChildNodes(\DOMNodeList $NodeList)  : \DOMNodeList // This might not be of use.

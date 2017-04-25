@@ -52,11 +52,9 @@ function displayException(\Exception $e)
 
           $table = new EarningsTable($date_time, Configuration::config('column-names'), Configuration::config('output-ordering')); 
           
-          $input_ordering = $table->getInputOrdering(); 
-
-          $csv_writer = new CSVWriter($output_file_name, new CSVEarningsFormatter($input_ordering, Configuration::config('output-ordering'))); 
+          $csv_writer = new CSVWriter($output_file_name, new CSVEarningsFormatter($table->getInputOrder(), Configuration::config('output-ordering'))); 
           
-	  $filterIter = new CustomStockFilterIterator($table->getIterator(), $input_ordering['sym']); 
+	  $filterIter = new CustomStockFilterIterator($table->getIterator(), $table->getRowDataIndex('sym')); 
     
           foreach($filterIter as $key => $stock_row) {
 
