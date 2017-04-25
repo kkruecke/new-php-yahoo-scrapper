@@ -42,7 +42,8 @@ class EarningsTable implements \IteratorAggregate, TableInterface {
       $nodeList = $xpath->query("(//table)[2]");
       
       if ($nodeList->length == 0) { // Table was not found.
-          
+
+          // Set default values if there is no data on the page          
           $this->row_count = 0;
 
           // set some default values since there is no table on the page.
@@ -54,13 +55,15 @@ class EarningsTable implements \IteratorAggregate, TableInterface {
 
       $tblElement = $nodeList->item(0);
 
-      $nodeList = $xpath->query("tbody", $tblElement);
+      //--$nodeList = $xpath->query("tbody", $tblElement);
 
-      $this->trDOMNodeList = $this->getChildNodes($nodeList);
+      $this->trDOMNodeList = $this->getChildNodes($xpath->query("tbody", $tblElement)); //--$nodeList);
       
       $this->row_count = $this->trDOMNodeList->length;
 
-      $this->findRelevantColumns($xpath, $tblElement, $column_names, $output_ordering);
+      $this->findColumns($xpath, $tblElement, $column_names, $output_ordering);
+    
+      $this->createInputOrdering($output_ordering);
   } 
 
   /*
@@ -68,31 +71,37 @@ class EarningsTable implements \IteratorAggregate, TableInterface {
    *  $column_names = Configuration::config('column-column_names') 
    *  $output_ordering  =  Configuration::config('output-ordering') 
    */ 
-  private function findRelevantColumns(\DOMXPath $xpath, \DOMElement $DOMElement, $column_names, $output_ordering) 
+  private function findColumns(\DOMXPath $xpath, \DOMElement $DOMElement, $column_names, $output_ordering) 
   {  
-     $col_cnt = count($column_names);
+     $config_col_cnt = count($column_names);
 
      $thNodelist = $xpath->query("thead/tr/th", $DOMElement);
 
      $arr = array();
      
-     for ($col_num = 0; $col_num < $thNodelist->length; ++$col_num) {
-
+     $col_num = 0; 
+     
+     do {
+ 
         $thNode = $thNodelist->item($col_num);
         
         $index = array_search($thNode->nodeValue, $column_names); 
                 
-        if ($index === FALSE) {
-             continue; 
-         } 
-         
-        $this->input_column_indecies[] = $col_num; 
+        if ($index !== FALSE) {
+            
+            $this->input_column_indecies[] = $col_num; 
+        } 
 
-        if (count($this->input_column_indecies) == $col_cnt) 
-            break;
-    } 
-    
-    $this->createInputOrdering($output_ordering);
+        if (++$col_num == $thNodelist->length) { // If no more columns to examine...
+            
+            if (count($this->input_column_indecies) != $config_col_cnt) { // ... if we didn't find all the $column_names
+                
+                throw new Exception("One or more column names specificied in config.xml were not found in the earning's table's column headers.");
+            }
+            break;    
+        }
+        
+     } while(count($this->input_column_indecies) < $config_col_cnt);
   }
   
   private function createInputOrdering(array $output_ordering)
