@@ -8,7 +8,7 @@ class CSVWriter {
   private $line_count;
   private $formatter;
   
-  public function __construct($file_name, CSVFormatter $formatter)
+  public function __construct($file_name, CSVFormatter $formatter, string $open_mode)
   {
     $this->file_name = $file_name;	  
 
@@ -18,7 +18,7 @@ class CSVWriter {
     */
     $this->formatter = $formatter;
                 
-    $this->splfile = new \SplFileObject($file_name, "w");
+    $this->splfile = new \SplFileObject($file_name, $open_mode);
 
     $this->splfile->setFlags(\SplFileObject::READ_AHEAD | \SplFileObject::SKIP_EMPTY);
        

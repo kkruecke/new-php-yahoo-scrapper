@@ -43,7 +43,7 @@ require_once("utility.php");
           $table = new EarningsTable($date_time, Configuration::config('column-names'), Configuration::config('output-order')); 
          
           // BUG: Opening file every time.
-          $csv_writer = new CSVWriter($output_file_name, new CSVEarningsFormatter($table->getInputOrder(), Configuration::config('output-order'))); 
+          $csv_writer = new CSVWriter($output_file_name, new CSVEarningsFormatter($table->getInputOrder(), Configuration::config('output-order')), 'a'); 
           
 	  $filterIter = new CustomStockFilterIterator($table->getIterator(), $table->getRowDataIndex('sym')); 
     
