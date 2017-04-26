@@ -69,7 +69,7 @@ class EarningsTable implements \IteratorAggregate, TableInterface {
   /*
    *  Input:
    *  $column_names = Configuration::config('column-column_names') 
-   *  $output_ordering  =  Configuration::config('output-ordering') 
+   *  $output_ordering  =  Configuration::config('output-order') 
    */ 
   private function findColumnIndecies(\DOMXPath $xpath, \DOMElement $DOMElement, $column_names, $output_ordering) 
   {  

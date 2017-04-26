@@ -12,6 +12,16 @@ function boot_strap()
  $spl_loader->register();
 }
 
+function displayException(\Exception $e)
+{
+  $msg = "\nError occurred processing page. Exception information below:\n";
+          
+  $msg .= $e->getMessage() . "\n\n";
+  echo $msg;
+  echo $e->getTraceAsString() . "\n\n";
+}
+
+
 /*
  * Input: $argc, $argv, reference to $error_msg string to return
  * Returns: boolean: true if input good, false otherwise.
@@ -72,6 +82,10 @@ function  build_date_period(\DateTime $start_date, int $number_of_days) : \DateP
   return $date_period;
 }
 
+function build_output_fname(\DateTime $start_date, int $days)
+{
+  return $start_date->format('jmY') . "-plus-" . $days . ".csv";
+}
 /*
  * Return bool
  */ 

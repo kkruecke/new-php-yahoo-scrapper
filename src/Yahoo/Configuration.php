@@ -39,7 +39,7 @@ class Configuration {
      self::$config_['help'] = (string) $xml->help;
      self::$config_['url'] = (string) $xml->url;
      self::$config_['column-names'] = $names;
-     self::$config_['output-ordering'] = $abbrevs;
+     self::$config_['output-order'] = $abbrevs;
    }
 
    public static function setConfig(string $key, array $value) 

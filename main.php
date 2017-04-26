@@ -4,15 +4,6 @@ use Yahoo\{CSVWriter, CSVEarningsFormatter, EarningsTable, CustomStockFilterIter
 
 require_once("utility.php");
 
-function displayException(\Exception $e)
-{
-  $msg = "\nError occurred processing page. Exception information below:\n";
-          
-  $msg .= $e->getMessage() . "\n\n";
-  echo $msg;
-  echo $e->getTraceAsString() . "\n\n";
-}
-
   boot_strap();
 
   if ($argc == 2) {
@@ -34,12 +25,9 @@ function displayException(\Exception $e)
 
   $date_period = build_date_period($start_date, intval($argv[2])); 
 
-  /*
-   * CSVEarningsFormatter determines the format of the output, the rows of the CSV file.
-   */  
-  $output_file_name = $start_date->format('jmY') . "-plus-" . intval($argv[2]) . ".csv";
+  $output_file_name = build_output_fname($start_date, intval($argv[2]));
   
-  // loop over each day in the DatePeriod.
+  // loop over each day in the date period.
   foreach ($date_period as $date_time) {
       
       if (EarningsTable::page_exists($date_time) == false) {
@@ -50,9 +38,9 @@ function displayException(\Exception $e)
       
       try {
 
-          $table = new EarningsTable($date_time, Configuration::config('column-names'), Configuration::config('output-ordering')); 
+          $table = new EarningsTable($date_time, Configuration::config('column-names'), Configuration::config('output-order')); 
           
-          $csv_writer = new CSVWriter($output_file_name, new CSVEarningsFormatter($table->getInputOrder(), Configuration::config('output-ordering'))); 
+          $csv_writer = new CSVWriter($output_file_name, new CSVEarningsFormatter($table->getInputOrder(), Configuration::config('output-order'))); 
           
 	  $filterIter = new CustomStockFilterIterator($table->getIterator(), $table->getRowDataIndex('sym')); 
     
@@ -70,9 +58,7 @@ function displayException(\Exception $e)
       }
   }
 
-  $line_count = $csv_writer->getLineCount();
-  
-  echo  $csv_writer->getFileName() . " has been created. It contains $line_count US stocks entries.\n";
+  echo  $csv_writer->getFileName() . " has been created. It contains " . $csv_writer->getLineCount() . " US stocks entries.\n";
     
   return;
 
