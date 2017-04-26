@@ -9,7 +9,7 @@ class EarningsTable implements \IteratorAggregate, TableInterface {
    private   $url;
 
    private $input_column_indecies;   // indecies of column names ordered in those names appear in config.xml  
-   private $input_ordering = array();// Associative array of abbreviations mapped to indecies indicating their location in the table.
+   private $input_order = array();// Associative array of abbreviations mapped to indecies indicating their location in the table.
 
   public function __construct(\DateTime $date_time, array $column_names, array $output_ordering) 
   {
@@ -49,13 +49,11 @@ class EarningsTable implements \IteratorAggregate, TableInterface {
           // set some default values since there is no table on the page.
           $total = count($output_ordering);
  
-          $this->input_ordering = array_combine(array_keys($output_ordering), range(0, $total - 1));
+          $this->input_order = array_combine(array_keys($output_ordering), range(0, $total - 1));
           return;
       }
 
       $tblElement = $nodeList->item(0);
-
-      //--$nodeList = $xpath->query("tbody", $tblElement);
 
       $this->trDOMNodeList = $this->getChildNodes($xpath->query("tbody", $tblElement)); //--$nodeList);
       
@@ -110,13 +108,13 @@ class EarningsTable implements \IteratorAggregate, TableInterface {
     
     for($i = 0; $i < count($abbrevs); ++$i) { // we ignore output_input
       
-       $this->input_ordering[$abbrevs[$i]] = $this->input_column_indecies[$i];
+       $this->input_order[$abbrevs[$i]] = $this->input_column_indecies[$i];
     }
   }
 
   public function getInputOrder() : array
   {
-    return $this->input_ordering;
+    return $this->input_order;
   }
   /*
     Input: abbrev from confg.xml
@@ -125,7 +123,7 @@ class EarningsTable implements \IteratorAggregate, TableInterface {
   public function getRowDataIndex(string $abbrev) : int
   {
     // If it is a valid $abbrev, return its index.  
-    return array_search($abbrev, $this->input_ordering) !== false ? $this->input_ordering[$abbrev] : false;
+    return array_search($abbrev, $this->input_order) !== false ? $this->input_order[$abbrev] : false;
   }
    
   function getChildNodes(\DOMNodeList $NodeList)  : \DOMNodeList // This might not be of use.
