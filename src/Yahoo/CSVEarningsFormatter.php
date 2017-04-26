@@ -56,16 +56,8 @@ class CSVEarningsFormatter implements CSVFormatter {
      $output[$size - 1] = "Add"; // Last column "Add"
 
      $csv_str = '';
-     // implode the fixed array
-     $i = 0;
-     while($i < $size) {
-         
-         $csv_str .= $output[$i++];
-         if ($i == $size) break;
-         $csv_str .= ',';    
-     }
-     
-     return $csv_str;
+
+     return $this->spl_implode($output, ",");
    }
 
    private function modify_input($input, $abbrev)
@@ -118,5 +110,23 @@ class CSVEarningsFormatter implements CSVFormatter {
    private function format_eps(string $eps) : string
    {
       return (is_numeric($eps) == FALSE) ? "N/A" : $eps;
+   }
+
+   private function spl_implode(\SplFixedArray $array, string $delimeter) : string
+   {
+     // implode the fixed array
+     $i = 0;
+     $str = '';
+     $size = count($array);
+
+     while($i < $size) {
+         
+         $str .= $array[$i++];
+
+         if ($i == $size) break;
+
+         $str .= ',';    
+     }
+     return $str;
    }
 }
