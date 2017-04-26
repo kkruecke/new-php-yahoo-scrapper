@@ -26,7 +26,9 @@ require_once("utility.php");
   $date_period = build_date_period($start_date, intval($argv[2])); 
 
   $output_file_name = build_output_fname($start_date, intval($argv[2]));
-  
+
+  $total_lines = 0; 
+
   // loop over each day in the date period.
   foreach ($date_period as $date_time) {
       
@@ -49,7 +51,8 @@ require_once("utility.php");
                $csv_writer->writeLine($stock_row, $date_time); 
 	  }
 
-          display_progress($date_time, $table->row_count(), $csv_writer->getLineCount()); 
+          display_progress($date_time, $table->row_count(), $csv_writer->getLineCount()); // TODO: Add running total
+          $total += $csv_writer->getLineCount();    
   
       } catch(\Exception $e) {
          
@@ -58,8 +61,8 @@ require_once("utility.php");
       }
   }
 
-  echo  $csv_writer->getFileName() . " has been created. It contains " . $csv_writer->getLineCount() . " US stocks entries.\n";
-    
+  echo  $csv_writer->getFileName() . " has been created. It contains " . $total . " US stocks entries.\n";
+
   return;
 
 function display_progress(\DateTime $date_time, int $table_stock_cnt, int $lines_written)

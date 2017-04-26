@@ -1,7 +1,7 @@
 TODOES
 ======
 
-See ~/temp/yahoo/todo.md
+It is not doing what display_progress() says. Only a few records are being written.
 
 My Comments
 -----------
