@@ -42,7 +42,7 @@ class CSVWriter {
        */ 	  
 
       $csv_str = $this->formatter->format($row_data, $date); 
-
+      
       $csv_str .= "\n"; // replace terminating ',' with newline.
                    
       $this->splfile->fwrite($csv_str);

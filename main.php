@@ -27,7 +27,7 @@ require_once("utility.php");
 
   $output_file_name = build_output_fname($start_date, intval($argv[2]));
 
-  $total_lines = 0; 
+  $total = 0; 
 
   // loop over each day in the date period.
   foreach ($date_period as $date_time) {
@@ -41,7 +41,8 @@ require_once("utility.php");
       try {
 
           $table = new EarningsTable($date_time, Configuration::config('column-names'), Configuration::config('output-order')); 
-          
+         
+          // BUG: Opening file every time.
           $csv_writer = new CSVWriter($output_file_name, new CSVEarningsFormatter($table->getInputOrder(), Configuration::config('output-order'))); 
           
 	  $filterIter = new CustomStockFilterIterator($table->getIterator(), $table->getRowDataIndex('sym')); 
@@ -51,8 +52,8 @@ require_once("utility.php");
                $csv_writer->writeLine($stock_row, $date_time); 
 	  }
 
-          display_progress($date_time, $table->row_count(), $csv_writer->getLineCount()); // TODO: Add running total
           $total += $csv_writer->getLineCount();    
+          display_progress($date_time, $table->row_count(), $csv_writer->getLineCount(), $total); 
   
       } catch(\Exception $e) {
          
@@ -65,7 +66,7 @@ require_once("utility.php");
 
   return;
 
-function display_progress(\DateTime $date_time, int $table_stock_cnt, int $lines_written)
+function display_progress(\DateTime $date_time, int $table_stock_cnt, int $lines_written, int $total)
 {
-  echo $date_time->format("m-d-Y") . " earnings table contained $table_stock_cnt stocks. {$lines_written} stocks met the filter criteria and were written.\n";
+  echo $date_time->format("m-d-Y") . " earnings table contained $table_stock_cnt stocks. {$lines_written} stocks met the filter criteria. $total total records have been written.\n";
 }
