@@ -1,7 +1,15 @@
 TODOES
 ======
 
-Pass optional SplFileObjectEx opened in append modeto CSVWriter.
+1. Query for the Earnings Results total (xxx of yyyy) using an XPath query that searches for, say, "101-200 of 1167 results" 
+
+Complete XPath query:
+
+  /html/body/div[1]/div/div/div[1]/div/div[2]/div/div/div[5]/div/h3/span[2]/spanPass optional SplFileObjectEx opened in append modeto CSVWriter.
+
+2. In a loop do:
+  i. Download each "page" of subresults 
+  ii. Append it to the table using a simple DOMAppend or DOMAdd call.
 
 My Comments
 -----------
