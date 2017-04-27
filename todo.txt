@@ -12,6 +12,17 @@ Complete XPath query:
   i. Download each "page" of subresults 
   ii. Append it to the table using a simple DOMAppend or DOMAdd call.
 
+Help:
+1. Excellent Overview of XPath Syntax:  https://www.w3schools.com/xml/xpath_syntax.asp
+
+2. PHP DOM Using XPATH https://www.sitepoint.com/php-dom-using-xpath/
+
+3. XPath Query to get Element by id: http://stackoverflow.com/questions/10873842/php-xpath-to-extract-value-from-webpage-of-a-specific-id
+
+4. http://www.the-art-of-web.com/php/html-xpath-query/
+
+5. http://www.devhour.net/reading-a-websites-contents-with-php-and-xpath/
+
 My Comments
 -----------
 
