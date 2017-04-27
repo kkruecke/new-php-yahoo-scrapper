@@ -3,7 +3,13 @@ namespace Yahoo;
 
 class EarningsTable implements \IteratorAggregate, TableInterface {
 
+   // TODO: Don't make $dom and $path class variable, make them local variables were need. Only make the new in-memory DOM table's variable class variables--
+   // if this is needed.
+
    private   $dom;	
+   
+   private   $domTable; // <-- new
+   
    private   $xpath;
    private   $trDOMNodeList;
    private   $row_count;
@@ -17,26 +23,16 @@ class EarningsTable implements \IteratorAggregate, TableInterface {
    /*
     * The column of the table that the external iterator should return
     */ 	  
-    $opts = array(
-                'http'=>array(
-                  'method'=>"GET",
-                  'header'=>"Accept-language: en\r\n" .  "Cookie: foo=bar\r\n")
-                 );
-
-    $context = stream_context_create($opts);
-
-    $friendly_date = $date_time->format("m-d-Y");
- 
     $this->url = self::make_url($date_time);
   
-    $page = $this->get_html_file($this->url);
+    $page = $this->get_html_file($date_time, $this->url);
        
-    $this->loadHTML($page); // also sets $this->dom and $this->xpath
+    $this->loadHTML($date_time, $page); // rename $this->buildTable($date_time);
 
     $this->loadRowNodes($this->xpath, $column_names, $output_ordering); 
   }
 
-  private function loadHTML(string $page) : bool
+  private function loadHTML(\DateTime $date_time, string $page) : bool
   {
       $this->dom = new \DOMDocument();
      
@@ -47,17 +43,17 @@ class EarningsTable implements \IteratorAggregate, TableInterface {
       $this->dom->preserveWhiteSpace = false;
   
       @$boolRc = $this->dom->loadHTML($page);  // Turn off error reporting
-            
+      
       $this->xpath = new \DOMXPath($this->dom);
       
-      $extra_pages = $this->getTotalAdditionalPages($this->xpath);
+      $extra_pages = $this->getExtraPagesCount($this->xpath);
       
-      $this->table = $this->buildDOMTable($extra_pages);
+      $this->table = $this->buildDOMTable($date_time, $extra_pages);
             
       return $boolRc;
   } 
   
-  private function getTotalAddtionalPages(\DOMXPath $xpath) : int
+  private function getExtraPagesCount(\DOMXPath $xpath) : int
   {
       /* 
        * All these XPath queries work, starting with the most general at the top:
@@ -82,10 +78,70 @@ class EarningsTable implements \IteratorAggregate, TableInterface {
       
       $earning_results = (int) ($matches[1]);
       
-      return floor($earning_results/100);
+      return (int) floor($earning_results/100);
   } 
 
-  function loadRowNodes(\DOMXPath $xpath, array $column_names, array $output_ordering)
+  private function buildDOMTable(\DateTime $date_time, int $extra_pages)
+  {
+      $this->domTable = new \DOMDocument('1.0', 'utf-8');
+      
+      $page_text = <<<EOT
+<html>
+    <head>
+        <title></title>
+        <meta charset="UTF-8">
+    </head>
+    <body>
+      <table></table> 
+    </body>
+</html>
+EOT;
+
+     $this->domTable->loadHTML($page_text);
+      
+     $tableNodeList = $this->domTable->getElementsByTagName('table');
+     
+     $table = $tableNodeList->item(0);
+           
+      // Add a table node to $domTable. See Paula code.
+     for($i = 1; $i <= $extra_pages; ++$i)  {    
+         
+         // Load next sub-page
+         $dom = new \DOMDocument();
+     
+         // load the html into the object
+         $dom->strictErrorChecking = false; // default is true.
+      
+         // discard redundant white space
+         $dom->preserveWhiteSpace = false;
+         
+         //TODO: Change message to be: fetching additional results xx-yy of zzz total
+                     
+         echo  "...fetching additional page $i of $extra_pages extra pages\n";       
+         
+         $url = $this->make_additional_url($date_time, $i);
+              
+         $page = $this->get_html_file($date_time, $url);
+       
+         @$boolRc = $dom->loadHTML($page);  // Turn off error reporting
+         
+         $xpath = new \DOMXPath($dom);
+         
+         $trNodeList = $xpath->query("(//table)[2]/tbody/tr");
+         
+         echo  "   ...appending its rows\n";              
+         
+         foreach($trNodeList as $trNode) { // append extra rows to the 
+             
+             $importedNode = $this->domTable->importNode($trNode, true);        
+             
+             $table->appendChild($importedNode); // A
+         }    
+       }
+  }
+
+  // TODO: We need to initially add these rows to $this->domTable.
+  private function loadRowNodes(\DOMXPath $xpath, array $column_names, array $output_ordering)
   {
       $nodeList = $xpath->query("(//table)[2]");
       
@@ -244,8 +300,14 @@ class EarningsTable implements \IteratorAggregate, TableInterface {
   {
         return Configuration::config('url') . '?day=' . $date_time->format('Y-m-d');
   }
+  
+  private function make_additional_url(\DateTime $date_time, int $extra) : string
+  {
+        $offset = $extra * 100;
+        return Configuration::config('url') . '?day=' . $date_time->format('Y-m-d') . "&offset={$offset}&size=100";
+  }
 
-  private function get_html_file(string $url) : string
+  private function get_html_file(\DateTime $date_time, string $url) : string
   {
       for ($i = 0; $i < 2; ++$i) {
           
@@ -255,6 +317,8 @@ class EarningsTable implements \IteratorAggregate, TableInterface {
              
             break;
          }   
+         
+         $friendly_date = $date_time->format("m-d-Y"); 
          
          echo "Attempt to download data for $friendly_date on webpage $url failed. Retrying.\n";
       }
