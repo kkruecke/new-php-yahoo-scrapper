@@ -1,16 +1,8 @@
 TODOES
 ======
 
-1. Query for the Earnings Results total (xxx of yyyy) using either 1.) an XPath query that searches for, say, "101-200 of 1167 results" or 2.) a DOM call that gets
-a prior node.
-
-Complete XPath query:
-
-  /html/body/div[1]/div/div/div[1]/div/div[2]/div/div/div[5]/div/h3/span[2]/spanPass optional SplFileObjectEx opened in append modeto CSVWriter.
-
-2. In a loop do:
-  i. Download each "page" of subresults 
-  ii. Append it to the table using a simple DOMAppend or DOMAdd call.
+Started newEarningTable.php that gets earning results. I added code to get the number of additional pages, if any. Next, write code to create a new DOMDocument that
+has just the Table and the row nodes. Save this new in-memory DOMDocument as a property of EarningsTable. Change the iteration logic in accordingly.
 
 Help:
 1. Excellent Overview of XPath Syntax:  https://www.w3schools.com/xml/xpath_syntax.asp
