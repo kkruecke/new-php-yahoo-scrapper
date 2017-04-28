@@ -1,13 +1,11 @@
 TODOES
 ======
 
-See ~/temp/yahoo/
-
-Started newEarningTable.php that gets earning results. I added code to get the number of additional pages, if any. Next, write code to create a new DOMDocument that
-has just the Table and the row nodes. Save this new in-memory DOMDocument as a property of EarningsTable. Change the iteration logic in accordingly.
+Change EarningsTable::getRowData() and EarningTableIterator as needed, too.
 
 Help:
 1. Excellent Overview of XPath Syntax:  https://www.w3schools.com/xml/xpath_syntax.asp
+2. Excellent XPath cheatsheet:   http://ricostacruz.com/cheatsheets/xpath.html 
 
 2. PHP DOM Using XPATH https://www.sitepoint.com/php-dom-using-xpath/
 
