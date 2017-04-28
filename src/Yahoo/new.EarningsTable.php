@@ -2,7 +2,7 @@
 namespace Yahoo;
 
 class EarningsTable implements \IteratorAggregate, TableInterface {
-  
+   
    private   $domTable; 
 
    private static $data_table_query = "//table[contains(@class, 'data-table')]";
@@ -48,7 +48,7 @@ class EarningsTable implements \IteratorAggregate, TableInterface {
     return $dom;
   } 
   
-  private function getExtraPagesCount(\DOMXPath $xpath) : int
+  private function getExtraPagesCount(\DOMDocument $dom_first_page) : int
   {
       /* 
        * All these XPath queries work, starting with the most general at the top:
@@ -60,6 +60,8 @@ class EarningsTable implements \IteratorAggregate, TableInterface {
        *
        *  The last query above is the one we really want: 
        */
+      $xpath = new \DOMXPath($dom_first_page);
+
       $nodeList = $xpath->query(self::$total_results_query); 
             
       if ($nodeList->length == 0) { // div was not found.
@@ -97,13 +99,9 @@ EOT;
 
   private function buildDOMTable(\DOMDocument $dom_first_page, \DateTime $date_time)
   {
-     $xpath = new \DOMXPath($dom_first_page);
-      
-     $extra_pages = $this->getExtraPagesCount($xpath); 
+     $this->appendRows($this->domTable, $dom_first_page);
 
-     $tableNodeList = $this->domTable->getElementsByTagName('table');
-     
-     $tableNode = $tableNodeList->item(0);
+     $extra_pages = $this->getExtraPagesCount($dom_first_page); 
 
      $this->row_count = 0;
            
@@ -112,7 +110,7 @@ EOT;
          
          echo  "...fetching additional results page $extra_page of $extra_pages extra pages";       
 
-         $dom_extra_page = $this->loadHTML($date_time, $extra_page);  // Turn off error reporting
+         $dom_extra_page = $this->loadHTML($date_time, $extra_page);  // BUG: We are not adding the rows of the first page.
 
          $row_count = $this->appendRows($this->domTable, $dom_extra_page);
 
