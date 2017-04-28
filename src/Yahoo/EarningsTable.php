@@ -114,20 +114,7 @@ EOT;
   private function createDOMTable(\DOMDocument $dom_first_page)
   {
       $this->domTable = new \DOMDocument('1.0', 'utf-8');
-     /* 
-      $page_text = <<<EOT
-<html>
-    <head>
-        <title></title>
-        <meta charset="UTF-8">
-    </head>
-    <body>
-      <table><tbody></tbody></table> 
-    </body>
-</html>
-EOT;
-   */
-     @$bRc = $this->domTable->loadHTML(self::$table_page_text);
+      @$bRc = $this->domTable->loadHTML(self::$table_page_text);
   }
 
   private function buildDOMTable(\DOMDocument $dom_first_page, \DateTime $date_time)
