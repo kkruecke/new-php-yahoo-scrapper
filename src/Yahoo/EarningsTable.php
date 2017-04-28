@@ -134,7 +134,7 @@ EOT;
   {  
      $this->row_count = 0;
 
-     $this->appendRows($this->domTable, $dom_first_page, "Appending rows of first results page.");
+     $this->appendRows($this->domTable, $dom_first_page, "Appending rows of first results page for " . $date_time->format('m-d-Y'));
 
      $extra_pages = $this->getExtraPagesCount($this->results_total); 
 
@@ -143,7 +143,7 @@ EOT;
          
          echo  "...fetching additional results page $extra_page of $extra_pages extra pages...";       
 
-         $dom_extra_page = $this->loadHTML($date_time, $extra_page);  // BUG: We are not adding the rows of the first page.
+         $dom_extra_page = $this->loadHTML($date_time, $extra_page); 
 
          $this->appendRows($this->domTable, $dom_extra_page, "...appending its rows");
      }
