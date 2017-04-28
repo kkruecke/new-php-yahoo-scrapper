@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-use Yahoo\{CSVWriter, CSVEarningsFormatter, EarningsTable, CustomStockFilterIterator, Configuration};
+use Yahoo\{CSVWriter, CSVEarningsFormatter, EarningsTable, CustomStockFilterIterator, NullObjectFilter, Configuration};
 
 require_once("utility.php");
 
@@ -41,12 +41,10 @@ require_once("utility.php");
       try {
 
           $table = new EarningsTable($date_time, Configuration::config('column-names'), Configuration::config('output-order')); 
-         
-          // BUG: Opening file every time resets line count?
+                
           $csv_writer = new CSVWriter($output_file_name, new CSVEarningsFormatter($table->getInputOrder(), Configuration::config('output-order')), 'a'); 
           
-          // TODO: Bug. When $table->getRowDataIndex('sym') is called, an indexing error occurs if the EarningsTable has no results.
-	  $filterIter = new CustomStockFilterIterator($table->getIterator(), $table->getRowDataIndex('sym')); 
+          $filterIter = ($table->row_count() > 0) ? new CustomStockFilterIterator($table->getIterator(), $table->getRowDataIndex('sym')) : new NullObjectFilter($table->getIterator()); 
     
           foreach($filterIter as $key => $stock_row) {
 
