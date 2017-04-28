@@ -177,8 +177,6 @@ EOT;
      
      $query = self::$data_table_query . "/thead/tr/th";
      
-     echo $query . "\n";
-     
      $thNodelist = $xpath->query($query);
 
      $arr = array();
