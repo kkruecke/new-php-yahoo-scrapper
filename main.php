@@ -68,7 +68,7 @@ require_once("utility.php");
 
 function display_progress(\DateTime $date_time, int $table_stock_cnt, int $lines_written, int $total)
 {
-  echo $date_time->format("m-d-Y") . " earnings table contained $table_stock_cnt stocks. {$lines_written} stocks met the filter criteria. $total total records have been written.\n";
+  echo "\n" .$date_time->format("m-d-Y") . " earnings table contained $table_stock_cnt stocks. {$lines_written} stocks met the filter criteria. $total total records have been written.\n";
 }
 
 function wrap_up(int $total,  CSVWriter $csv_writer)

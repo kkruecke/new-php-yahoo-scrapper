@@ -134,18 +134,18 @@ EOT;
   {  
      $this->row_count = 0;
 
-     $this->appendRows($this->domTable, $dom_first_page, "Appending rows of first results page for " . $date_time->format('m-d-Y'));
+     $this->appendRows($this->domTable, $dom_first_page, "\nAppending rows of first results page for " . $date_time->format('m-d-Y'));
 
      $extra_pages = $this->getExtraPagesCount($this->results_total); 
 
       // Add a table node to $domTable. See Paula code.
      for($extra_page = 1; $extra_page <= $extra_pages; ++$extra_page)  {    
          
-         echo  "...fetching additional results page $extra_page of $extra_pages extra pages...";       
+         echo  "   ...fetching additional results page $extra_page of $extra_pages extra pages...";       
 
          $dom_extra_page = $this->loadHTML($date_time, $extra_page); 
 
-         $this->appendRows($this->domTable, $dom_extra_page, "...appending its rows");
+         $this->appendRows($this->domTable, $dom_extra_page, " appending its rows");
      }
   }
 
