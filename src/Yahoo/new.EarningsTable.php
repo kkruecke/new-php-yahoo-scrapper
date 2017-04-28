@@ -3,14 +3,9 @@ namespace Yahoo;
 
 class EarningsTable implements \IteratorAggregate, TableInterface {
 
-   // TODO: Don't make $dom and $path class variable, make them local variables were need. Only make the new in-memory DOM table's variable class variables--
-   // if this is needed.
-
-   private   $dom;	
+   // TODO: Don't I need to add the rows of the first page to $domTable? 
+   private   $domTable; 
    
-   private   $domTable; // <-- new
-   
-   private   $xpath;
    private   $trDOMNodeList;
    private   $row_count;
    private   $url;
@@ -20,37 +15,30 @@ class EarningsTable implements \IteratorAggregate, TableInterface {
 
   public function __construct(\DateTime $date_time, array $column_names, array $output_ordering) 
   {
-   /*
-    * The column of the table that the external iterator should return
-    */ 	  
-    $this->url = self::make_url($date_time);
-  
-    $page = $this->get_html_file($date_time, $this->url);
-       
-    $this->loadHTML($date_time, $page); // rename $this->buildTable($date_time);
+    $this->loadHTML($date_time); // load initial more, there may be more which buildDOMTable() will fetch.
+
+    $this->table = $this->buildDOMTable($date_time, $extra_pages);
 
     $this->loadRowNodes($this->xpath, $column_names, $output_ordering); 
   }
 
-  private function loadHTML(\DateTime $date_time, string $page) : bool
+  private function loadHTML(\DateTime $date_time, int $extra_page_num=0) : \DOMDocument
   {
-      $this->dom = new \DOMDocument();
-     
-      // load the html into the object
-      $this->dom->strictErrorChecking = false; // default is true.
-      
-      // discard redundant white space
-      $this->dom->preserveWhiteSpace = false;
+    $this->url = self::make_url($date_time, $extra_page_num);
   
-      @$boolRc = $this->dom->loadHTML($page);  // Turn off error reporting
+    $page = $this->get_html_file($date_time, $this->url);
+
+    $dom = new \DOMDocument('1.0', 'utf-8');
+     
+    // load the html into the object
+    $dom->strictErrorChecking = false; // default is true.
       
-      $this->xpath = new \DOMXPath($this->dom);
-      
-      $extra_pages = $this->getExtraPagesCount($this->xpath);
-      
-      $this->table = $this->buildDOMTable($date_time, $extra_pages);
-            
-      return $boolRc;
+    // discard redundant white space
+    $dom->preserveWhiteSpace = false;
+  
+    @$boolRc = $dom->loadHTML($page);  // Turn off error reporting
+    
+    return $dom;
   } 
   
   private function getExtraPagesCount(\DOMXPath $xpath) : int
@@ -81,8 +69,12 @@ class EarningsTable implements \IteratorAggregate, TableInterface {
       return (int) floor($earning_results/100);
   } 
 
-  private function buildDOMTable(\DateTime $date_time, int $extra_pages)
+  private function buildDOMTable(\DOMDocument $dom_first_page, \DateTime $date_time, int $extra_pages)
   {
+      $xpath = new \DOMXPath($dom_first_page);
+      
+      $extra_pages = $this->getExtraPagesCount($xpath); 
+
       $this->domTable = new \DOMDocument('1.0', 'utf-8');
       
       $page_text = <<<EOT
@@ -101,46 +93,36 @@ EOT;
       
      $tableNodeList = $this->domTable->getElementsByTagName('table');
      
-     $table = $tableNodeList->item(0);
+     $tableNode = $tableNodeList->item(0);
            
       // Add a table node to $domTable. See Paula code.
-     for($i = 1; $i <= $extra_pages; ++$i)  {    
+     for($extra_page = 1; $extra_page <= $extra_pages; ++$i)  {    
          
-         // Load next sub-page
-         $dom = new \DOMDocument();
-     
-         // load the html into the object
-         $dom->strictErrorChecking = false; // default is true.
-      
-         // discard redundant white space
-         $dom->preserveWhiteSpace = false;
-         
-         //TODO: Change message to be: fetching additional results xx-yy of zzz total
-                     
-         echo  "...fetching additional page $i of $extra_pages extra pages\n";       
-         
-         $url = $this->make_additional_url($date_time, $i);
-              
-         $page = $this->get_html_file($date_time, $url);
-       
-         @$boolRc = $dom->loadHTML($page);  // Turn off error reporting
-         
-         $xpath = new \DOMXPath($dom);
-         
-         $trNodeList = $xpath->query("(//table)[2]/tbody/tr");
-         
-         echo  "   ...appending its rows\n";              
-         
-         foreach($trNodeList as $trNode) { // append extra rows to the 
-             
-             $importedNode = $this->domTable->importNode($trNode, true);        
-             
-             $table->appendChild($importedNode); // A
-         }    
-       }
+         echo  "...fetching additional page $extra_page of $extra_pages extra pages\n";       
+
+         $dom_extra_page = $this->loadHTML($date_time, $extra_page);  // Turn off error reporting
+
+         $this->appendRows($this->domTable, $dom_extra_page);
+     }
   }
 
-  // TODO: We need to initially add these rows to $this->domTable.
+  private function appendRows(\DOMDocument $domTable, \DOMDocument $dom_extra_page)
+  { 
+     $xpath = new \DOMXPath($dom_extra_page);
+    
+     $trNodeList = $xpath->query("(//table)[2]/tbody/tr");
+    
+     echo  "   ...appending its rows\n";              
+    
+     foreach($trNodeList as $trNode) { // append extra rows to the 
+        
+         $importedNode = $domTable->importNode($trNode, true);        
+        
+         $tableNode->appendChild($importedNode); // Append imported node to the tableNode of the DOMDocument at $this->domTable.
+     }    
+  }
+
+  // TODO: This is no longer needed--or is part of it? We need to initially add these rows to $this->domTable.
   private function loadRowNodes(\DOMXPath $xpath, array $column_names, array $output_ordering)
   {
       $nodeList = $xpath->query("(//table)[2]");
@@ -295,16 +277,11 @@ EOT;
 
     }
   } 
-
-  static private function make_url(\DateTime $date_time) : string
-  {
-        return Configuration::config('url') . '?day=' . $date_time->format('Y-m-d');
-  }
   
-  private function make_additional_url(\DateTime $date_time, int $extra) : string
+  static private function make_url(\DateTime $date_time, int $extra_page_num=0) : string
   {
-        $offset = $extra * 100;
-        return Configuration::config('url') . '?day=' . $date_time->format('Y-m-d') . "&offset={$offset}&size=100";
+      $offset = $extra_page_num * 100;
+      return Configuration::config('url') . '?day=' . $date_time->format('Y-m-d') . "&offset={$offset}&size=100";
   }
 
   private function get_html_file(\DateTime $date_time, string $url) : string
