@@ -15,18 +15,18 @@ class EarningsTable implements \IteratorAggregate, TableInterface {
 
   public function __construct(\DateTime $date_time, array $column_names, array $output_ordering) 
   {
-    $this->loadHTML($date_time); // load initial more, there may be more which buildDOMTable() will fetch.
+    $dom_first_page = $this->loadHTML($date_time); // load initial more, there may be more which buildDOMTable() will fetch.
 
-    $this->table = $this->buildDOMTable($date_time, $extra_pages);
+    $this->table = $this->buildDOMTable($dom_first_page, $date_time);
 
-    $this->loadRowNodes($this->xpath, $column_names, $output_ordering); 
+    //TODO: $this->loadRowNodes($this->xpath, $column_names, $output_ordering); // TODO: <-- Rewrite to interogate $this->domTable.
   }
 
-  private function loadHTML(\DateTime $date_time, int $extra_page_num=0) : \DOMDocument
+  private function loadHTML(\DateTime $date_time, $extra_page_num=0) : \DOMDocument
   {
-    $this->url = self::make_url($date_time, $extra_page_num);
+    $url = self::make_url($date_time, $extra_page_num);
   
-    $page = $this->get_html_file($date_time, $this->url);
+    $page = $this->get_html_file($date_time, $url);
 
     $dom = new \DOMDocument('1.0', 'utf-8');
      
@@ -69,7 +69,7 @@ class EarningsTable implements \IteratorAggregate, TableInterface {
       return (int) floor($earning_results/100);
   } 
 
-  private function buildDOMTable(\DOMDocument $dom_first_page, \DateTime $date_time, int $extra_pages)
+  private function buildDOMTable(\DOMDocument $dom_first_page, \DateTime $date_time)
   {
       $xpath = new \DOMXPath($dom_first_page);
       
@@ -96,9 +96,9 @@ EOT;
      $tableNode = $tableNodeList->item(0);
            
       // Add a table node to $domTable. See Paula code.
-     for($extra_page = 1; $extra_page <= $extra_pages; ++$i)  {    
+     for($extra_page = 1; $extra_page <= $extra_pages; ++$extra_page)  {    
          
-         echo  "...fetching additional page $extra_page of $extra_pages extra pages\n";       
+         echo  "...fetching additional page $extra_page of $extra_pages extra pages";       
 
          $dom_extra_page = $this->loadHTML($date_time, $extra_page);  // Turn off error reporting
 
@@ -112,16 +112,16 @@ EOT;
     
      $trNodeList = $xpath->query("(//table)[2]/tbody/tr");
     
-     echo  "   ...appending its rows\n";              
+     echo  "...appending its rows\n";              
     
      foreach($trNodeList as $trNode) { // append extra rows to the 
         
          $importedNode = $domTable->importNode($trNode, true);        
         
-         $tableNode->appendChild($importedNode); // Append imported node to the tableNode of the DOMDocument at $this->domTable.
+         $domTable->appendChild($importedNode); // Append imported node to the tableNode of the DOMDocument at $this->domTable.
      }    
   }
-
+ 
   // TODO: This is no longer needed--or is part of it? We need to initially add these rows to $this->domTable.
   private function loadRowNodes(\DOMXPath $xpath, array $column_names, array $output_ordering)
   {
