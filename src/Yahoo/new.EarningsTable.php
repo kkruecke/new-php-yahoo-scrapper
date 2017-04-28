@@ -22,8 +22,10 @@ class EarningsTable implements \IteratorAggregate, TableInterface {
 
     $this->getColumnOrder($dom_first_page, $column_names, $output_ordering);
 
+    $this->createInputOrdering($output_ordering);
+
     $this->buildDOMTable($dom_first_page, $date_time);
-    
+      
     //--$this->debug_show_table();
   }
 
@@ -102,6 +104,8 @@ EOT;
      $tableNodeList = $this->domTable->getElementsByTagName('table');
      
      $tableNode = $tableNodeList->item(0);
+
+     $this->row_count = 0;
            
       // Add a table node to $domTable. See Paula code.
      for($extra_page = 1; $extra_page <= $extra_pages; ++$extra_page)  {    
@@ -110,9 +114,9 @@ EOT;
 
          $dom_extra_page = $this->loadHTML($date_time, $extra_page);  // Turn off error reporting
 
-         $this->appendRows($this->domTable, $dom_extra_page);
-         
-         $this->debug_show_table();
+         $row_count = $this->appendRows($this->domTable, $dom_extra_page);
+
+         $this->row_count += $row_count;
      }
   }
 
@@ -120,7 +124,7 @@ EOT;
   { 
      $xpath_src = new \DOMXPath($dom_page); 
     
-     $trNodeList_to_append = $xpath_src->query(self::$data_table_query . "/tbody/tr"); // was "(//table)[2]/tbody/tr"
+     $trNodeList_src = $xpath_src->query(self::$data_table_query . "/tbody/tr"); // was "(//table)[2]/tbody/tr"
     
      echo  "...appending its rows\n"; 
      
@@ -128,42 +132,16 @@ EOT;
      
      $dest_node = $dest_node_list->item($dest_node_list->length - 1);
     
-     foreach($trNodeList_to_append as $trNode) { // append extra rows to the 
+     foreach($trNodeList_src as $trNode) { // append extra rows to the 
         
          $importedNode = $domTable->importNode($trNode, true);        
         
          $dest_node->appendChild($importedNode); // Append imported node to the tableNode of the DOMDocument at $this->domTable.
      }    
+
+     return $trNodeList_src->length;
   }
  
-  // TODO: This is no longer needed--or is part of it? We need to initially add these rows to $this->domTable.
-  private function loadRowNodes(\DOMXPath $xpath, array $column_names, array $output_ordering)
-  {
-      $nodeList = $xpath->query(self::$data_table_query);  // was "(//table)[2]"
-      
-      if ($nodeList->length == 0) { // Table was not found.
-
-          // Set default values if there is no data on the page          
-          $this->row_count = 0;
-
-          // set some default values since there is no table on the page.
-          $total = count($output_ordering);
- 
-          $this->input_order = array_combine(array_keys($output_ordering), range(0, $total - 1));
-          return;
-      }
-
-      $tblElement = $nodeList->item(0);
-
-      $this->trDOMNodeList = $this->getChildNodes($xpath->query("tbody", $tblElement)); //--$nodeList);
-      
-      $this->row_count = $this->trDOMNodeList->length;
-
-      $this->findColumnIndecies($xpath, $tblElement, $column_names, $output_ordering);
-    
-      $this->createInputOrdering($output_ordering);
-  } 
-
   /*
    *  Input:
    *  $column_names = Configuration::config('column-column_names') 
@@ -256,13 +234,20 @@ EOT;
   public function getRowData($row_num) : \SplFixedArray
   {
      $row_data = new \SplFixedArray(count($this->input_column_indecies));
- 
+
+     $xpath = new \DOMXPath($this->domTable);
+
+     $tdNodelist =  $xpath->query("//table/tbody/tr[" . $row_num + 1 . "]/td"); // BUG: "Invalid expression" && TODO: Make this a class static?
+
+     /*
      // get DOMNode for row number $row_id
-     $rowNode =  $this->trDOMNodeList->item($row_num);
+     
+     $rowNode =  $trNodelist->item($row_num);
 
      // get DOMNodeList of <td></td> elemnts in the row     
      $tdNodelist = $rowNode->getElementsByTagName('td');
-
+     */
+ 
      $i = 0;
 
      foreach($this->input_column_indecies as $index) {
