@@ -3,8 +3,7 @@ namespace Yahoo;
 
 class EarningsTable implements \IteratorAggregate, TableInterface {
     
-   // TODO: Handle the case when a date has no data table. Think it through; don't hack a solution.
-   private   $domTable; 
+   // TODO: Handle the case when a date has no data table. Think it through. We want a consistent invariant for class.
 
    private static $data_table_query = "//table[contains(@class, 'data-table')]";
    private static $total_results_query = "//div[@id='fin-cal-table']//span[contains(text(), 'results')]";
@@ -19,8 +18,9 @@ class EarningsTable implements \IteratorAggregate, TableInterface {
     </body>
 </html>
 EOT;
-
    
+   private   $results_total;
+   private   $domTable; 
    private   $row_count;
    
    private $input_column_indecies;   // indecies of column names ordered in those names appear in config.xml  
@@ -28,16 +28,30 @@ EOT;
 
   public function __construct(\DateTime $date_time, array $column_names, array $output_ordering) 
   {
+    $this->setDefaultInvariant();
+
     $dom_first_page = $this->loadHTML($date_time); // load initial page, there may be more which buildDOMTable() will fetch.
+
+    $this->results_total = $this->getResultsTotal($dom_first_page);
+
+    if ($this->results_total == 0) {
+
+        return;
+    }
 
     $this->createDOMTable($dom_first_page); 
 
-    // TODO: Handle case where there is no data table.
     $this->createInputOrdering($dom_first_page, $column_names, $output_ordering);
 
     $this->buildDOMTable($dom_first_page, $date_time);
       
-    //--$this->debug_show_table();
+    //$this->debug_show_table();
+  }
+
+  private function setDefaultInvariant()
+  {
+     $this->row_count = 0;
+     $this->domTable = null;
   }
 
   private function loadHTML(\DateTime $date_time, $extra_page_num=0) : \DOMDocument
@@ -59,33 +73,37 @@ EOT;
     return $dom;
   } 
   
-  private function getExtraPagesCount(\DOMDocument $dom_first_page) : int
+  private function getResultsTotal(\DOMDocument $dom_first_page) : int
   {
-      /* 
-       * All these XPath queries work, starting with the most general at the top:
-       *
-       * //div[@id='fin-cal-table']                            find any div whose id is 'fin-cal-table'
-       * //div[@id='fin-cal-table']//span                      After find that div, find any spans anywhere under it
-       * //div[@id='fin-cal-table']//span[text()='1-100 of 1169 results']      ...that have the specified text    
-       * //div[@id='fin-cal-table']//span[contains(text(), 'results')]         ...that contain the specified text   
-       *
-       *  The last query above is the one we really want: 
-       */
-      $xpath = new \DOMXPath($dom_first_page);
+     /* 
+      * All these XPath queries work, starting with the most general at the top:
+      *
+      * //div[@id='fin-cal-table']                            find any div whose id is 'fin-cal-table'
+      * //div[@id='fin-cal-table']//span                      After find that div, find any spans anywhere under it
+      * //div[@id='fin-cal-table']//span[text()='1-100 of 1169 results']      ...that have the specified text    
+      * //div[@id='fin-cal-table']//span[contains(text(), 'results')]         ...that contain the specified text   
+      *
+      *  The last query above is the one we really want: 
+      */
+     $xpath = new \DOMXPath($dom_first_page);
 
-      $nodeList = $xpath->query(self::$total_results_query); 
-            
-      if ($nodeList->length == 0) { // div was not found.
-      
-          throw new \Exception("Total Results could not be found. Total Results XPath query failed!");
-      }    
-          
-      $nodeElement = $nodeList->item(0);
-          
-      preg_match("/(\d+) results/", $nodeElement->nodeValue, $matches);
-      
-      $earning_results = (int) ($matches[1]);
-      
+     $nodeList = $xpath->query(self::$total_results_query); 
+           
+     if ($nodeList->length == 0) { // div was not found.
+     
+         return 0; // Since the XPath query failed, we know that the page doesn't have any earnings results.
+                   // Note: This also could be due to a page format change on Yahoo's part, which is a catatrophic failure.
+     }    
+         
+     $nodeElement = $nodeList->item(0);
+         
+     preg_match("/(\d+) results/", $nodeElement->nodeValue, $matches);
+     
+     return (int) ($matches[1]);
+  }
+
+  private function getExtraPagesCount(int $earning_results) : int
+  {
       return (int) floor($earning_results/100);
   } 
 
@@ -105,7 +123,7 @@ EOT;
 </html>
 EOT;
    */
-     $this->domTable->loadHTML(self::$table_page_text);
+     @$bRc = $this->domTable->loadHTML(self::$table_page_text);
   }
 
   private function buildDOMTable(\DOMDocument $dom_first_page, \DateTime $date_time)
@@ -114,7 +132,7 @@ EOT;
 
      $this->appendRows($this->domTable, $dom_first_page, "Appending rows of first results page.");
 
-     $extra_pages = $this->getExtraPagesCount($dom_first_page); 
+     $extra_pages = $this->getExtraPagesCount($this->results_total); 
 
       // Add a table node to $domTable. See Paula code.
      for($extra_page = 1; $extra_page <= $extra_pages; ++$extra_page)  {    
@@ -179,16 +197,7 @@ EOT;
      
      if ($thNodelist->length == 0) { // query failed, no data table was found.
          
-          //TODO: IS this the best way to handle no data table being found?
-
-          // Set default values if there is no data on the page          
-          $this->row_count = 0;
-          
-          // set some default values since there is no table on the page.
-          $total = count($output_ordering);
- 
-          $this->input_order = array_combine(array_keys($output_ordering), range(0, $total - 1));
-          
+          throw new \Exception("Data table query for /thead/tr/th failed. Yahoo may have changed data table page format"); 
           return;
      }
 
@@ -349,7 +358,7 @@ EOT;
      return count($this->input_column_indecies);
   }
   
-  private function debug_show_table()
+  private function debug_show_table_all_columns()
   {
       echo "\nDisplaying rows for \$this->domTable\n";
       
@@ -358,10 +367,38 @@ EOT;
       $trNodeList = $xpath->query("//table/tbody/tr");
       
       echo "Row count of \$this->domTable is " . $trNodeList->length . "\n";
-      
+            
       foreach($trNodeList as $trNode) {
+                    
+          $tdNodeList = $xpath->query("td", $trNode);
           
-          echo $trNode->nodeValue . "\n";
-      }
-  }
+          for($i = 0; $i < $tdNodeList->length; ++$i) {
+              
+             $tdNode = $tdNodeList->item($i);
+             
+             echo $tdNode->nodeValue;
+             
+             echo (($i + 1) != $tdNodeList->length) ? ", " : "\n";
+          }
+        }
+        echo "-------------------------------------------------\n";
+ }
+
+ private function debug_show_table()
+ {
+     echo "table contains {$this->row_count()} rows.\n";
+
+     $iter = $this->getIterator();
+
+     foreach($iter as $splfixedarray) {
+
+          foreach($splfixedarray as $column) {
+
+              echo $column . ", ";
+          }
+          echo "\n";
+     }
+     echo "-------------------------------------------------\n";
+ }
+
 } 

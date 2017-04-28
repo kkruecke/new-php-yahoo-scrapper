@@ -16,8 +16,6 @@ class EarningsTableIterator implements  \SeekableIterator {
      
      $this->current_row = 0; 
                
-     //$this->row_data = new \SplFixedArray($this->html_table->row_count());
-
      $this->end = $this->html_table->row_count(); 
   }
 
