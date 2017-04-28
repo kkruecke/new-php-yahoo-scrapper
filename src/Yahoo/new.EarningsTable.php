@@ -3,15 +3,13 @@ namespace Yahoo;
 
 class EarningsTable implements \IteratorAggregate, TableInterface {
 
-   /* TODO: 
-   1. Don't I need to add the rows of the first page to $domTable? 
+   /* 
+    * TODO: 
+      >>>>>>>>>>>    Add the rows of the first page to $this->domTable  <<<<<<<<<<<
     */
    private   $domTable; 
 
    private static $data_table_query = "//table[contains(@class, 'data-table')]";
-   private static $
-   private static $
-   private static $
    private static $total_results_query = "//div[@id='fin-cal-table']//span[contains(text(), 'results')]";
    
    private   $row_count;
@@ -119,7 +117,7 @@ EOT;
      }
   }
 
-  private function appendRows(\DOMDocument $domTable, \DOMDocument $dom_extra_page=0) // TODO: This needs to work for the first page, too!
+  private function appendRows(\DOMDocument $domTable, int $dom_extra_page=0) // TODO: This needs to work for the first page, too!
   { 
      $xpath = new \DOMXPath($dom_extra_page);
     
@@ -168,14 +166,22 @@ EOT;
    *  $column_names = Configuration::config('column-column_names') 
    *  $output_ordering  =  Configuration::config('output-order') 
    */ 
-  private function findColumnIndecies(\DOMXPath $xpath, \DOMNodeList $thNodelist, $column_names, $output_ordering) 
+  private function getColumnOrder(\DOMDocument $dom_first_page, $column_names, $output_ordering) 
   {  
      $config_col_cnt = count($column_names);
+
+     $xpath = new \DOMXPath($dom_first_page);
+     
+     $query = self::$data_table_query . "/thead/tr/th";
+     
+     echo $query . "\n";
+     
+     $thNodelist = $xpath->query($query);
 
      $arr = array();
      
      $col_num = 0; 
-     
+
      do {
  
         $thNode = $thNodelist->item($col_num);
@@ -215,6 +221,7 @@ EOT;
   {
     return $this->input_order;
   }
+  
   /*
     Input: abbrev from confg.xml
     Output: Its index in the returned getRowData() 
@@ -294,6 +301,7 @@ EOT;
   static private function make_url(\DateTime $date_time, int $extra_page_num=0) : string
   {
       $offset = $extra_page_num * 100;
+      
       return Configuration::config('url') . '?day=' . $date_time->format('Y-m-d') . "&offset={$offset}&size=100";
   }
 
