@@ -44,7 +44,7 @@ require_once("utility.php");
                 
           $csv_writer = new CSVWriter($output_file_name, new CSVEarningsFormatter($table->getInputOrder(), Configuration::config('output-order')), 'a'); 
           
-          $filterIter = ($table->row_count() > 0) ? new CustomStockFilterIterator($table->getIterator(), $table->getRowDataIndex('sym')) : new EmptyFilter($table->getIterator()); 
+          $filterIter = createFilterIterator($table);
     
           foreach($filterIter as $key => $stock_row) {
 
@@ -84,3 +84,7 @@ function wrap_up(int $total,  CSVWriter $csv_writer)
   }
 }
 
+function createFilterIterator(EarningsTable $table) : \FilterIterator
+{
+ return ($table->row_count() > 0) ? new CustomStockFilterIterator($table->getIterator(), $table->getRowDataIndex('sym')) : new EmptyFilter($table->getIterator()); 
+}
