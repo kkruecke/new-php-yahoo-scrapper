@@ -45,6 +45,7 @@ require_once("utility.php");
           // BUG: Opening file every time resets line count?
           $csv_writer = new CSVWriter($output_file_name, new CSVEarningsFormatter($table->getInputOrder(), Configuration::config('output-order')), 'a'); 
           
+          // TODO: Bug. When $table->getRowDataIndex('sym') is called, an indexing error occurs if the EarningsTable has no results.
 	  $filterIter = new CustomStockFilterIterator($table->getIterator(), $table->getRowDataIndex('sym')); 
     
           foreach($filterIter as $key => $stock_row) {

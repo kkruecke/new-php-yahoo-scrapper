@@ -3,8 +3,6 @@ namespace Yahoo;
 
 class EarningsTable implements \IteratorAggregate, TableInterface {
     
-   // TODO: Handle the case when a date has no data table. Think it through. We want a consistent invariant for class.
-
    private static $data_table_query = "//table[contains(@class, 'data-table')]";
    private static $total_results_query = "//div[@id='fin-cal-table']//span[contains(text(), 'results')]";
    private static $table_page_text = <<<EOT
@@ -75,6 +73,7 @@ EOT;
   
   private function getResultsTotal(\DOMDocument $dom_first_page) : int
   {
+   
      /* 
       * All these XPath queries work, starting with the most general at the top:
       *
@@ -97,7 +96,12 @@ EOT;
          
      $nodeElement = $nodeList->item(0);
          
-     preg_match("/(\d+) results/", $nodeElement->nodeValue, $matches);
+     $rc = preg_match("/(\d+) results/", $nodeElement->nodeValue, $matches);
+     
+     if ($rc == 0 || $rc === FALSE) { // The xpath query succeeded. It contained the word "results", but had no expect numeric results. Thus
+                           // the page has no results.
+          return 0;    
+     }
      
      return (int) ($matches[1]);
   }
@@ -271,9 +275,9 @@ EOT;
 
      $xpath = new \DOMXPath($this->domTable);
      
-     $query = "//table/tbody/tr[" . (string) ($row_num + 1) . "]/td"; // BUG: "Invalid expression" && TODO: Make this a class static?
+     $query = "//table/tbody/tr[" . (string) ($row_num + 1) . "]/td"; 
               
-     $tdNodelist =  $xpath->query($query); // BUG: "Invalid expression" && TODO: Make this a class static?
+     $tdNodelist =  $xpath->query($query); 
 
      $i = 0;
 
