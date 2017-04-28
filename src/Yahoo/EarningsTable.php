@@ -7,6 +7,18 @@ class EarningsTable implements \IteratorAggregate, TableInterface {
 
    private static $data_table_query = "//table[contains(@class, 'data-table')]";
    private static $total_results_query = "//div[@id='fin-cal-table']//span[contains(text(), 'results')]";
+   private static $table_page_text = <<<EOT
+<html>
+    <head>
+        <title></title>
+        <meta charset="UTF-8">
+    </head>
+    <body>
+      <table><tbody></tbody></table> 
+    </body>
+</html>
+EOT;
+
    
    private   $row_count;
    
@@ -80,7 +92,7 @@ class EarningsTable implements \IteratorAggregate, TableInterface {
   private function createDOMTable(\DOMDocument $dom_first_page)
   {
       $this->domTable = new \DOMDocument('1.0', 'utf-8');
-      
+     /* 
       $page_text = <<<EOT
 <html>
     <head>
@@ -92,8 +104,8 @@ class EarningsTable implements \IteratorAggregate, TableInterface {
     </body>
 </html>
 EOT;
-
-     $this->domTable->loadHTML($page_text);
+   */
+     $this->domTable->loadHTML(self::$table_page_text);
   }
 
   private function buildDOMTable(\DOMDocument $dom_first_page, \DateTime $date_time)

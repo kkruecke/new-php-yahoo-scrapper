@@ -25,6 +25,12 @@ class CSVWriter {
     $this->line_count = 0;
   }
 
+  public function unlink() // deletes file
+  {
+    $this->splfile = null;
+    unlink($this->file_name);
+  }
+
   public function getFileName() : string
   {
      return $this->file_name;

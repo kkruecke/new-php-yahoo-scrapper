@@ -53,6 +53,7 @@ require_once("utility.php");
 	  }
 
           $total += $csv_writer->getLineCount();    
+
           display_progress($date_time, $table->row_count(), $csv_writer->getLineCount(), $total); 
   
       } catch(\Exception $e) {
@@ -61,8 +62,8 @@ require_once("utility.php");
           return 0;
       }
   }
-
-  echo  $csv_writer->getFileName() . " has been created. It contains " . $total . " US stocks entries.\n";
+   
+  wrap_up($total, $csv_writer);
 
   return;
 
@@ -70,3 +71,17 @@ function display_progress(\DateTime $date_time, int $table_stock_cnt, int $lines
 {
   echo $date_time->format("m-d-Y") . " earnings table contained $table_stock_cnt stocks. {$lines_written} stocks met the filter criteria. $total total records have been written.\n";
 }
+
+function wrap_up(int $total,  CSVWriter $csv_writer)
+{
+  if ($total != 0) {
+
+      echo  $csv_writer->getFileName() . " has been created. It contains " . $total . " met filter entries.\n";
+
+  } else {
+
+     echo  "No output was created because $total stocks met filter criteria.\n";
+     $csv_writer->unlink(); 
+  }
+}
+
