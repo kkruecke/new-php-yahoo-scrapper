@@ -2,83 +2,161 @@
 namespace Yahoo;
 
 class EarningsTable implements \IteratorAggregate, TableInterface {
+   
+   private   $domTable; 
 
-   private   $dom;	
-   private   $trDOMNodeList;
+   private static $data_table_query = "//table[contains(@class, 'data-table')]";
+   private static $total_results_query = "//div[@id='fin-cal-table']//span[contains(text(), 'results')]";
+   
    private   $row_count;
-   private   $url;
-
+   
    private $input_column_indecies;   // indecies of column names ordered in those names appear in config.xml  
-   private $input_order = array();// Associative array of abbreviations mapped to indecies indicating their location in the table.
+   private $input_order = array();   // Associative array of abbreviations mapped to indecies indicating their location in the table.
 
   public function __construct(\DateTime $date_time, array $column_names, array $output_ordering) 
   {
-   /*
-    * The column of the table that the external iterator should return
-    */ 	  
-    $opts = array(
-                'http'=>array(
-                  'method'=>"GET",
-                  'header'=>"Accept-language: en\r\n" .  "Cookie: foo=bar\r\n")
-                 );
+    $dom_first_page = $this->loadHTML($date_time); // load initial more, there may be more which buildDOMTable() will fetch.
 
-    $context = stream_context_create($opts);
+    $this->createDOMTable($dom_first_page); 
 
-    $friendly_date = $date_time->format("m-d-Y");
- 
-    $this->url = self::make_url($date_time);
-  
-    $page = $this->get_html_file($this->url);
-       
-    $this->loadHTML($page);
+    $this->getColumnOrder($dom_first_page, $column_names, $output_ordering);
 
-    $this->loadRowNodes($column_names, $output_ordering); 
+    $this->createInputOrdering($output_ordering);
+
+    $this->buildDOMTable($dom_first_page, $date_time);
+      
+    //--$this->debug_show_table();
   }
 
-  function loadRowNodes(array $column_names, array $output_ordering)
+  private function loadHTML(\DateTime $date_time, $extra_page_num=0) : \DOMDocument
   {
-      $xpath = new \DOMXPath($this->dom);
-            
-      $nodeList = $xpath->query("(//table)[2]");
+    $url = self::make_url($date_time, $extra_page_num);
+  
+    $page = $this->get_html_file($date_time, $url);
+
+    $dom = new \DOMDocument('1.0', 'utf-8');
+     
+    // load the html into the object
+    $dom->strictErrorChecking = false; // default is true.
       
-      if ($nodeList->length == 0) { // Table was not found.
-
-          // Set default values if there is no data on the page          
-          $this->row_count = 0;
-
-          // set some default values since there is no table on the page.
-          $total = count($output_ordering);
- 
-          $this->input_order = array_combine(array_keys($output_ordering), range(0, $total - 1));
-          return;
-      }
-
-      $tblElement = $nodeList->item(0);
-
-      $this->trDOMNodeList = $this->getChildNodes($xpath->query("tbody", $tblElement)); //--$nodeList);
-      
-      $this->row_count = $this->trDOMNodeList->length;
-
-      $this->findColumnIndecies($xpath, $tblElement, $column_names, $output_ordering);
+    // discard redundant white space
+    $dom->preserveWhiteSpace = false;
+  
+    @$boolRc = $dom->loadHTML($page);  // Turn off error reporting
     
-      $this->createInputOrdering($output_ordering);
+    return $dom;
+  } 
+  
+  private function getExtraPagesCount(\DOMDocument $dom_first_page) : int
+  {
+      /* 
+       * All these XPath queries work, starting with the most general at the top:
+       *
+       * //div[@id='fin-cal-table']                            find any div whose id is 'fin-cal-table'
+       * //div[@id='fin-cal-table']//span                      After find that div, find any spans anywhere under it
+       * //div[@id='fin-cal-table']//span[text()='1-100 of 1169 results']      ...that have the specified text    
+       * //div[@id='fin-cal-table']//span[contains(text(), 'results')]         ...that contain the specified text   
+       *
+       *  The last query above is the one we really want: 
+       */
+      $xpath = new \DOMXPath($dom_first_page);
+
+      $nodeList = $xpath->query(self::$total_results_query); 
+            
+      if ($nodeList->length == 0) { // div was not found.
+      
+          throw new \Exception("Total Results could not be found. Total Results XPath query failed!");
+      }    
+          
+      $nodeElement = $nodeList->item(0);
+          
+      preg_match("/(\d+) results/", $nodeElement->nodeValue, $matches);
+      
+      $earning_results = (int) ($matches[1]);
+      
+      return (int) floor($earning_results/100);
   } 
 
+  private function createDOMTable(\DOMDocument $dom_first_page)
+  {
+      $this->domTable = new \DOMDocument('1.0', 'utf-8');
+      
+      $page_text = <<<EOT
+<html>
+    <head>
+        <title></title>
+        <meta charset="UTF-8">
+    </head>
+    <body>
+      <table><tbody></tbody></table> 
+    </body>
+</html>
+EOT;
+
+     $this->domTable->loadHTML($page_text);
+  }
+
+  private function buildDOMTable(\DOMDocument $dom_first_page, \DateTime $date_time)
+  {  
+     $this->row_count = 0;
+
+     $this->appendRows($this->domTable, $dom_first_page);
+
+     $extra_pages = $this->getExtraPagesCount($dom_first_page); 
+
+      // Add a table node to $domTable. See Paula code.
+     for($extra_page = 1; $extra_page <= $extra_pages; ++$extra_page)  {    
+         
+         echo  "...fetching additional results page $extra_page of $extra_pages extra pages...";       
+
+         $dom_extra_page = $this->loadHTML($date_time, $extra_page);  // BUG: We are not adding the rows of the first page.
+
+         $this->appendRows($this->domTable, $dom_extra_page);
+     }
+  }
+
+  private function appendRows(\DOMDocument $domTable, \DOMDocument $dom_page) 
+  { 
+     $xpath_src = new \DOMXPath($dom_page); 
+    
+     $trNodeList_src = $xpath_src->query(self::$data_table_query . "/tbody/tr"); // was "(//table)[2]/tbody/tr"
+    
+     echo  "Appending rows\n"; 
+     
+     $dest_node_list = $domTable->getElementsByTagName("tbody"); 
+     
+     $dest_node = $dest_node_list->item($dest_node_list->length - 1);
+    
+     foreach($trNodeList_src as $trNode) { // append extra rows to the 
+        
+         $importedNode = $domTable->importNode($trNode, true);        
+        
+         $dest_node->appendChild($importedNode); // Append imported node to the tableNode of the DOMDocument at $this->domTable.
+     }    
+
+     $this->row_count += $trNodeList_src->length;
+     return $trNodeList_src->length;
+  }
+ 
   /*
    *  Input:
    *  $column_names = Configuration::config('column-column_names') 
    *  $output_ordering  =  Configuration::config('output-order') 
    */ 
-  private function findColumnIndecies(\DOMXPath $xpath, \DOMElement $DOMElement, $column_names, $output_ordering) 
+  private function getColumnOrder(\DOMDocument $dom_first_page, $column_names, $output_ordering) 
   {  
      $config_col_cnt = count($column_names);
 
-     $thNodelist = $xpath->query("thead/tr/th", $DOMElement);
+     $xpath = new \DOMXPath($dom_first_page);
+     
+     $query = self::$data_table_query . "/thead/tr/th";
+     
+     $thNodelist = $xpath->query($query);
 
      $arr = array();
      
      $col_num = 0; 
-     
+
      do {
  
         $thNode = $thNodelist->item($col_num);
@@ -116,6 +194,7 @@ class EarningsTable implements \IteratorAggregate, TableInterface {
   {
     return $this->input_order;
   }
+  
   /*
     Input: abbrev from confg.xml
     Output: Its index in the returned getRowData() 
@@ -151,12 +230,12 @@ class EarningsTable implements \IteratorAggregate, TableInterface {
   public function getRowData($row_num) : \SplFixedArray
   {
      $row_data = new \SplFixedArray(count($this->input_column_indecies));
- 
-     // get DOMNode for row number $row_id
-     $rowNode =  $this->trDOMNodeList->item($row_num);
 
-     // get DOMNodeList of <td></td> elemnts in the row     
-     $tdNodelist = $rowNode->getElementsByTagName('td');
+     $xpath = new \DOMXPath($this->domTable);
+     
+     $query = "//table/tbody/tr[" . (string) ($row_num + 1) . "]/td"; // BUG: "Invalid expression" && TODO: Make this a class static?
+              
+     $tdNodelist =  $xpath->query($query); // BUG: "Invalid expression" && TODO: Make this a class static?
 
      $i = 0;
 
@@ -171,22 +250,7 @@ class EarningsTable implements \IteratorAggregate, TableInterface {
      }
      return $row_data;
   }
-
-  private function loadHTML(string $page) : bool
-  {
-      $this->dom = new \DOMDocument();
-      
-      // load the html into the object
-      $this->dom->strictErrorChecking = false; // default is true.
-      
-      // discard redundant white space
-      $this->dom->preserveWhiteSpace = false;
   
-      @$boolRc = $this->dom->loadHTML($page);  // Turn off error reporting
-
-      return $boolRc;
-  } 
-
   static public function page_exists(\DateTime $date_time) : bool
   {
     return self::url_exists( self::make_url($date_time) );
@@ -206,13 +270,15 @@ class EarningsTable implements \IteratorAggregate, TableInterface {
 
     }
   } 
-
-  static private function make_url(\DateTime $date_time) : string
+  
+  static private function make_url(\DateTime $date_time, int $extra_page_num=0) : string
   {
-        return Configuration::config('url') . '?day=' . $date_time->format('Y-m-d');
+      $offset = $extra_page_num * 100;
+      
+      return Configuration::config('url') . '?day=' . $date_time->format('Y-m-d') . "&offset={$offset}&size=100";
   }
 
-  private function get_html_file(string $url) : string
+  private function get_html_file(\DateTime $date_time, string $url) : string
   {
       for ($i = 0; $i < 2; ++$i) {
           
@@ -222,6 +288,8 @@ class EarningsTable implements \IteratorAggregate, TableInterface {
              
             break;
          }   
+         
+         $friendly_date = $date_time->format("m-d-Y"); 
          
          echo "Attempt to download data for $friendly_date on webpage $url failed. Retrying.\n";
       }
@@ -250,5 +318,21 @@ class EarningsTable implements \IteratorAggregate, TableInterface {
   public function column_count() : int
   {
      return count($this->input_column_indecies);
+  }
+  
+  private function debug_show_table()
+  {
+      echo "\nDisplaying rows for \$this->domTable\n";
+      
+      $xpath = new \DOMXPath($this->domTable);
+      
+      $trNodeList = $xpath->query("//table/tbody/tr");
+      
+      echo "Row count of \$this->domTable is " . $trNodeList->length . "\n";
+      
+      foreach($trNodeList as $trNode) {
+          
+          echo $trNode->nodeValue . "\n";
+      }
   }
 } 
