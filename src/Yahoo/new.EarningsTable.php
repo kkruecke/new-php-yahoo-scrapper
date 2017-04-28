@@ -117,9 +117,9 @@ EOT;
      }
   }
 
-  private function appendRows(\DOMDocument $domTable, int $dom_extra_page=0) // TODO: This needs to work for the first page, too!
+  private function appendRows(\DOMDocument $domTable, \DOMDocument $dom_page) 
   { 
-     $xpath = new \DOMXPath($dom_extra_page);
+     $xpath = new \DOMXPath($dom_page); 
     
      $trNodeList = $xpath->query(self::$data_table_query . "/tbody/tr"); // was "(//table)[2]/tbody/tr"
     
