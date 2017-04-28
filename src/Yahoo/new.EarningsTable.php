@@ -22,7 +22,9 @@ class EarningsTable implements \IteratorAggregate, TableInterface {
 
     $this->getColumnOrder($dom_first_page, $column_names, $output_ordering);
 
-    $this->table = $this->buildDOMTable($dom_first_page, $date_time);
+    $this->buildDOMTable($dom_first_page, $date_time);
+    
+    //--$this->debug_show_table();
   }
 
   private function loadHTML(\DateTime $date_time, $extra_page_num=0) : \DOMDocument
@@ -60,7 +62,7 @@ class EarningsTable implements \IteratorAggregate, TableInterface {
             
       if ($nodeList->length == 0) { // div was not found.
       
-          //TODO: Throw an exception explaining the error.
+          throw new \Exception("Total Results could not be found. Total Results XPath query failed!");
       }    
           
       $nodeElement = $nodeList->item(0);
@@ -72,7 +74,6 @@ class EarningsTable implements \IteratorAggregate, TableInterface {
       return (int) floor($earning_results/100);
   } 
 
-  // TODO: create $this->domTable and append rows of first page
   private function createDOMTable(\DOMDocument $dom_first_page)
   {
       $this->domTable = new \DOMDocument('1.0', 'utf-8');
@@ -84,7 +85,7 @@ class EarningsTable implements \IteratorAggregate, TableInterface {
         <meta charset="UTF-8">
     </head>
     <body>
-      <table></table> 
+      <table><tbody></tbody></table> 
     </body>
 </html>
 EOT;
@@ -105,27 +106,33 @@ EOT;
       // Add a table node to $domTable. See Paula code.
      for($extra_page = 1; $extra_page <= $extra_pages; ++$extra_page)  {    
          
-         echo  "...fetching additional page $extra_page of $extra_pages extra pages";       
+         echo  "...fetching additional results page $extra_page of $extra_pages extra pages";       
 
          $dom_extra_page = $this->loadHTML($date_time, $extra_page);  // Turn off error reporting
 
          $this->appendRows($this->domTable, $dom_extra_page);
+         
+         $this->debug_show_table();
      }
   }
 
   private function appendRows(\DOMDocument $domTable, \DOMDocument $dom_page) 
   { 
-     $xpath = new \DOMXPath($dom_page); 
+     $xpath_src = new \DOMXPath($dom_page); 
     
-     $trNodeList = $xpath->query(self::$data_table_query . "/tbody/tr"); // was "(//table)[2]/tbody/tr"
+     $trNodeList_to_append = $xpath_src->query(self::$data_table_query . "/tbody/tr"); // was "(//table)[2]/tbody/tr"
     
-     echo  "...appending its rows\n";              
+     echo  "...appending its rows\n"; 
+     
+     $dest_node_list = $domTable->getElementsByTagName("tbody"); 
+     
+     $dest_node = $dest_node_list->item($dest_node_list->length - 1);
     
-     foreach($trNodeList as $trNode) { // append extra rows to the 
+     foreach($trNodeList_to_append as $trNode) { // append extra rows to the 
         
          $importedNode = $domTable->importNode($trNode, true);        
         
-         $domTable->appendChild($importedNode); // Append imported node to the tableNode of the DOMDocument at $this->domTable.
+         $dest_node->appendChild($importedNode); // Append imported node to the tableNode of the DOMDocument at $this->domTable.
      }    
   }
  
@@ -201,8 +208,6 @@ EOT;
      } while(count($this->input_column_indecies) < $config_col_cnt);
   }
   
-
- 
   private function createInputOrdering(array $output_ordering)
   {
      $abbrevs = array_keys($output_ordering);
@@ -341,5 +346,21 @@ EOT;
   public function column_count() : int
   {
      return count($this->input_column_indecies);
+  }
+  
+  private function debug_show_table()
+  {
+      echo "\nDisplaying rows for \$this->domTable\n";
+      
+      $xpath = new \DOMXPath($this->domTable);
+      
+      $trNodeList = $xpath->query("//table/tbody/tr");
+      
+      echo "Row count of \$this->domTable is " . $trNodeList->length . "\n";
+      
+      foreach($trNodeList as $trNode) {
+          
+          echo $trNode->nodeValue . "\n";
+      }
   }
 } 
