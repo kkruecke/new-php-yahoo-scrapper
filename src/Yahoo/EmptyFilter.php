@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 namespace Yahoo;
       
-class NullObjectFilter extends \FilterIterator {
+class EmptyFilter extends \FilterIterator {
     
    public function __construct(\Iterator $iter)
    {
