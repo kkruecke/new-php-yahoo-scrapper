@@ -4,6 +4,7 @@ namespace Yahoo;
 class CustomStockFilterIterator extends \FilterIterator {
     
    private $symbol_column;
+   private $call_back;    // filter call back.
    
    public function __construct(\Iterator $iter, int $symbol_column)
    {
