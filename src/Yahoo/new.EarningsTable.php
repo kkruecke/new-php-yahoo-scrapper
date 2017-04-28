@@ -3,23 +3,32 @@ namespace Yahoo;
 
 class EarningsTable implements \IteratorAggregate, TableInterface {
 
-   // TODO: Don't I need to add the rows of the first page to $domTable? 
+   /* TODO: 
+   1. Don't I need to add the rows of the first page to $domTable? 
+    */
    private   $domTable; 
+
+   private static $data_table_query = "//table[contains(@class, 'data-table')]";
+   private static $
+   private static $
+   private static $
+   private static $total_results_query = "//div[@id='fin-cal-table']//span[contains(text(), 'results')]";
    
-   private   $trDOMNodeList;
    private   $row_count;
    private   $url;
 
    private $input_column_indecies;   // indecies of column names ordered in those names appear in config.xml  
-   private $input_order = array();// Associative array of abbreviations mapped to indecies indicating their location in the table.
+   private $input_order = array();   // Associative array of abbreviations mapped to indecies indicating their location in the table.
 
   public function __construct(\DateTime $date_time, array $column_names, array $output_ordering) 
   {
     $dom_first_page = $this->loadHTML($date_time); // load initial more, there may be more which buildDOMTable() will fetch.
 
-    $this->table = $this->buildDOMTable($dom_first_page, $date_time);
+    $this->createDOMTable($dom_first_page); 
 
-    //TODO: $this->loadRowNodes($this->xpath, $column_names, $output_ordering); // TODO: <-- Rewrite to interogate $this->domTable.
+    $this->getColumnOrder($dom_first_page, $column_names, $output_ordering);
+
+    $this->table = $this->buildDOMTable($dom_first_page, $date_time);
   }
 
   private function loadHTML(\DateTime $date_time, $extra_page_num=0) : \DOMDocument
@@ -53,7 +62,7 @@ class EarningsTable implements \IteratorAggregate, TableInterface {
        *
        *  The last query above is the one we really want: 
        */
-      $nodeList = $xpath->query("//div[@id='fin-cal-table']//span[contains(text(), 'results')]"); // works--best
+      $nodeList = $xpath->query(self::$total_results_query); 
             
       if ($nodeList->length == 0) { // div was not found.
       
@@ -69,12 +78,9 @@ class EarningsTable implements \IteratorAggregate, TableInterface {
       return (int) floor($earning_results/100);
   } 
 
-  private function buildDOMTable(\DOMDocument $dom_first_page, \DateTime $date_time)
+  // TODO: create $this->domTable and append rows of first page
+  private function createDOMTable(\DOMDocument $dom_first_page)
   {
-      $xpath = new \DOMXPath($dom_first_page);
-      
-      $extra_pages = $this->getExtraPagesCount($xpath); 
-
       $this->domTable = new \DOMDocument('1.0', 'utf-8');
       
       $page_text = <<<EOT
@@ -90,7 +96,14 @@ class EarningsTable implements \IteratorAggregate, TableInterface {
 EOT;
 
      $this->domTable->loadHTML($page_text);
+  }
+
+  private function buildDOMTable(\DOMDocument $dom_first_page, \DateTime $date_time)
+  {
+     $xpath = new \DOMXPath($dom_first_page);
       
+     $extra_pages = $this->getExtraPagesCount($xpath); 
+
      $tableNodeList = $this->domTable->getElementsByTagName('table');
      
      $tableNode = $tableNodeList->item(0);
@@ -106,11 +119,11 @@ EOT;
      }
   }
 
-  private function appendRows(\DOMDocument $domTable, \DOMDocument $dom_extra_page)
+  private function appendRows(\DOMDocument $domTable, \DOMDocument $dom_extra_page=0) // TODO: This needs to work for the first page, too!
   { 
      $xpath = new \DOMXPath($dom_extra_page);
     
-     $trNodeList = $xpath->query("(//table)[2]/tbody/tr");
+     $trNodeList = $xpath->query(self::$data_table_query . "/tbody/tr"); // was "(//table)[2]/tbody/tr"
     
      echo  "...appending its rows\n";              
     
@@ -125,7 +138,7 @@ EOT;
   // TODO: This is no longer needed--or is part of it? We need to initially add these rows to $this->domTable.
   private function loadRowNodes(\DOMXPath $xpath, array $column_names, array $output_ordering)
   {
-      $nodeList = $xpath->query("(//table)[2]");
+      $nodeList = $xpath->query(self::$data_table_query);  // was "(//table)[2]"
       
       if ($nodeList->length == 0) { // Table was not found.
 
@@ -155,11 +168,9 @@ EOT;
    *  $column_names = Configuration::config('column-column_names') 
    *  $output_ordering  =  Configuration::config('output-order') 
    */ 
-  private function findColumnIndecies(\DOMXPath $xpath, \DOMElement $DOMElement, $column_names, $output_ordering) 
+  private function findColumnIndecies(\DOMXPath $xpath, \DOMNodeList $thNodelist, $column_names, $output_ordering) 
   {  
      $config_col_cnt = count($column_names);
-
-     $thNodelist = $xpath->query("thead/tr/th", $DOMElement);
 
      $arr = array();
      
@@ -188,6 +199,8 @@ EOT;
      } while(count($this->input_column_indecies) < $config_col_cnt);
   }
   
+
+ 
   private function createInputOrdering(array $output_ordering)
   {
      $abbrevs = array_keys($output_ordering);
