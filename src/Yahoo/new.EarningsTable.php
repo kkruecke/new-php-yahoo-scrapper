@@ -2,11 +2,7 @@
 namespace Yahoo;
 
 class EarningsTable implements \IteratorAggregate, TableInterface {
-
-   /* 
-    * TODO: 
-      >>>>>>>>>>>    Add the rows of the first page to $this->domTable  <<<<<<<<<<<
-    */
+  
    private   $domTable; 
 
    private static $data_table_query = "//table[contains(@class, 'data-table')]";
