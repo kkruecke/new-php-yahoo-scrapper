@@ -1,10 +1,8 @@
-# php7 Support Added
+## Overview
 
-Change use ... to new format, like?, "use Yahoo { ... };
+A screen scrapper for Yahoo stock earnings. Requires PHP 7 or above. Usage:
 
-## YahooTable Use fixed ini values for start and end column
+    php -f main.php "05/10/2017" 2
 
-There is a problem with the output sometimes being narrower than the width the stock symbol. The start\_column and end\_colun used in
-YahooTable and also YahooTableIterator is simply the hard coded values in the .ini file. 
-
-Maybe these should not be used and instead the code should determine at run time how wide the text is of the largest stock symbol on the page?
+where 2 is the number of additional calendar date to scrap for data. Outputs 
+a .csv file. See specification.txt for format of file.
