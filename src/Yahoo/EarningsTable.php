@@ -2,7 +2,8 @@
 namespace Yahoo;
 
 class EarningsTable implements \IteratorAggregate, TableInterface {
-   
+    
+   // TODO: Handle the case when a date has no data table. Think it through; don't hack a solution.
    private   $domTable; 
 
    private static $data_table_query = "//table[contains(@class, 'data-table')]";
