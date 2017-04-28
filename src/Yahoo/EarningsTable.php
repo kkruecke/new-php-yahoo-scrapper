@@ -27,13 +27,12 @@ EOT;
 
   public function __construct(\DateTime $date_time, array $column_names, array $output_ordering) 
   {
-    $dom_first_page = $this->loadHTML($date_time); // load initial more, there may be more which buildDOMTable() will fetch.
+    $dom_first_page = $this->loadHTML($date_time); // load initial page, there may be more which buildDOMTable() will fetch.
 
     $this->createDOMTable($dom_first_page); 
 
-    $this->getColumnOrder($dom_first_page, $column_names, $output_ordering);
-
-    $this->createInputOrdering($output_ordering);
+    // TODO: Handle case where there is no data table.
+    $this->createInputOrdering($dom_first_page, $column_names, $output_ordering);
 
     $this->buildDOMTable($dom_first_page, $date_time);
       
@@ -112,7 +111,7 @@ EOT;
   {  
      $this->row_count = 0;
 
-     $this->appendRows($this->domTable, $dom_first_page);
+     $this->appendRows($this->domTable, $dom_first_page, "Appending rows of first results page.");
 
      $extra_pages = $this->getExtraPagesCount($dom_first_page); 
 
@@ -123,17 +122,17 @@ EOT;
 
          $dom_extra_page = $this->loadHTML($date_time, $extra_page);  // BUG: We are not adding the rows of the first page.
 
-         $this->appendRows($this->domTable, $dom_extra_page);
+         $this->appendRows($this->domTable, $dom_extra_page, "...appending its rows");
      }
   }
 
-  private function appendRows(\DOMDocument $domTable, \DOMDocument $dom_page) 
+  private function appendRows(\DOMDocument $domTable, \DOMDocument $dom_page, string $msg) 
   { 
      $xpath_src = new \DOMXPath($dom_page); 
     
      $trNodeList_src = $xpath_src->query(self::$data_table_query . "/tbody/tr"); // was "(//table)[2]/tbody/tr"
     
-     echo  "Appending rows\n"; 
+     echo  $msg . "\n"; 
      
      $dest_node_list = $domTable->getElementsByTagName("tbody"); 
      
@@ -149,13 +148,25 @@ EOT;
      $this->row_count += $trNodeList_src->length;
      return $trNodeList_src->length;
   }
- 
+  
+  private function createInputOrdering(\DOMDocument $dom_first_page, $column_names, $output_ordering)
+  {
+     $this->getTableColumnOrder($dom_first_page, $column_names, $output_ordering);
+
+     $abbrevs = array_keys($output_ordering);
+    
+    for($i = 0; $i < count($abbrevs); ++$i) { // we ignore output_input
+      
+       $this->input_order[$abbrevs[$i]] = $this->input_column_indecies[$i];
+    }
+  }
+
   /*
    *  Input:
    *  $column_names = Configuration::config('column-column_names') 
    *  $output_ordering  =  Configuration::config('output-order') 
    */ 
-  private function getColumnOrder(\DOMDocument $dom_first_page, $column_names, $output_ordering) 
+  private function getTableColumnOrder(\DOMDocument $dom_first_page, $column_names, $output_ordering) 
   {  
      $config_col_cnt = count($column_names);
 
@@ -164,6 +175,21 @@ EOT;
      $query = self::$data_table_query . "/thead/tr/th";
      
      $thNodelist = $xpath->query($query);
+     
+     if ($thNodelist->length == 0) { // query failed, no data table was found.
+         
+          //TODO: IS this the best way to handle no data table being found?
+
+          // Set default values if there is no data on the page          
+          $this->row_count = 0;
+          
+          // set some default values since there is no table on the page.
+          $total = count($output_ordering);
+ 
+          $this->input_order = array_combine(array_keys($output_ordering), range(0, $total - 1));
+          
+          return;
+     }
 
      $arr = array();
      
@@ -190,16 +216,6 @@ EOT;
         }
         
      } while(count($this->input_column_indecies) < $config_col_cnt);
-  }
-  
-  private function createInputOrdering(array $output_ordering)
-  {
-     $abbrevs = array_keys($output_ordering);
-    
-    for($i = 0; $i < count($abbrevs); ++$i) { // we ignore output_input
-      
-       $this->input_order[$abbrevs[$i]] = $this->input_column_indecies[$i];
-    }
   }
 
   public function getInputOrder() : array
