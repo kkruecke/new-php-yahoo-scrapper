@@ -4,7 +4,7 @@ Items
 Bug
 ---
 
-See TODO and BUG in main.php.
+set row_count from preg_match results.
 
 Help:
 1. Excellent Overview of XPath Syntax:  https://www.w3schools.com/xml/xpath_syntax.asp
