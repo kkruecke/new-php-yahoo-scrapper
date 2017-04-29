@@ -101,7 +101,7 @@ EOT;
          
      $rc = preg_match("/(\d+) results/", $nodeElement->nodeValue, $matches);
      
-     if ($rc == 0 || $rc === FALSE) { // The xpath query succeeded. It contained the word "results", but had no expect numeric results. Thus
+     if ($rc == 0 || $rc === FALSE) { // The xpath query succeeded. It contained the word "results", but had no expected numeric results. Thus
                            // the page has no results.
           return 0;    
      }
@@ -139,7 +139,7 @@ EOT;
      }
   }
 
-  private function appendRows(\DOMDocument $domTable, \DOMDocument $dom_page, string $msg) 
+  private function appendRows(\DOMDocument $domTable, \DOMDocument $dom_page, string $msg) : int // return rows_count
   { 
      $xpath_src = new \DOMXPath($dom_page); 
     
