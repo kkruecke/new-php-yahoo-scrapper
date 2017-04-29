@@ -46,6 +46,9 @@ EOT;
     //$this->debug_show_table();
   }
 
+  public function exists() : bool
+  { return  is_null($this->domTable) ? false : true; }
+
   private function setDefaultInvariant()
   {
      $this->row_count = 0;
