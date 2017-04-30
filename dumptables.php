@@ -52,8 +52,7 @@ require_once("utility.php");
           return 0;
       }
   }
-   
-  wrap_up($total, $csv_writer);
+    
 
   return;
 

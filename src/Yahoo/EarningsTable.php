@@ -375,9 +375,9 @@ EOT;
         echo "-------------------------------------------------\n";
  }
 
- private function debug_show_table()
+ public function debug_show_table()
  {
-     echo "table contains {$this->rows()} rows.\n";
+     echo "table contains {$this->row_count()} rows.\n";
 
      $iter = $this->getIterator();
 
