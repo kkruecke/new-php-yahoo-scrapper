@@ -42,8 +42,6 @@ require_once("utility.php");
 
           $table = new EarningsTable($date_time, Configuration::config('column-names'), Configuration::config('output-order')); 
 
-          echo "\nDate: " . $date_time->format("m-d-Y") . "\n"; 
-
           $table->debug_show_table();
             
       } catch(\Exception $e) {

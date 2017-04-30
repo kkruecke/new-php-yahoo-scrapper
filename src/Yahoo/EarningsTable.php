@@ -18,6 +18,7 @@ class EarningsTable implements \IteratorAggregate, TableInterface {
 EOT;
    
    private   $results;
+   private   $date_time;
    private   $domTable; 
    
    private $input_column_indecies;   // indecies of column names ordered in those names appear in config.xml  
@@ -25,7 +26,7 @@ EOT;
 
   public function __construct(\DateTime $date_time, array $column_names, array $output_ordering) 
   {
-    $this->setDefaultInvariant();
+    $this->setDefaultInvariant($date_time);
 
     $dom_first_page = $this->loadHTML($date_time); // load initial page, there may be more which buildDOMTable() will fetch.
 
@@ -48,8 +49,9 @@ EOT;
      return  is_null($this->domTable) ? false : true; 
   }
 
-  private function setDefaultInvariant()
+  private function setDefaultInvariant(\DateTime $date_time)
   {
+     $this->date_time = $date_time;
      $this->results = 0;
      $this->domTable = null;
   }
@@ -377,7 +379,7 @@ EOT;
 
  public function debug_show_table()
  {
-     echo "Table contains {$this->row_count()} results.\n";
+     echo "Date " . $this->date_time->format('m-d-Y') . " Table contains {$this->row_count()} results.\n";
 
      $iter = $this->getIterator();
 
