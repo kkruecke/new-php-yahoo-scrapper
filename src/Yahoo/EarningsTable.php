@@ -17,7 +17,7 @@ class EarningsTable implements \IteratorAggregate, TableInterface {
 </html>
 EOT;
    
-   private   $results_rows;
+   private   $results;
    private   $domTable; 
    
    private $input_column_indecies;   // indecies of column names ordered in those names appear in config.xml  
@@ -29,9 +29,9 @@ EOT;
 
     $dom_first_page = $this->loadHTML($date_time); // load initial page, there may be more which buildDOMTable() will fetch.
 
-    $this->results_rows = $this->getResultsTotal($dom_first_page); // TODO: Same as rows!!!
+    $this->results = $this->getResultsTotal($dom_first_page); // TODO: Same as rows!!!
 
-    if ($this->results_rows == 0) {
+    if ($this->results == 0) {
 
         return;
     }
@@ -50,7 +50,7 @@ EOT;
 
   private function setDefaultInvariant()
   {
-     $this->results_rows = 0;
+     $this->results = 0;
      $this->domTable = null;
   }
 
@@ -105,8 +105,8 @@ EOT;
           return 0;    
      }
 
-     $this->results_rows = (int) $matches[1];  
-     return $this->results_rows;
+     $this->results = (int) $matches[1];  
+     return $this->results;
   }
 
   private function getExtraPagesCount(int $earning_results) : int
@@ -124,7 +124,7 @@ EOT;
   {  
      $this->appendRows($this->domTable, $dom_first_page, "\nAppending rows of first results page for " . $date_time->format('m-d-Y'));
 
-     $extra_pages = $this->getExtraPagesCount($this->results_rows); 
+     $extra_pages = $this->getExtraPagesCount($this->results); 
 
       // Add a table node to $domTable. See Paula code.
      for($extra_page = 1; $extra_page <= $extra_pages; ++$extra_page)  {    
@@ -341,7 +341,7 @@ EOT;
 
   public function row_count() : int // was rows() : int
   {
-     return $this->results_rows;
+     return $this->results;
   } 
 
   public function column_count() : int
