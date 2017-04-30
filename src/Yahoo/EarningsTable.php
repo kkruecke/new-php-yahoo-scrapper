@@ -372,12 +372,12 @@ EOT;
              echo (($i + 1) != $tdNodeList->length) ? ", " : "\n";
           }
         }
-        echo "-------------------------------------------------\n";
+        echo "\n";
  }
 
  public function debug_show_table()
  {
-     echo "table contains {$this->row_count()} rows.\n";
+     echo "Table contains {$this->row_count()} results.\n";
 
      $iter = $this->getIterator();
 
@@ -389,7 +389,7 @@ EOT;
           }
           echo "\n";
      }
-     echo "-------------------------------------------------\n";
+     echo "\n";
  }
 
 } 
