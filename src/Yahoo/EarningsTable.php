@@ -149,7 +149,7 @@ EOT;
   private function appendRows(\DOMDocument $domTable, \DOMDocument $dom_page, string $msg) : int // return rows_count
   { 
      $xpath_src = new \DOMXPath($dom_page); 
-    
+        
      $trNodeList_src = $xpath_src->query(self::$data_table_query . "/tbody/tr"); // was "(//table)[2]/tbody/tr"
     
      echo  $msg . "\n"; 
@@ -164,7 +164,7 @@ EOT;
         
          $dest_node->appendChild($importedNode); // Append imported node to the tableNode of the DOMDocument at $this->domTable.
      }    
-
+    
      return $trNodeList_src->length;
   }
   
