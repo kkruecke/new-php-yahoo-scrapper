@@ -31,10 +31,10 @@ EOT;
 
     $dom_first_page = $this->loadHTML($date_time); // load initial page, there may be more which buildDOMTable() will fetch.
 
-    $this->results = $this->getResultsTotal($dom_first_page); // TODO: Same as rows!!!
+    $this->results = $this->getResultsTotal($dom_first_page); 
 
     if ($this->results == 0) {
-
+        
         return;
     }
 
@@ -273,30 +273,7 @@ EOT;
      $query = "//table/tbody/tr[" . (string) ($row_num + 1) . "]/td"; 
               
      $tdNodelist = $xpath->query($query); 
-     
-     /// Debug
-     if ($tdNodelist->length == 0) {
-         
-          $this->debug($xpath, $query, $row_num);
-          
-          echo "td NodeList->length is 0. \$xpath->query(" . "'$query') failed.\n";
-
-          echo "Length of DOMNodeList from \$xpath->query(" . "'//table/tbody/tr') = ";
-
-          $trnodelist = $xpath->query('//table/tbody/tr');
-
-          echo $trnodelist->length . "\n."; 
-
-          $i = 0; 
-
-          foreach ($this->input_column_indecies as $index) {
-
-              $row_data[$i++] = " ";
-          } 
-
-          return $row_data;          
-     }
-
+    
      $i = 0;
 
      foreach($this->input_column_indecies as $index) {
