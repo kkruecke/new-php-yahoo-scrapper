@@ -26,13 +26,14 @@ function displayException(\Exception $e)
  * Input: $argc, $argv, reference to $error_msg string to return
  * Returns: boolean: true if input good, false otherwise.
  */
-function validate_user_input(int $arg_number, array $params, &$error_msg) : bool
+function validate_user_input(int $arg_number, array $params)
 {
+   $error_msg = '';
 
    if ( isset($arg_number) && $arg_number != 3 ) {
       
      $error_msg = "Two input paramters are required.";
-     return false;
+     return $error_msg;
    }
   
    // validate the date
@@ -45,7 +46,7 @@ function validate_user_input(int $arg_number, array $params, &$error_msg) : bool
    if ($count === FALSE || $count != 1) {
           
        $error_msg =  "The date " . $params[1] . " is not in a valid format.\n" ;
-       return false;
+       return $error_msg;
    }
    // Convert strings to ints.        
    $bRc = checkdate (intval($matches[1]), intval($matches[2]), intval($matches[3]));
@@ -53,14 +54,14 @@ function validate_user_input(int $arg_number, array $params, &$error_msg) : bool
    if ($bRc === FALSE) {
           
        $error_msg = $params[1] . " is not a valid date\n";
-       return false;
+       return $error_msg;
    }
       
    // validate that second parameter is between 1 and 40 
    if ( (preg_match("/^[0-9][0-9]?$/", $params[2]) == 0) || ( ((int) $params[2]) > 40) ) {
         
         $error_msg = $params[2] . " is not a number between 0 and 40\n";
-        return false;
+        return $error_msg;
     } 
     
     return true;

@@ -4,25 +4,22 @@ namespace Yahoo;
 class CSVWriter {
 
   private $splfile;
-  private $file_name;
   private $line_count;
   private $formatter;
   
-  public function __construct($file_name, CSVFormatter $formatter, string $open_mode)
+  public function __construct(CSVFormatter $formatter, SplFileObjectExtended $fobject=null)
   {
-    $this->file_name = $file_name;	  
-
-   /* j --> day without leading zeroes
-    * m --> month with leading zeroes
-    * T --> four digit year
-    */
     $this->formatter = $formatter;
-                
-    $this->splfile = new \SplFileObject($file_name, $open_mode);
 
-    $this->splfile->setFlags(\SplFileObject::READ_AHEAD | \SplFileObject::SKIP_EMPTY);
-       
+    $this->splfile = $fobject;
+
     $this->line_count = 0;
+  }
+
+  public function attach(\SplFileObject $fobject)
+  {
+    // Note: Not sure if I must first do "$this->splfile = null" if $this->splfile exists?
+    $this->splfile = $fobject; 
   }
 
   public function unlink() // deletes file

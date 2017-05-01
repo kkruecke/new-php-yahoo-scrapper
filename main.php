@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-use Yahoo\{CSVWriter, CSVEarningsFormatter, EarningsTable, CustomStockFilterIterator, EmptyFilter, Configuration};
+use Yahoo\{CSVWriter, CSVEarningsFormatter, EarningsTable, CustomStockFilterIterator, EmptyFilter, Configuration, SplFileObjectExtended};
 
 require_once("utility.php");
 
@@ -8,15 +8,15 @@ require_once("utility.php");
 
   if ($argc == 2) {
 
-    $argv[2] = "0"; // $argv values are strings 
+    $argv[2] = "0"; // Set default argv[2] if not entered ($argv values are strings). 
     $argc = 3;
   }
 
-  $error_msg = '';
+  $rc = validate_user_input($argc, $argv);
 
-  if (validate_user_input($argc, $argv, $error_msg) == false) {
+  if ($rc !== true) {
 
-       echo $error_msg . "\n";
+       echo $rc . "\n";
        echo Configuration::config('help') . "\n"; 
        return;
   }
@@ -25,7 +25,9 @@ require_once("utility.php");
 
   $date_period = build_date_period($start_date, intval($argv[2])); 
 
-  $output_file_name = build_output_fname($start_date, intval($argv[2]));
+  $output_file_name = build_output_fname($start_date, intval($argv[2])); 
+
+  $file_object = new SplFileObjectExtended($output_file_name, "w+");
 
   $total = 0; 
 
@@ -42,7 +44,7 @@ require_once("utility.php");
 
           $table = new EarningsTable($date_time, Configuration::config('column-names'), Configuration::config('output-order')); 
                 
-          $csv_writer = new CSVWriter($output_file_name, new CSVEarningsFormatter($table->getInputOrder(), Configuration::config('output-order')), 'a'); 
+          $csv_writer = new CSVWriter(new CSVEarningsFormatter($table->getInputOrder(), Configuration::config('output-order')), $file_object); 
           
           $filterIter = createFilterIterator($table);
     
@@ -62,7 +64,7 @@ require_once("utility.php");
       }
   }
    
-  wrap_up($total, $csv_writer);
+  wrap_up($total, $output_file_name);
 
   return;
 
@@ -71,16 +73,15 @@ function display_progress(\DateTime $date_time, int $table_stock_cnt, int $lines
   echo "\n" .$date_time->format("m-d-Y") . " earnings table contained $table_stock_cnt stocks. {$lines_written} stocks met the filter criteria. $total total records have been written.\n";
 }
 
-function wrap_up(int $total,  CSVWriter $csv_writer)
+function wrap_up(int $total,  string $fname)
 {
   if ($total != 0) {
 
-      echo  $csv_writer->getFileName() . " has been created. It contains " . $total . " met filter entries.\n";
+      echo  $fname . " has been created. It contains " . $total . " met filter entries.\n";
 
   } else {
 
      echo  "No output was created because $total stocks met filter criteria.\n";
-     $csv_writer->unlink(); 
   }
 }
 

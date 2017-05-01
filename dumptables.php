@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-use Yahoo\{CSVWriter, CSVEarningsFormatter, EarningsTable, CustomStockFilterIterator, EmptyFilter, Configuration};
+use Yahoo\{CSVWriter, CSVEarningsFormatter, EarningsTable, CustomStockFilterIterator, EmptyFilter, Configuration, SplFileObjectExtended};
 
 require_once("utility.php");
 
@@ -26,6 +26,8 @@ require_once("utility.php");
   $date_period = build_date_period($start_date, intval($argv[2])); 
 
   $output_file_name = build_output_fname($start_date, intval($argv[2]));
+
+  $file_object = new SplFileObjectExtended($output_file_name, "w+");
 
   $total = 0; 
 
@@ -57,19 +59,6 @@ require_once("utility.php");
 function display_progress(\DateTime $date_time, int $table_stock_cnt, int $lines_written, int $total)
 {
   echo "\n" . $date_time->format("m-d-Y") . " earnings table contained $table_stock_cnt stocks. {$lines_written} stocks met the filter criteria. $total total records have been written.\n";
-}
-
-function wrap_up(int $total,  CSVWriter $csv_writer)
-{
-  if ($total != 0) {
-
-      echo  $csv_writer->getFileName() . " has been created. It contains " . $total . " met filter entries.\n";
-
-  } else {
-
-     echo  "No output was created because $total stocks met filter criteria.\n";
-     $csv_writer->unlink(); 
-  }
 }
 
 function createFilterIterator(EarningsTable $table) : \FilterIterator
