@@ -5,5 +5,5 @@ interface TableInterface  {
 
    public function row_count() : int;
    public function column_count() : int;
-   public function getRowData($row_index) : \SplFixedArray;
+   public function getRowData(int $row_num) : \SplFixedArray;
 }

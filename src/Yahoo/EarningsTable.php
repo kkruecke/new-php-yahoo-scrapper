@@ -18,6 +18,7 @@ class EarningsTable implements \IteratorAggregate, TableInterface {
 EOT;
    
    private   $results;
+   private   $row_count;
    private   $date_time;
    private   $domTable; 
    
@@ -41,7 +42,7 @@ EOT;
 
     $this->createInputOrdering($dom_first_page, $column_names, $output_ordering);
 
-    $this->buildDOMTable($dom_first_page, $date_time);
+    $this->row_count = $this->buildDOMTable($dom_first_page, $date_time);
   }
 
   public function exists() : bool
@@ -52,7 +53,7 @@ EOT;
   private function setDefaultInvariant(\DateTime $date_time)
   {
      $this->date_time = $date_time;
-     $this->results = 0;
+     $this->row_count = $this->results = 0;
      $this->domTable = null;
   }
 
@@ -107,8 +108,8 @@ EOT;
           return 0;    
      }
 
-     $this->results = (int) $matches[1];  
-     return $this->results;
+     $results = (int) $matches[1];  
+     return $results;
   }
 
   private function getExtraPagesCount(int $earning_results) : int
@@ -122,21 +123,27 @@ EOT;
       @$bRc = $this->domTable->loadHTML(self::$table_page_text);
   }
 
-  private function buildDOMTable(\DOMDocument $dom_first_page, \DateTime $date_time)
+  /*  Input: 
+          1. First page DOMDocument. 
+          2. Date 
+      Returns: total row count of scrapped rows.
+   */
+  private function buildDOMTable(\DOMDocument $dom_first_page, \DateTime $date_time) : int
   {  
-     $this->appendRows($this->domTable, $dom_first_page, "\nAppending rows of first results page for " . $date_time->format('m-d-Y'));
+     $row_count = $this->appendRows($this->domTable, $dom_first_page, "\nAppending rows of first results page for " . $date_time->format('m-d-Y'));
 
      $extra_pages = $this->getExtraPagesCount($this->results); 
 
-      // Add a table node to $domTable. See Paula code.
      for($extra_page = 1; $extra_page <= $extra_pages; ++$extra_page)  {    
          
          echo  "   ...fetching additional results page $extra_page of $extra_pages extra pages...";       
 
          $dom_extra_page = $this->loadHTML($date_time, $extra_page); 
 
-         $this->appendRows($this->domTable, $dom_extra_page, " appending its rows");
+         $row_count += $this->appendRows($this->domTable, $dom_extra_page, " appending its rows");
      }
+
+     return $row_count;
   }
 
   private function appendRows(\DOMDocument $domTable, \DOMDocument $dom_page, string $msg) : int // return rows_count
@@ -228,7 +235,6 @@ EOT;
   
   /*
     Input: abbrev from confg.xml
-    Output: Its index in the returned getRowData() 
    */
   public function getRowDataIndex(string $abbrev) : int
   {
@@ -256,9 +262,9 @@ EOT;
   }
 
   /*
-   * returns SplFixedArray of all text for the columns indexed by $this->input_column_indecies in row number $row_num
+   * returns SplFixedArray of all text for the columns indexed by $this->input_column_indecies in row number $row_num. $row_num is the 0-based index.
    */ 
-  public function getRowData($row_num) : \SplFixedArray
+  public function getRowData(int $row_num) : \SplFixedArray
   {
      $row_data = new \SplFixedArray(count($this->input_column_indecies));
 
@@ -266,13 +272,38 @@ EOT;
      
      $query = "//table/tbody/tr[" . (string) ($row_num + 1) . "]/td"; 
               
-     $tdNodelist =  $xpath->query($query); 
+     $tdNodelist = $xpath->query($query); 
+     
+     /// Debug
+     if ($tdNodelist->length == 0) {
+         
+          $this->debug($xpath, $query, $row_num);
+          
+          echo "td NodeList->length is 0. \$xpath->query(" . "'$query') failed.\n";
+
+          echo "Length of DOMNodeList from \$xpath->query(" . "'//table/tbody/tr') = ";
+
+          $trnodelist = $xpath->query('//table/tbody/tr');
+
+          echo $trnodelist->length . "\n."; 
+
+          $i = 0; 
+
+          foreach ($this->input_column_indecies as $index) {
+
+              $row_data[$i++] = " ";
+          } 
+
+          return $row_data;          
+     }
 
      $i = 0;
 
      foreach($this->input_column_indecies as $index) {
-
+         
          $td = $tdNodelist->item($index);     
+
+         //--$this->debug($row_num, __LINE__, __FILE__, $td);
 
          $nodeValue = trim($td->nodeValue);
         
@@ -343,7 +374,7 @@ EOT;
 
   public function row_count() : int // was rows() : int
   {
-     return $this->results;
+     return $this->row_count;
   } 
 
   public function column_count() : int
@@ -393,5 +424,23 @@ EOT;
      }
      echo "\n";
  }
+ 
+ function debug(\DOMXPath $xpath, string $query, int $row_num)
+ {    
+   echo "BUG: td NodeList->length is 0.\n";
+   
+   echo "The xpath query $query failed. The input row number was $row_num.\n";
+   
+   echo "\$this->results is " . $this->date_time->format('d-M-Y') . " was {$this->results}.\n";
+   
+   echo "The length of '//table/tbody/tr' NodeList is ";
+
+   $trnodelist = $xpath->query('//table/tbody/tr');
+
+   echo $trnodelist->length . "\n."; 
+   //echo "Dumping \$this->domTable \n";
+   
+   //var_dump($this->domTable);
+ }  
 
 } 

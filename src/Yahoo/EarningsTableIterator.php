@@ -15,8 +15,15 @@ class EarningsTableIterator implements  \SeekableIterator {
      $this->html_table = $htmltable;
      
      $this->current_row = 0; 
-               
-     $this->end = $this->html_table->row_count(); 
+     
+     if ($this->html_table->row_count() == 0) {
+         
+         $this->end = 0;
+         
+     } else {         
+      
+        $this->end = $this->html_table->row_count() - 1; // Since we use zero-based indexing, we need to subtract one.
+     }    
   }
 
   /*
