@@ -280,8 +280,6 @@ EOT;
          
          $td = $tdNodelist->item($index);     
 
-         //--$this->debug($row_num, __LINE__, __FILE__, $td);
-
          $nodeValue = trim($td->nodeValue);
         
          $row_data[$i++] = html_entity_decode($nodeValue);
@@ -401,23 +399,4 @@ EOT;
      }
      echo "\n";
  }
- 
- function debug(\DOMXPath $xpath, string $query, int $row_num)
- {    
-   echo "BUG: td NodeList->length is 0.\n";
-   
-   echo "The xpath query $query failed. The input row number was $row_num.\n";
-   
-   echo "\$this->results is " . $this->date_time->format('d-M-Y') . " was {$this->results}.\n";
-   
-   echo "The length of '//table/tbody/tr' NodeList is ";
-
-   $trnodelist = $xpath->query('//table/tbody/tr');
-
-   echo $trnodelist->length . "\n."; 
-   //echo "Dumping \$this->domTable \n";
-   
-   //var_dump($this->domTable);
- }  
-
 } 
