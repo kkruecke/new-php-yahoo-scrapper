@@ -156,7 +156,7 @@ EOT;
      
      $dest_node_list = $domTable->getElementsByTagName("tbody"); 
      
-     $dest_node = $dest_node_list->item($dest_node_list->length - 1);
+     $dest_node = $dest_node_list->item(0); 
     
      foreach($trNodeList_src as $trNode) { // append extra rows to the 
         
