@@ -41,6 +41,9 @@ class CustomStockFilterIterator extends \FilterIterator {
          */ 
         $rc = preg_match("/^[a-zA-Z]{1,5}$/", $symbol) ? true : false;
         
+        // Debug:
+        // echo "Stock Symbol is: $symbol <--- " . ($rc ? "true" : "false") . ".\n";
+        
         return $rc;
     }
 }
