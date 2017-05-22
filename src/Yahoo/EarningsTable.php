@@ -22,8 +22,8 @@ EOT;
    private   $date_time;
    private   $domTable; 
    
-   private $input_column_indecies;   // Actual indecies of column names (given in .xml file, where only the start of the column name is given).
-   private $input_order = array();   // Associative array of abbreviations found in .xml file mapped to indecies of data in array returned by getRowData(int $row_num).
+   private $input_column_indecies;   // Actual consecutive-ordered indecies of html earning table columns (specified in config.xml).
+   private $input_order = array();   // Associative array of abbreviations found in .xml file mapped to indecies of array returned by getRowData(int $row_num).
 /*
  * Input: 
  * 1. $date_time is from the command line
@@ -181,7 +181,8 @@ EOT;
   /*
    *  Input:
    *  $column_names = Configuration::config('column-column_names') 
-   *  $output_ordering  =  Configuration::config('output-order') 
+      Output: 
+   *    array holding indecies of html table columns corresponding to the input column names. 
    */ 
   private function getTableColumnOrder(\DOMDocument $dom_first_page, array $column_names) : array 
   {  
@@ -234,6 +235,7 @@ EOT;
   
   /*
     Input: abbrev from confg.xml
+    Output: its input index in getRowData(int $row_num)
    */
   public function getRowDataIndex(string $abbrev) //: int
   {    
