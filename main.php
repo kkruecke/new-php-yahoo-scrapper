@@ -87,5 +87,6 @@ function wrap_up(int $total,  string $fname)
 
 function createFilterIterator(EarningsTable $table) : \FilterIterator
 {
+    $rc =  $table->getRowDataIndex('sym'); // Debug
  return ($table->row_count() > 0) ? new CustomStockFilterIterator($table->getIterator(), $table->getRowDataIndex('sym')) : new EmptyFilter($table->getIterator()); 
 }

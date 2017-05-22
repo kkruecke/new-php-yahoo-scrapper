@@ -47,8 +47,8 @@ class CSVEarningsFormatter implements CSVFormatter {
      
      // Reorder input into appropriate output positions in $output
      foreach($this->output_ordering as $abbrev => $output_index) {
-             
-             $output[ $output_index ] = $this->modify_input($row[ $this->input_ordering[$abbrev] ], $abbrev);
+         
+        $output[ $output_index ] = $this->modify_input($row[ $this->input_ordering[$abbrev] ], $abbrev);
      }
      
      $output[2] = $date->format('j-M'); // current DD/MM -- day and month.

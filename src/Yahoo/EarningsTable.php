@@ -22,9 +22,13 @@ EOT;
    private   $date_time;
    private   $domTable; 
    
-   private $input_column_indecies;   // indecies of column names ordered in those names appear in config.xml  
-   private $input_order = array();   // Associative array of abbreviations mapped to indecies indicating their location in the table.
-
+   private $input_column_indecies;   // Actual indecies of column names (given in .xml file, where only the start of the column name is given).
+   private $input_order = array();   // Associative array of abbreviations found in .xml file mapped to indecies of data in array returned by getRowData(int $row_num).
+/*
+ * Input: 
+ * 1. $date_time is from the command line
+ * 2. $columm_names and $output_ordering are from config.xml
+ */
   public function __construct(\DateTime $date_time, array $column_names, array $output_ordering) 
   {
     $this->setDefaultInvariant($date_time);
@@ -170,22 +174,16 @@ EOT;
   
   private function createInputOrdering(\DOMDocument $dom_first_page, $column_names, $output_ordering)
   {
-     $this->getTableColumnOrder($dom_first_page, $column_names, $output_ordering);
-
-     $abbrevs = array_keys($output_ordering);
-    
-    for($i = 0; $i < count($abbrevs); ++$i) { // we ignore output_input
-      
-       $this->input_order[$abbrevs[$i]] = $this->input_column_indecies[$i];
-    }
-  }
+    $this->input_column_indecies = $this->getTableColumnOrder($dom_first_page, $column_names);
+    $this->input_order = array_combine( array_keys($output_ordering), array_keys($this->input_column_indecies));
+  }  
 
   /*
    *  Input:
    *  $column_names = Configuration::config('column-column_names') 
    *  $output_ordering  =  Configuration::config('output-order') 
    */ 
-  private function getTableColumnOrder(\DOMDocument $dom_first_page, $column_names, $output_ordering) 
+  private function getTableColumnOrder(\DOMDocument $dom_first_page, array $column_names) : array 
   {  
      $config_col_cnt = count($column_names);
 
@@ -201,9 +199,8 @@ EOT;
           return;
      }
 
-     $arr = array();
-     
      $col_num = 0; 
+     $input_column_indecies = array();
 
      do {
  
@@ -212,13 +209,13 @@ EOT;
         $index = array_search($thNode->nodeValue, $column_names); 
                 
         if ($index !== FALSE) {
-            
-            $this->input_column_indecies[] = $col_num; 
+           
+            $input_column_indecies[] = $col_num; // Get actual column headers on the page?
         } 
 
         if (++$col_num == $thNodelist->length) { // If no more columns to examine...
             
-            if (count($this->input_column_indecies) != $config_col_cnt) { // ... if we didn't find all the $column_names
+            if (count($input_column_indecies) != $config_col_cnt) { // ... if we didn't find all the $column_names
                 
                 throw new Exception("One or more column names specificied in config.xml were not found in the earning's table's column headers.");
             }
@@ -226,6 +223,8 @@ EOT;
         }
         
      } while(count($this->input_column_indecies) < $config_col_cnt);
+
+     return $input_column_indecies;
   }
 
   public function getInputOrder() : array
@@ -236,10 +235,9 @@ EOT;
   /*
     Input: abbrev from confg.xml
    */
-  public function getRowDataIndex(string $abbrev) : int
-  {
-    // If it is a valid $abbrev, return its index.  
-    return array_search($abbrev, $this->input_order) !== false ? $this->input_order[$abbrev] : false;
+  public function getRowDataIndex(string $abbrev) //: int
+  {    
+    return $this->input_order[$abbrev];
   }
    
   function getChildNodes(\DOMNodeList $NodeList)  : \DOMNodeList // This might not be of use.

@@ -4,7 +4,23 @@ Items
 Bug
 ---
 
-set row_count from preg_match results.
+There is a bug in EarningTable::  private function createInputOrdering(...). Figure out what the array it is creating should look like. Doesn't it have to match 
+config.xml? If so, what does this part of config.xml represent:
+
+   <column abbrev="sym"  output="1">Symbol</column>
+    <column abbrev="co"   output="0">Company</column>
+    <column abbrev="time" output="3">Earnings Call Time</column>
+    <column abbrev="eps"  output="4">EPS Estimate</column>
+  </columns>
+
+EarningsTable::$input_order must be the correct array format so that array_search() in the function below works:
+
+public function EarningsTable::getRowDataIndex(string $abbrev) //: int
+  {
+    // BUG: The keys and values in $abbrev need to be reverse.
+    return (array_search($abbrev, $this->input_order) !== false) ? $this->input_order[$abbrev] : false;
+  }
+
 
 Help:
 1. Excellent Overview of XPath Syntax:  https://www.w3schools.com/xml/xpath_syntax.asp
