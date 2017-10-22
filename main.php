@@ -2,6 +2,12 @@
 
 use Yahoo\{CSVWriter, CSVEarningsFormatter, EarningsTable, CustomStockFilterIterator, EmptyFilter, Configuration, SplFileObjectExtended};
 
+
+function createFilterIterator(EarningsTable $table) : \FilterIterator
+{
+ return ($table->row_count() > 0) ? new CustomStockFilterIterator($table->getIterator(), $table->getRowDataIndex('sym')) : new EmptyFilter($table->getIterator()); 
+}
+
 require_once("utility.php");
 
   boot_strap();
@@ -83,9 +89,4 @@ function wrap_up(int $total,  string $fname)
 
      echo  "No output was created because $total stocks met filter criteria.\n";
   }
-}
-
-function createFilterIterator(EarningsTable $table) : \FilterIterator
-{
- return ($table->row_count() > 0) ? new CustomStockFilterIterator($table->getIterator(), $table->getRowDataIndex('sym')) : new EmptyFilter($table->getIterator()); 
 }
