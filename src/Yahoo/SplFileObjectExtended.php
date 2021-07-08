@@ -9,7 +9,7 @@ class SplFileObjectExtended extends \SplFileObject   {
     {
        parent::__construct($filename, $mode);
 
-       parent::setFlags(\SplFileObject::READ_AHEAD | \SplFileObject::SKIP_EMPTY);
+       parent::setFlags(\SplFileObject::READ_AHEAD | \SplFileObject::SKIP_EMPTY | \SplFileObject::DROP_NEW_LINE);
 
        $this->line_no = 1;
     }
